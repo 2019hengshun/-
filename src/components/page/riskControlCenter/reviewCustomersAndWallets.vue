@@ -692,8 +692,10 @@
                 </div>
             </el-row>   
             <hr>
-            <div class="xy_title" style="margin-top:20px;">新颜报告</div>
-            <el-row v-if="reportList">
+              <div  v-if="!BreportList" class="xy_title" style="margin-top:20px;">暂无报告</div>
+            
+            <div v-if="BreportList" class="xy_title" style="margin-top:20px;">新颜报告</div>
+            <el-row v-if="BreportList">
                 <el-card >
                     <div class="xy_card">
                         <div>
@@ -709,10 +711,10 @@
                                     <strong>{{reportList.loans_score}}</strong>
                                     <p>贷款行为分</p>
                                 </div>
-                                <el-progress type="circle" :percentage="reportList.loans_score/10" color="red" :show-text="showText">aaaaa</el-progress>                        
+                                <el-progress type="circle" :percentage="reportList.loans_score?reportList.loans_score/10:0" color="red" :show-text="showText">aaaaa</el-progress>                        
                                 <div class="xy_zxd">贷款行为置信度：{{reportList.loans_credibility}}</div>
                         </div>
-                        <img class="xy_img" :src="reportList.loans_score > 500? require('../../../assets/img/u236.png'): require('../../../assets/img/u115.png')" alt="">
+<img class="xy_img" :src="reportList.loans_score > 500? require('../../../assets/img/u115.png'): require('../../../assets/img/u236.png')" alt="">
                     </div>
 
 
@@ -736,8 +738,8 @@
                     </el-col> -->
                 </el-card>
             </el-row> 
-              <div class="xy_title" style="margin-top:20px;">规则命中详情</div>
-              <el-card v-if="reportList">
+              <div  v-if="BreportList" class="xy_title" style="margin-top:20px;">规则命中详情</div>
+              <el-card v-if="BreportList">
                 <table class="xy_table">
                     <tr>
                         <th style="width:40%">命中规则详情</th>
@@ -1296,6 +1298,515 @@
                 </el-main>
               </el-row>
             </el-tab-pane>
+            <el-tab-pane label="白骑士贷款报告" name="fourth">
+            <el-row class="xy_flex">
+                <div >
+                    白骑士贷款报告
+                </div>
+                <div style="flex-grow:1">
+                </div>
+                <div >
+                    报告时间:<span>{{new Date() |dateServer}}</span>
+                </div>
+            </el-row>   
+              <div  v-if="!whiteForm.loan" class="xy_title" style="margin-top:20px;">暂无报告</div>
+            <hr>     
+            <div v-if="whiteForm&&whiteForm.loan" class="xy_title" style="margin-top:20px;">白骑士贷款报告</div>
+            <el-row v-if="whiteForm&&whiteForm.loan">
+                <el-card >
+                    <div class="xy_card">
+                        <div tyle="align-self: flex-start;">
+                            流水号{{whiteForm.loan.flowNo}}
+                        </div>
+                        <div v-if="whiteForm.loan.finalScore">
+                                <div class="progress-text">
+                                    <strong>{{whiteForm.loan.finalScore}}</strong>
+                                    <p>贷款最终风险分</p>
+                                </div>
+                                <el-progress type="circle" percentage=100 color="red" :show-text="showText">aaaaa</el-progress>    
+                        </div>
+                        <div>
+                        <img  class="xy_img"
+                         :src="whiteForm.loan.finalDecision=='Reject'?require('../../../assets/img/u236.png'):
+                            whiteForm.loan.finalDecision=='Review'?require('../../../assets/img/report_reject.png'):
+                            whiteForm.loan.finalDecision=='Accept'?require('../../../assets/img/u115.png'):''" alt="">
+                        </div>
+
+                    </div>
+                </el-card>
+            </el-row> 
+            <div v-if="whiteForm&&whiteForm.loan" class="xy_title" style="margin-top:20px;">风险情况</div>                                 
+              <el-card class="box-card" v-if="whiteForm&&whiteForm.loan">
+                <!-- <table style="font-size:14px;line-height:30px;width:100%;table-layout: fixed"  id="bqs"> -->
+                <table class="xy_table">
+                  <thead>
+                    <tr>
+                      <th style="width:200px"></th>
+                      <th style="text-align:center">检查项目</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  <template v-if="whiteForm&&whiteForm.loan" v-for="(temp,index) in whiteForm.loan.strategySet">
+                    <tr :key="index">
+                      <th style="background: #fff;text-align:right;line-height:52px;padding-right:16px;width:220px">
+                       {{temp.strategyName}}<span>( {{temp.strategyMode=='FirstMode'?'首次匹配':
+                                    temp.strategyMode=='WorstMode'?'最坏匹配':
+                                    temp.strategyMode=='WeightMode'?'权重匹配':''
+                                  }})</span>
+                      </th>
+                      <th >
+                        <template >
+                                     <span :style="{color:temp.strategyDecision=='Reject'?'red':
+                            temp.strategyDecision=='Review'?'#FF6100':
+                            temp.strategyDecision=='Accept'?'green':''}">决策分:{{temp.strategyScore}}</span> <br/>    
+                                     <span :style="{color:temp.strategyDecision=='Reject'?'red':
+                            temp.strategyDecision=='Review'?'#FF6100':
+                            temp.strategyDecision=='Accept'?'green':''}">决策结果
+                          {{temp.strategyDecision=='Reject'?'拒绝，风险评估决策为高风险建议拒绝':
+                            temp.strategyDecision=='Review'?'审核，风险评估决策为低风险建议人工审核':
+                            temp.strategyDecision=='Accept'?'通过':''
+                          }}                                       
+                                      </span>  <br/>                  
+                                <!-- <el-tag :type="temp.strategyDecision=='Reject'?'danger':
+                                    temp.strategyDecision=='Review'?'info':
+                                    temp.strategyDecision=='Accept'?'success':''"> 
+                                  {{temp.strategyDecision=='Reject'?'建议拒绝':
+                                    temp.strategyDecision=='Review'?'建议重审':
+                                    temp.strategyDecision=='Accept'?'建议通过':''
+                                  }}
+
+                                </el-tag> -->
+                            <template v-for="(t,i) in temp.hitRules">
+                              <span :key="i">
+                                <span   > 
+                                  {{t.ruleName}}
+                                  </span>
+                                  <span style="text-align:center;width:450px" v-if="t.memo">
+                                      
+                                        {{t.memo}}
+                                      
+                                    </span>
+                              </span><br/>
+                            </template>                                
+                              </span>
+                            </span>
+  
+                        </template>                        
+                      </th>
+                    </tr>
+                    <!-- <tr>
+                      <th  style="background: #fff;text-align:right;line-height:52px;padding-right:16px;">
+                        失信风险
+                      </th>
+                      <th >
+                        <span v-if="whiteForm.loan.finalScore">决策分:{{whiteForm.loan.finalScore}}</span><br v-if="whiteForm.loan.finalScore"/>
+                        <span>决策结果:     {{whiteForm.loan.finalDecision=='Reject'?'拒绝，风险评估决策为高风险建议拒绝':
+                            whiteForm.loan.finalDecision=='Review'?'审核，风险评估决策为低风险建议人工审核':
+                            whiteForm.loan.finalDecision=='Accept'?'通过':''
+                          }}</span><br/>  
+                        <template v-for="(temp,index) in whiteForm.loan.strategySet">
+                            <span :key="index">
+                                <span>{{temp.strategyName}}</span>
+                              
+                              <span >
+                              <span>匹配模式 {{temp.strategyMode=='FirstMode'?'首次匹配':
+                                    temp.strategyMode=='WorstMode'?'最坏匹配':
+                                    temp.strategyMode=='WeightMode'?'权重匹配':''
+                                  }}</span>
+                                <el-tag :type="temp.strategyDecision=='Reject'?'danger':
+                                    temp.strategyDecision=='Review'?'info':
+                                    temp.strategyDecision=='Accept'?'success':''"> 
+                                  {{temp.strategyDecision=='Reject'?'建议拒绝':
+                                    temp.strategyDecision=='Review'?'建议重审':
+                                    temp.strategyDecision=='Accept'?'建议通过':''
+                                  }}
+                                </el-tag>
+                              </span>
+                            </span><br/>
+                            <template v-for="(t,i) in temp.hitRules">
+                              <span :key="i">
+                                <span   > 
+                                  {{t.ruleName}}
+                                  </span>
+                                  <span style="text-align:center;width:450px" >
+                                      <el-tag type="danger" v-if="t.memo"> 
+                                        {{t.memo}}
+                                      </el-tag>
+                                    </span>
+                              </span>
+                            </template>
+                        </template>                                                 
+
+                      </th>
+                    </tr> -->
+                  </template>                      
+                  </tbody>
+                  <!-- <template >
+                    <tr>
+                      <th  >
+                        <el-alert
+                            title="贷款情况"
+                            type="success"
+                            center
+                            :closable="false">
+                        </el-alert>
+                      </th>
+                      <th >
+                        <el-tag :type="whiteForm.loan.finalDecision=='Reject'?'danger':
+                                whiteForm.loan.finalDecision=='Review'?'info':
+                                whiteForm.loan.finalDecision=='Accept'?'success':''"> 
+                          {{whiteForm.loan.finalDecision=='Reject'?'建议拒绝':
+                            whiteForm.loan.finalDecision=='Review'?'建议重审':
+                            whiteForm.loan.finalDecision=='Accept'?'建议通过':''
+                          }}
+                        </el-tag>
+                      </th>
+                    </tr>
+                    <template v-for="(temp,index) in whiteForm.loan.strategySet">
+                        <tr :key="index">
+                          <th >
+                            <el-alert
+                                :title="temp.strategyName"
+                                type="success"
+                                center
+                                :closable="false">
+                            </el-alert>
+                          </th>
+                          <th >
+                            <el-tag :type="temp.strategyDecision=='Reject'?'danger':
+                                temp.strategyDecision=='Review'?'info':
+                                temp.strategyDecision=='Accept'?'success':''"> 
+                              {{temp.strategyDecision=='Reject'?'建议拒绝':
+                                temp.strategyDecision=='Review'?'建议重审':
+                                temp.strategyDecision=='Accept'?'建议通过':''
+                              }}
+                            </el-tag>
+                          </th>
+                        </tr><br/>
+                        <template v-for="(t,i) in temp.hitRules">
+                          <tr :key="i" >
+                            <th   >
+                                <el-alert
+                                    :title="t.ruleName"
+                                    type="info"
+                                    center
+                                    :closable="false">
+                                </el-alert>                      
+                                </th>
+                                <td  style="text-align:center;width:450px">
+                                  <el-tag type="danger"> 
+                                    {{t.memo}}
+                                  </el-tag>
+                                </td>
+                          </tr>
+                        </template>
+                    </template>
+                  </template>
+                  <template v-if="whiteForm&&whiteForm.register">
+
+                    <tr style="background: #fff;">
+                      <th  >
+                        <el-alert
+                            title="注册情况"
+                            type="success"
+                            center
+                            :closable="false">
+                        </el-alert>
+                      </th>
+                      <th >
+                        <el-tag :type="whiteForm.register.finalDecision=='Reject'?'danger':
+                                whiteForm.register.finalDecision=='Review'?'info':
+                                whiteForm.register.finalDecision=='Accept'?'success':''"> 
+                          {{whiteForm.register.finalDecision=='Reject'?'建议拒绝':
+                            whiteForm.register.finalDecision=='Review'?'建议重审':
+                            whiteForm.register.finalDecision=='Accept'?'建议通过':''
+                          }}
+                        </el-tag>
+                      </th>
+                    </tr>
+                    <template v-for="(temp,index) in whiteForm.register.strategySet">
+                        <tr :key="index">
+                          <th  >
+                            <el-alert
+                                :title="temp.strategyName"
+                                type="success"
+                                center
+                                :closable="false">
+                            </el-alert>
+                          </th>
+                          <th >
+                            <el-tag :type="temp.strategyDecision=='Reject'?'danger':
+                                temp.strategyDecision=='Review'?'info':
+                                temp.strategyDecision=='Accept'?'success':''"> 
+                              {{temp.strategyDecision=='Reject'?'建议拒绝':
+                                temp.strategyDecision=='Review'?'建议重审':
+                                temp.strategyDecision=='Accept'?'建议通过':''
+                              }}
+                            </el-tag>
+                          </th>
+                        </tr>
+                        <template v-for="(t,i) in temp.hitRules">
+                          <tr :key="i">
+                            <th   > 
+                                <el-alert
+                                    :title="t.ruleName"
+                                    type="info"
+                                    center
+                                    :closable="false">
+                                </el-alert>                      
+                              </th>
+                              <td style="text-align:center;width:450px" >
+                                  <el-tag type="danger" v-if="t.memo"> 
+                                    {{t.memo}}
+                                  </el-tag>
+                                </td>
+                          </tr>
+                        </template>
+                    </template>
+                  </template>                   -->
+                                  
+                </table>
+              </el-card>   
+            </el-tab-pane>
+            <el-tab-pane label="白骑士注册报告" name="fived">
+            <el-row class="xy_flex">
+                <div >
+                    白骑士注册报告
+                </div>
+                <div style="flex-grow:1">
+                </div>
+                <div >
+                    报告时间:<span>{{new Date() |dateServer}}</span>
+                </div>
+            </el-row>   
+              <div  v-if="!whiteForm.register" class="xy_title" style="margin-top:20px;">暂无报告</div>
+            <hr>     
+            <div v-if="whiteForm&&whiteForm.register" class="xy_title" style="margin-top:20px;">白骑士注册报告</div>
+            <el-row v-if="whiteForm&&whiteForm.register">
+                <el-card >
+                    <div class="xy_card">
+                        <div tyle="align-self: flex-start;">
+                            流水号{{whiteForm.register.flowNo}}
+                        </div>
+                        <div v-if="whiteForm.register.finalScore">
+                                <div class="progress-text">
+                                    <strong>{{whiteForm.register.finalScore}}</strong>
+                                    <p>注册最终风险分</p>
+                                </div>
+                                <el-progress type="circle" percentage=100 color="red" :show-text="showText">aaaaa</el-progress>    
+                                                
+                        </div>
+                        <div>
+                        <img  class="xy_img"
+                         :src="whiteForm.register.finalDecision=='Reject'?require('../../../assets/img/u236.png'):
+                            whiteForm.register.finalDecision=='Review'?require('../../../assets/img/report_reject.png'):
+                            whiteForm.register.finalDecision=='Accept'?require('../../../assets/img/u115.png'):''" alt="">                            
+                        </div>
+
+                    </div>
+                </el-card>
+            </el-row> 
+            <div v-if="whiteForm&&whiteForm.register" class="xy_title" style="margin-top:20px;">风险情况</div>                                 
+              <el-card class="box-card" v-if="whiteForm&&whiteForm.register">
+                <table class="xy_table">
+                  <thead>
+                    <tr>
+                      <th style="width:200px"></th>
+                      <th style="text-align:center">检查项目</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                
+                <template v-if="whiteForm&&whiteForm.register" v-for="(temp,index) in whiteForm.register.strategySet">
+                    <tr :key="index">
+                      <th style="background: #fff;text-align:right;line-height:52px;padding-right:16px;">
+                       {{temp.strategyName}}<span>( {{temp.strategyMode=='FirstMode'?'首次匹配':
+                                    temp.strategyMode=='WorstMode'?'最坏匹配':
+                                    temp.strategyMode=='WeightMode'?'权重匹配':''
+                                  }})</span>
+                      </th>
+                      <th >
+                        <template >
+                                     <span :style="{color:temp.strategyDecision=='Reject'?'red':
+                            temp.strategyDecision=='Review'?'yellow':
+                            temp.strategyDecision=='Accept'?'green':''}">决策分:{{temp.strategyScore}}</span> <br/>    
+                                     <span :style="{color:temp.strategyDecision=='Reject'?'red':
+                            temp.strategyDecision=='Review'?'yellow':
+                            temp.strategyDecision=='Accept'?'green':''}">决策结果
+                          {{temp.strategyDecision=='Reject'?'拒绝，风险评估决策为高风险建议拒绝':
+                            temp.strategyDecision=='Review'?'审核，风险评估决策为低风险建议人工审核':
+                            temp.strategyDecision=='Accept'?'通过':''
+                          }}                                       
+                                      </span>  <br/>                  
+                                <!-- <el-tag :type="temp.strategyDecision=='Reject'?'danger':
+                                    temp.strategyDecision=='Review'?'info':
+                                    temp.strategyDecision=='Accept'?'success':''"> 
+                                  {{temp.strategyDecision=='Reject'?'建议拒绝':
+                                    temp.strategyDecision=='Review'?'建议重审':
+                                    temp.strategyDecision=='Accept'?'建议通过':''
+                                  }}
+
+                                </el-tag> -->
+                            <template v-for="(t,i) in temp.hitRules">
+                              <span :key="i">
+                                <span   > 
+                                  {{t.ruleName}}
+                                  </span>
+                                  <span style="text-align:center;width:450px" >
+                                      <el-tag type="danger" v-if="t.memo"> 
+                                        {{t.memo}}
+                                      </el-tag>
+                                    </span>
+                              </span><br/>
+                            </template>                                
+                              </span>
+                            </span>
+  
+                        </template>                        
+                      </th>
+                    </tr>
+                    <!-- <tr>
+                      <th  style="background: #fff;text-align:right;line-height:52px;padding-right:16px;">
+                        失信风险
+                      </th>
+                      <th >
+                        <span v-if="whiteForm.loan.finalScore">决策分:{{whiteForm.loan.finalScore}}</span><br v-if="whiteForm.loan.finalScore"/>
+                        <span>决策结果:     {{whiteForm.loan.finalDecision=='Reject'?'拒绝，风险评估决策为高风险建议拒绝':
+                            whiteForm.loan.finalDecision=='Review'?'审核，风险评估决策为低风险建议人工审核':
+                            whiteForm.loan.finalDecision=='Accept'?'通过':''
+                          }}</span><br/>  
+                        <template v-for="(temp,index) in whiteForm.loan.strategySet">
+                            <span :key="index">
+                                <span>{{temp.strategyName}}</span>
+                              
+                              <span >
+                              <span>匹配模式 {{temp.strategyMode=='FirstMode'?'首次匹配':
+                                    temp.strategyMode=='WorstMode'?'最坏匹配':
+                                    temp.strategyMode=='WeightMode'?'权重匹配':''
+                                  }}</span>
+                                <el-tag :type="temp.strategyDecision=='Reject'?'danger':
+                                    temp.strategyDecision=='Review'?'info':
+                                    temp.strategyDecision=='Accept'?'success':''"> 
+                                  {{temp.strategyDecision=='Reject'?'建议拒绝':
+                                    temp.strategyDecision=='Review'?'建议重审':
+                                    temp.strategyDecision=='Accept'?'建议通过':''
+                                  }}
+                                </el-tag>
+                              </span>
+                            </span><br/>
+                            <template v-for="(t,i) in temp.hitRules">
+                              <span :key="i">
+                                <span   > 
+                                  {{t.ruleName}}
+                                  </span>
+                                  <span style="text-align:center;width:450px" >
+                                      <el-tag type="danger" v-if="t.memo"> 
+                                        {{t.memo}}
+                                      </el-tag>
+                                    </span>
+                              </span>
+                            </template>
+                        </template>                                                 
+
+                      </th>
+                    </tr> -->
+                  </template>    
+                    <!-- <tr >
+                      <th style="background: #fff;text-align:right;line-height:52px;padding-right:16px;">
+                        垃圾注册
+                      </th>
+                      <th >
+                        <span>决策分:{{whiteForm.register.finalScore}}</span><br/>
+                        <span>决策结果:     {{whiteForm.register.finalDecision=='Reject'?'拒绝，风险评估决策为高风险建议拒绝':
+                            whiteForm.register.finalDecision=='Review'?'审核，风险评估决策为低风险建议人工审核':
+                            whiteForm.register.finalDecision=='Accept'?'通过':''
+                          }}</span><br/>
+                        <template v-for="(temp,index) in whiteForm.register.strategySet">
+                            <span :key="index">
+                                <span>{{temp.strategyName}}</span>
+                              
+                              <span >
+                                                              <span>匹配模式 {{temp.strategyMode=='FirstMode'?'首次匹配':
+                                    temp.strategyMode=='WorstMode'?'最坏匹配':
+                                    temp.strategyMode=='WeightMode'?'权重匹配':''
+                                  }}</span>
+                                <el-tag :type="temp.strategyDecision=='Reject'?'danger':
+                                    temp.strategyDecision=='Review'?'info':
+                                    temp.strategyDecision=='Accept'?'success':''"> 
+                                  {{temp.strategyDecision=='Reject'?'建议拒绝':
+                                    temp.strategyDecision=='Review'?'建议重审':
+                                    temp.strategyDecision=='Accept'?'建议通过':''
+                                  }}
+                                </el-tag>
+                              </span>
+                            </span>
+                            <template v-for="(t,i) in temp.hitRules">
+                              <span :key="i">
+                                <span   > 
+                                  {{t.ruleName}}
+                                  </span>
+                                  <span style="text-align:center;width:450px" >
+                                      <el-tag type="danger" v-if="t.memo"> 
+                                        {{t.memo}}
+                                      </el-tag>
+                                    </span>
+                              </span>
+                            </template>
+                        </template>                        
+                      </th>
+                    </tr>
+                    <tr>
+                      <th  style="background: #fff;text-align:right;line-height:52px;padding-right:16px;">
+                        失信风险
+                      </th>
+                      <th >
+                        <span v-if="whiteForm.loan.finalScore">决策分:{{whiteForm.loan.finalScore}}</span><br v-if="whiteForm.loan.finalScore"/>
+                        <span>决策结果:     {{whiteForm.loan.finalDecision=='Reject'?'拒绝，风险评估决策为高风险建议拒绝':
+                            whiteForm.loan.finalDecision=='Review'?'审核，风险评估决策为低风险建议人工审核':
+                            whiteForm.loan.finalDecision=='Accept'?'通过':''
+                          }}</span><br/>  
+                        <template v-for="(temp,index) in whiteForm.loan.strategySet">
+                            <span :key="index">
+                                <span>{{temp.strategyName}}</span>
+                              
+                              <span >
+                              <span>匹配模式 {{temp.strategyMode=='FirstMode'?'首次匹配':
+                                    temp.strategyMode=='WorstMode'?'最坏匹配':
+                                    temp.strategyMode=='WeightMode'?'权重匹配':''
+                                  }}</span>
+                                <el-tag :type="temp.strategyDecision=='Reject'?'danger':
+                                    temp.strategyDecision=='Review'?'info':
+                                    temp.strategyDecision=='Accept'?'success':''"> 
+                                  {{temp.strategyDecision=='Reject'?'建议拒绝':
+                                    temp.strategyDecision=='Review'?'建议重审':
+                                    temp.strategyDecision=='Accept'?'建议通过':''
+                                  }}
+                                </el-tag>
+                              </span>
+                            </span><br/>
+                            <template v-for="(t,i) in temp.hitRules">
+                              <span :key="i">
+                                <span   > 
+                                  {{t.ruleName}}
+                                  </span>
+                                  <span style="text-align:center;width:450px" >
+                                      <el-tag type="danger" v-if="t.memo"> 
+                                        {{t.memo}}
+                                      </el-tag>
+                                    </span>
+                              </span>
+                            </template>
+                        </template>                                                 
+
+                      </th>
+                    </tr> -->
+                                   
+                  </tbody>
+
+                                  
+                </table>
+              </el-card>   
+            </el-tab-pane>            
           </el-tabs>
         </el-dialog>   
         <el-dialog
@@ -1306,11 +1817,7 @@
           center
         >
           <table class="table textContent">
-                    <!-- <tr>
-                        <th valign="middle" colspan="6" class="bgcolor" style="text-align: center;">
-                            客户基本信息
-                        </th>
-                    </tr> -->
+          
                     <tr>
                         <th  class="bgcolor "  style="text-align: center;">百融</th>
                         <td colspan="5" v-if="brReport">
@@ -2866,6 +3373,7 @@
                                                   >
                                                   分数{{scope.row.msginfo.riskScore}}
                                                   </el-tag>
+                                                  <strong style="color:red;margin-left:10px">(腾讯反欺诈80分为高危)</strong>
                                                   <template v-for="(item,i) in scope.row.msginfo.riskInfo">
                                                     <el-tag  :key="i"
                                                     :type="item.riskCodeValue==1?'primary':item.riskCodeValue==2?'info':item.riskCodeValue==3?'danger':''"
@@ -2879,7 +3387,7 @@
                             </el-table>
                           </td>
                     </tr>   
-                    <tr>
+                    <!-- <tr>
                         <th  class="bgcolor "  style="text-align: center;">魔蝎</th>
                         <td colspan="5" >
                             <el-table
@@ -2984,8 +3492,8 @@
                                 </el-table-column>                                     
                             </el-table>
                           </td>
-                    </tr> 
-                    <tr>
+                    </tr>  -->
+                    <!-- <tr>
                         <th  class="bgcolor "  style="text-align: center;">数创</th>
                         <td colspan="5" >
                             <el-table
@@ -3034,8 +3542,8 @@
                                 </el-table-column>                                     
                             </el-table>
                           </td>
-                    </tr> 
-                    <tr>
+                    </tr>  -->
+                    <!-- <tr>
                         <th  class="bgcolor "  style="text-align: center;">公信宝</th>
                         <td colspan="5" >
                             <el-table
@@ -3112,7 +3620,7 @@
                                 </el-table-column>                                     
                             </el-table>
                           </td>
-                    </tr>  
+                    </tr>   -->
                     <tr>
                         <th  class="bgcolor "  style="text-align: center;">新颜</th>
                         <td colspan="5" >
@@ -3137,7 +3645,7 @@
                                                    type="danger"
                                                   v-if="scope.row.desc"
                                                     >
-                                                  {{scope.row.desc}}
+                                                  {{scope.row.desc=='A'?'建议拉黑':scope.row.desc=='U'?'无法确认':scope.row.desc=='N'?'空值未知':scope.row.desc=='Overdue'?'逾期未还款':''}}
                                                   </el-tag>                                                
                                                   <el-tag
                                                    type="danger"
@@ -3187,7 +3695,7 @@
                             </el-table>
                           </td>
                     </tr>   
-                    <tr>
+                    <!-- <tr>
                         <th  class="bgcolor "  style="text-align: center;">白骑士</th>
                         <td colspan="5" >
                             <el-table
@@ -3225,18 +3733,6 @@
                                                   风险类型{{scope.row.riskType=='botAction'?'机器行为':scope.row.riskType=='fakeRegister'?'伪冒申请':scope.row.riskType=='dynamicCode'?'动码攻击':scope.row.riskType=='suspiciousAction'?'异常行为':
                                                   scope.row.riskType=='bruteForce'?'暴力破解':scope.row.riskType=='userFraud'?'本人欺诈':scope.row.riskType=='accountTakeover'?'账户盗用':scope.row.riskType=='garbageRegister'?'垃圾注册':scope.row.riskType=='creditRisk'?'失信风险':scope.row.riskType=='agencyCash'?'中介套现':''}}
                                                   </el-tag>   
-                                                  <!-- <el-tag
-                                                   :type="scope.row.strategyDecision=='Accept'?'':scope.row.strategyDecision=='Reject'?'danger':scope.row.strategyDecision=='Review'?'info':''"
-                                                  v-if="scope.row.strategyDecision"
-                                                    >
-                                                  决策结果{{scope.row.strategyDecision=='Accept'?'无风险':scope.row.strategyDecision=='Reject'?'高风险建议拒绝':scope.row.strategyDecision=='Review'?'低风险建议人工审核':''}}
-                                                  </el-tag> 
-                                                  <el-tag
-                                                   type="danger"
-                                                  v-if="scope.row.strategyScor"
-                                                    >
-                                                  策略风险系数{{scope.row.strategyScor}}
-                                                  </el-tag>                                                                                                                                                                                                                                                 -->
                                                   <template v-for="(tem,i) in  scope.row.strategySet" v-if="scope.row.strategySet">
                                                  <el-tag :key="i"
                                                    :type="tem.strategyDecision=='Accept'?'':tem.strategyDecision=='Reject'?'danger':tem.strategyDecision=='Review'?'info':''"
@@ -3281,8 +3777,8 @@
                                 </el-table-column>                                     
                             </el-table>
                           </td>
-                    </tr>  
-                    <tr>
+                    </tr>   -->
+                    <!-- <tr>
                         <th  class="bgcolor "  style="text-align: center;">天创</th>
                         <td colspan="5" >
                             <el-table
@@ -3317,7 +3813,7 @@
                                 </el-table-column>                                     
                             </el-table>
                           </td>
-                    </tr>   
+                    </tr>    -->
                     <tr>
                         <th  class="bgcolor "  style="text-align: center;">拍拍信</th>
                         <td colspan="5" >
@@ -3474,7 +3970,7 @@
                             </el-table>
                           </td>
                     </tr> 
-                    <tr>
+                    <!-- <tr>
                         <th  class="bgcolor "  style="text-align: center;">鹏数科技</th>
                         <td colspan="5" >
                             <el-table
@@ -3676,7 +4172,7 @@
                                </el-table-column>
                             </el-table>
                           </td>
-                    </tr>   
+                    </tr>    -->
                     <tr>
                         <th  class="bgcolor "  style="text-align: center;">创蓝</th>
                         <td colspan="5" >
@@ -3690,14 +4186,14 @@
                                       <template slot-scope="scope">
                                                 <el-tag
                                                   :type="scope.row.status=='W1'?'':scope.row.status=='N'?'':'danger'">
-                                                  {{scope.row.status=='W1'?'否':scope.row.status=='N'?'否':'是'}}
+                                                  {{scope.row.status?'否':scope.row.status=='W1'?'否':scope.row.status=='N'?'否':'是'}}
                                                   </el-tag>
                                       </template>                                   
                                </el-table-column>
                                 <el-table-column  align="center" label="摘要"  min-width="150" >
                                       <template slot-scope="scope" >
                                                   <el-tag
-                                                    v-if="scope.row.blackLevel=='B1'||scope.row.blackLevel=='B2'"
+                                                     v-if="scope.row.blackLevel=='B1'||scope.row.blackLevel=='B2'||scope.row.blackLevel=='W1'||scope.row.blackLevel=='N'"
                                                     :type="scope.row.blackLevel='B1'?'danger':scope.row.blackLevel=='B2'?'danger':scope.row.blackLevel=='W1'?'warning':scope.row.blackLevel=='N'?'':''">
                                                     {{scope.row.blackLevel=='B1'?'黑名单':scope.row.blackLevel=='B2'?'可信度低':scope.row.blackLevel=='W1'?'白名单':scope.row.blackLevel=='N'?'未找到':''}}
                                                   </el-tag> 
@@ -3828,7 +4324,9 @@ export default {
         idNo: [{ required: true, message: "请输入身份证号", trigger: "blur" }],
         mobile: [{ require: true, validator: validateMobile, trigger: "blur" }]
       },
-      codeRow: {}
+      codeRow: {},
+      whiteForm: {},
+      BreportList: false
     };
   },
   computed: {
@@ -4042,329 +4540,55 @@ export default {
         this.customerInformation[0].chbrealName,
         this.customerInformation[0].chbphoneNumber,
         this.customerInformation[0].chbidcard,
-        2
-      ).then(res => {
-        let data = res.data;
-
-        if (data.code == 200) {
-          if (data.data) {
-            this.txReport.push(data.data);
-          } else {
-            this.txReport.push([{ status: false }]);
-          }
-        }
-        httpGettiqianfublacklistvarious(
-          this.customerInformation[0].chbrealName,
-          this.customerInformation[0].chbphoneNumber,
-          this.customerInformation[0].chbidcard,
-          1
-        ).then(res => {
+        1
+      )
+        .then(res => {
           let data = res.data;
-
           if (data.code == 200) {
             this.brReport.push(data.data);
-          }
-          httpGettiqianfublacklistvarious(
-            this.customerInformation[0].chbrealName,
-            this.customerInformation[0].chbphoneNumber,
-            this.customerInformation[0].chbidcard,
-            3
-          ).then(res => {
-            let data = res.data;
-
-            if (data.code == 200) {
-              if (data.data) {
-                this.mxReport.push(data.data);
-              } else {
-                this.mxReport.push([{ status: 0 }]);
-              }
-            }
             httpGettiqianfublacklistvarious(
               this.customerInformation[0].chbrealName,
               this.customerInformation[0].chbphoneNumber,
               this.customerInformation[0].chbidcard,
-              4
+              2
             ).then(res => {
               let data = res.data;
               if (data.code == 200) {
                 if (data.data) {
-                  this.scReport.push({
-                    status: data.data.status,
-                    netLoan: data.data.scInnerBlackVO
-                      ? data.data.scInnerBlackVO.handlerData.netLoan
-                      : "",
-                    altNumber: data.data.scInnerBlackVO
-                      ? data.data.scInnerBlackVO.handlerData.altNumber
-                      : "",
-                    history_overdue: data.data.scInnerBlackVO
-                      ? data.data.scInnerBlackVO.handlerData.history_overdue
-                      : "",
-                    current_overdue: data.data.scInnerBlackVO
-                      ? data.data.scInnerBlackVO.handlerData.current_overdue
-                      : ""
-                  });
+                  this.txReport.push(data.data);
                 } else {
-                  this.scReport.push({
-                    status: "",
-                    netLoan: "",
-                    altNumber: "",
-                    history_overdue: "",
-                    current_overdue: ""
-                  });
-                }
-              }
-
-              httpGettiqianfublacklistvarious(
-                // "王志存",
-                // "15176550456",
-                // "130230199207142313",
-                this.customerInformation[0].chbrealName,
-                this.customerInformation[0].chbphoneNumber,
-                this.customerInformation[0].chbidcard,
-                7
-              ).then(res => {
-                let data = res.data;
-                if (data.code == 200) {
-                  if (data.data) {
-                    let obj = JSON.parse(data.data.datasources[0].data);
-                    this.gxbReport.push({
-                      status: obj ? obj.status : "",
-                      phone: obj ? obj.data.phone[0] : "",
-                      idcard: obj ? obj.data.idcard[0] : "",
-                      overdue_time: "",
-                      lend_time: "",
-                      takeback: "",
-                      outDays: "",
-                      lend_money: ""
-                    });
-                  } else {
-                    this.gxbReport.push({
-                      status: "",
-                      phone: {
-                        overdue_time: "",
-                        lend_time: "",
-                        takeback: "",
-                        outDays: "",
-                        lend_money: ""
-                      },
-                      idcard: {
-                        overdue_time: "",
-                        lend_time: "",
-                        takeback: "",
-                        outDays: "",
-                        lend_money: ""
-                      },
-                      overdue_time: "",
-                      lend_time: "",
-                      takeback: "",
-                      outDays: "",
-                      lend_money: ""
-                    });
-                  }
-                }
-              });
-              httpGettiqianfublacklistvarious(
-                this.customerInformation[0].chbrealName,
-                this.customerInformation[0].chbphoneNumber,
-                this.customerInformation[0].chbidcard,
-                10
-              ).then(res => {
-                let data = res.data;
-                if (data.code == 200) {
-                  if (data.data) {
-                    let obj = JSON.parse(data.data);
-                    this.xyReport.push({
-                      status: data.data.success,
-                      desc: obj.data ? obj.data.desc : "",
-                      max_overdue_amt: obj.data
-                        ? obj.data.result_detail.max_overdue_amt
-                        : "",
-                      max_overdue_days: obj.data
-                        ? obj.data.result_detail.max_overdue_days
-                        : "",
-                      latest_overdue_time: obj.data
-                        ? obj.data.result_detail.latest_overdue_time
-                        : "",
-                      currently_overdue: obj.data
-                        ? obj.data.result_detail.currently_overdue
-                        : "",
-                      currently_performance: obj.data
-                        ? obj.data.result_detail.currently_performance
-                        : "",
-                      acc_exc: obj.data ? obj.data.result_detail.acc_exc : "",
-                      acc_sleep: obj.data
-                        ? obj.data.result_detail.acc_sleep
-                        : ""
-                    });
-                  } else {
-                    this.xyReport.push({
-                      status: null,
-                      desc: null,
-                      max_overdue_amt: null,
-                      max_overdue_days: null,
-                      latest_overdue_time: null,
-                      currently_overdue: null,
-                      currently_performance: null,
-                      acc_exc: null,
-                      acc_sleep: null
-                    });
-                  }
+                  this.txReport.push([{ status: false }]);
                 }
                 httpGettiqianfublacklistvarious(
                   this.customerInformation[0].chbrealName,
                   this.customerInformation[0].chbphoneNumber,
                   this.customerInformation[0].chbidcard,
-                  8
+                  5
                 ).then(res => {
                   let data = res.data;
                   if (data.code == 200) {
                     let obj = data.data;
-
                     if (data.data) {
-                      this.bqsReport.push({
-                        status: obj.status,
-                        finalDecision: obj.bqsDataVO
-                          ? obj.bqsDataVO.finalDecision
-                          : "", //决策结果码，
-                        finalScore: obj.bqsDataVO
-                          ? obj.bqsDataVO.finalScore
-                          : "", //最终风险参数
-                        // riskType: obj.bqsDataVO?obj.bqsDataVO.strategySet[0].riskType:'', //风险类型
-                        // strategyDecision:obj.bqsDataVO?
-                        //   obj.bqsDataVO.strategySet[0].strategyDecision:'', //策略决策结果，参见 decision 附录
-                        // strategyMode: obj.bqsDataVO?obj.bqsDataVO.strategySet[0].strategyMode:'', //   策略匹配模式，参见 strategyMode 附录
-                        // strategyScore:
-                        //   obj.bqsDataVO?obj.bqsDataVO.strategySet[0].strategyScore:'',
-                        // rejectValue: obj.bqsDataVO.strategySet[0].rejectValue,
-                        // reviewValue: obj.bqsDataVO.strategySet[0].reviewValue,
-                        // tips: obj.bqsDataVO.strategySet[0].tips,
-                        // hitRules: obj.bqsDataVO.strategySet[0].hitRules,
-                        strategySet: obj.bqsDataVO
-                          ? obj.bqsDataVO.strategySet
-                          : [],
-
-                        blackListFulinJinkeVo: null,
-                        psBalckListVO: null
-                      });
-                    } else {
-                      this.bqsReport.push({
-                        status: 0,
-                        blackListBaiRongVo: null,
-                        moxieBlackVO: null,
-                        blackListPaipaiXinVo: null,
-                        scInnerBlackVO: null,
-                        bqsDataVO: {
-                          finalDecision: null,
-                          finalScore: null,
-                          flowNo: null,
-                          resultCode: null,
-                          resultDesc: null,
-                          strategySet: [
-                            {
-                              riskType: null,
-                              strategyDecision: null,
-                              strategyId: null,
-                              strategyMode: null,
-                              strategyName: null,
-                              strategyScore: 0,
-                              rejectValue: 0,
-                              reviewValue: 0,
-                              tips: null,
-                              hitRules: [
-                                {
-                                  decision: null,
-                                  memo: null,
-                                  ruleId: null,
-                                  ruleName: null,
-                                  score: 0,
-                                  template: null,
-                                  detail: null
-                                }
-                              ]
-                            }
-                          ]
-                        },
-                        blackListFulinJinkeVo: null,
-                        psBalckListVO: null
-                      });
-                    }
-                  }
-                  httpGettiqianfublacklistvarious(
-                    this.customerInformation[0].chbrealName,
-                    this.customerInformation[0].chbphoneNumber,
-                    this.customerInformation[0].chbidcard,
-                    6
-                  ).then(res => {
-                    let data = res.data;
-                    if (data.code == 200) {
-                      let obj = data.data;
-                      if (data.data) {
-                        this.tcReport.push({
-                          status: obj.blackLevel == null ? false : true,
-                          isWhite: obj.isWhite ? obj.isWhite : true,
-                          msginfo: obj.msginfo
-                            ? JSON.parse(obj.msginfo).data.result
-                            : "",
-                          blackLevel: obj.blackLevel
+                      if (
+                        data.data.blackListPaipaiXinVo.resp_msg ==
+                        "调用接口成功"
+                      ) {
+                        this.ppxReport.push({
+                          status: obj.status,
+                          isAlert:
+                            obj.blackListPaipaiXinVo.resp_body.msg.data.isAlert,
+                          isBlack:
+                            obj.blackListPaipaiXinVo.resp_body.msg.data.isBlack,
+                          hkxw:
+                            obj.blackListPaipaiXinVo.resp_body.msg.data
+                              .blackSummary.hkxw,
+                          lsqz:
+                            obj.blackListPaipaiXinVo.resp_body.msg.data
+                              .blackSummary.lsqz,
+                          zffm:
+                            obj.blackListPaipaiXinVo.resp_body.msg.data
+                              .blackSummary.zffm
                         });
-                      } else {
-                        this.tcReport.push({
-                          status: false,
-                          isWhite: null,
-                          msginfo: {},
-                          blackLevel: null
-                        });
-                      }
-                    }
-                    httpGettiqianfublacklistvarious(
-                      this.customerInformation[0].chbrealName,
-                      this.customerInformation[0].chbphoneNumber,
-                      this.customerInformation[0].chbidcard,
-                      5
-                    ).then(res => {
-                      let data = res.data;
-                      if (data.code == 200) {
-                        let obj = data.data;
-                        if (data.data) {
-                          if (data.data.blackListPaipaiXinVo) {
-                            this.ppxReport.push({
-                              status: obj.status,
-                              isAlert:
-                                obj.blackListPaipaiXinVo.resp_body.msg.data
-                                  .isAlert,
-                              isBlack:
-                                obj.blackListPaipaiXinVo.resp_body.msg.data
-                                  .isBlack,
-                              hkxw:
-                                obj.blackListPaipaiXinVo.resp_body.msg.data
-                                  .blackSummary.hkxw,
-                              lsqz:
-                                obj.blackListPaipaiXinVo.resp_body.msg.data
-                                  .blackSummary.lsqz,
-                              zffm:
-                                obj.blackListPaipaiXinVo.resp_body.msg.data
-                                  .blackSummary.zffm
-                            });
-                          } else {
-                            this.ppxReport.push({
-                              status: null,
-                              isAlert: null,
-                              isBlack: null,
-                              hkxw: {},
-                              lsqz: {},
-                              zffm: {}
-                            });
-                          }
-                        } else {
-                          this.ppxReport.push({
-                            status: null,
-                            isAlert: null,
-                            isBlack: null,
-                            hkxw: {},
-                            lsqz: {},
-                            zffm: {}
-                          });
-                        }
                       } else {
                         this.ppxReport.push({
                           status: null,
@@ -4375,300 +4599,792 @@ export default {
                           zffm: {}
                         });
                       }
+                    } else {
+                      this.ppxReport.push({
+                        status: null,
+                        isAlert: null,
+                        isBlack: null,
+                        hkxw: {},
+                        lsqz: {},
+                        zffm: {}
+                      });
+                    }
+                  } else {
+                    this.ppxReport.push({
+                      status: null,
+                      isAlert: null,
+                      isBlack: null,
+                      hkxw: {},
+                      lsqz: {},
+                      zffm: {}
                     });
+                  }
+                  httpGettiqianfublacklistvarious(
+                    this.customerInformation[0].chbrealName,
+                    this.customerInformation[0].chbphoneNumber,
+                    this.customerInformation[0].chbidcard,
+                    14
+                  ).then(res => {
+                    let data = res.data;
+                    if (data.code == 200) {
+                      let obj = data.data;
+                      if (data.data) {
+                        console.log(obj.status);
+                        this.clReport.push({
+                          status: obj.status,
+                          // status: obj.status
+                          //   ? obj.status == "N" ? false : true
+                          //   : false,
+                          blackLevel: obj.status
+                        });
+                      } else {
+                        this.clReport.push({
+                          status: false,
+                          blackLevel: null
+                        });
+                      }
+                    }
                     httpGettiqianfublacklistvarious(
                       this.customerInformation[0].chbrealName,
                       this.customerInformation[0].chbphoneNumber,
                       this.customerInformation[0].chbidcard,
-                      11
+                      10
                     ).then(res => {
                       let data = res.data;
                       if (data.code == 200) {
-                        let obj = data.data;
                         if (data.data) {
-                          if (data.data.psBalckListVO) {
-                            this.pskjReport.push({
-                              status: obj.status,
-                              sn_order2_blacklist_contacts_cnt:
-                                obj.psBalckListVO.data.risk_social_network
-                                  .sn_order2_blacklist_contacts_cnt, //间接联系人在黑名单中数量(间接黑人)
-                              sn_order1_blacklist_contacts_cnt:
-                                obj.psBalckListVO.data.risk_social_network
-                                  .sn_order1_blacklist_contacts_cnt, //直接联系人在黑名单中数量(直接黑人)
-                              sn_order2_blacklist_routers_cnt:
-                                obj.psBalckListVO.data.risk_social_network
-                                  .sn_order2_blacklist_routers_cnt, //认识间接黑人的直接联系人个数
-                              sn_order2_blacklist_routers_pct:
-                                obj.psBalckListVO.data.risk_social_network
-                                  .sn_order2_blacklist_routers_pct, //认识间接黑人的直接联系人比例
-                              in_court_blacklist:
-                                obj.psBalckListVO.data.risk_blacklist
-                                  .in_court_blacklist, //是否命中法院黑名单
-                              in_p2p_blacklist:
-                                obj.psBalckListVO.data.risk_blacklist
-                                  .in_p2p_blacklist, //是否命中网贷黑名单
-                              idcard_in_blacklist:
-                                obj.psBalckListVO.data.risk_blacklist
-                                  .idcard_in_blacklist, //身份证是否命中黑名单
-                              phone_in_blacklist:
-                                obj.psBalckListVO.data.risk_blacklist
-                                  .phone_in_blacklist, //手机号是否命中黑名单
-                              in_bank_blacklist:
-                                obj.psBalckListVO.data.risk_blacklist
-                                  .in_bank_blacklist, //是否命中银行黑名单
-                              offline_cash_loan_cnt:
-                                obj.psBalckListVO.data.history_org
-                                  .offline_cash_loan_cnt, //线下现金贷出现次数
-                              online_cash_loan_cnt:
-                                obj.psBalckListVO.data.history_org
-                                  .online_cash_loan_cnt, //线上现金贷出现次数
-                              online_installment_cnt:
-                                obj.psBalckListVO.data.history_org
-                                  .online_installment_cnt, //线上消费分期出现次数
-                              payday_loan_cnt:
-                                obj.psBalckListVO.data.history_org
-                                  .payday_loan_cnt, //小额快速贷出现次数
-                              credit_card_repayment_cnt:
-                                obj.psBalckListVO.data.history_org
-                                  .credit_card_repayment_cnt, //信用卡代还出现次数
-                              offline_installment_cnt:
-                                obj.psBalckListVO.data.history_org
-                                  .offline_installment_cnt, //线下消费分期出现次数
-                              search_cnt_recent_180_days:
-                                obj.psBalckListVO.data.history_search
-                                  .search_cnt_recent_180_days, //最近180天查询次数
-                              search_cnt_recent_7_days:
-                                obj.psBalckListVO.data.history_search
-                                  .search_cnt_recent_7_days, //最近7天查询次数
-                              org_cnt_recent_180_days:
-                                obj.psBalckListVO.data.history_search
-                                  .org_cnt_recent_180_days, //最近180天查询机构数
-                              search_cnt_recent_90_days:
-                                obj.psBalckListVO.data.history_search
-                                  .search_cnt_recent_90_dayss, //最近90天查询次数
-                              org_cnt_recent_60_days:
-                                obj.psBalckListVO.data.history_search
-                                  .org_cnt_recent_60_days, //最近60天查询次数
-                              search_cnt_recent_30_days:
-                                obj.psBalckListVO.data.history_search
-                                  .search_cnt_recent_30_days, //最近30天查询次数
-                              search_cnt_recent_14_days:
-                                obj.psBalckListVO.data.history_search
-                                  .search_cnt_recent_14_days, //最近14天查询次数
-                              org_cnt_recent_14_days:
-                                obj.psBalckListVO.data.history_search
-                                  .org_cnt_recent_14_days, //最近14天查询次数
-                              org_cnt_recent_30_days:
-                                obj.psBalckListVO.data.history_search
-                                  .org_cnt_recent_30_days, //最近30天查询次数
-                              org_cnt_recent_7_days:
-                                obj.psBalckListVO.data.history_search
-                                  .org_cnt_recent_7_days, //最近7天查询次数
-                              org_cnt_recent_90_days:
-                                obj.psBalckListVO.data.history_search
-                                  .org_cnt_recent_90_days, //最近90天查询次数
-                              org_cnt:
-                                obj.psBalckListVO.data.history_search.org_cnt, //历史查询总机构数
-                              search_cnt_recent_60_days:
-                                obj.psBalckListVO.data.history_search
-                                  .search_cnt_recent_60_days,
-                              search_cnt:
-                                obj.psBalckListVO.data.history_search.search_cnt //历史查询总次数
-                            });
-                          } else {
-                            this.pskjReport.push({
-                              status: 0,
-                              sn_order2_blacklist_contacts_cnt: null, //间接联系人在黑名单中数量(间接黑人)
-                              sn_order1_blacklist_contacts_cnt: null, //直接联系人在黑名单中数量(直接黑人)
-                              sn_order2_blacklist_routers_cnt: null, //认识间接黑人的直接联系人个数
-                              sn_order2_blacklist_routers_pct: null, //认识间接黑人的直接联系人比例
-                              in_court_blacklist: null, //是否命中法院黑名单
-                              in_p2p_blacklist: null, //是否命中网贷黑名单
-                              idcard_in_blacklist: null, //身份证是否命中黑名单
-                              phone_in_blacklist: null, //手机号是否命中黑名单
-                              in_bank_blacklist: null, //是否命中银行黑名单
-                              offline_cash_loan_cnt: null, //线下现金贷出现次数
-                              online_cash_loan_cnt: null, //线上现金贷出现次数
-                              online_installment_cnt: null, //线上消费分期出现次数
-                              payday_loan_cnt: null, //小额快速贷出现次数
-                              credit_card_repayment_cnt: null, //信用卡代还出现次数
-                              offline_installment_cnt: null, //线下消费分期出现次数
-                              search_cnt_recent_180_days: null, //最近180天查询次数
-                              search_cnt_recent_7_days: null, //最近7天查询次数
-                              org_cnt_recent_180_days: null, //最近180天查询机构数
-                              search_cnt_recent_90_days: null, //最近90天查询次数
-                              org_cnt_recent_60_days: null, //最近60天查询次数
-                              search_cnt_recent_30_days: null, //最近30天查询次数
-                              search_cnt_recent_14_days: null, //最近14天查询次数
-                              org_cnt_recent_14_days: null, //最近14天查询次数
-                              org_cnt_recent_30_days: null, //最近30天查询次数
-                              org_cnt_recent_7_days: null, //最近7天查询次数
-                              org_cnt_recent_90_days: null, //最近90天查询次数
-                              org_cnt: null, //历史查询总机构数
-                              search_cnt_recent_60_days: null,
-                              search_cnt: null //历史查询总次数
-                            });
-                          }
-                        }
-                      } else {
-                        this.pskjReport.push({
-                          status: 0,
-                          sn_order2_blacklist_contacts_cnt: null, //间接联系人在黑名单中数量(间接黑人)
-                          sn_order1_blacklist_contacts_cnt: null, //直接联系人在黑名单中数量(直接黑人)
-                          sn_order2_blacklist_routers_cnt: null, //认识间接黑人的直接联系人个数
-                          sn_order2_blacklist_routers_pct: null, //认识间接黑人的直接联系人比例
-                          in_court_blacklist: null, //是否命中法院黑名单
-                          in_p2p_blacklist: null, //是否命中网贷黑名单
-                          idcard_in_blacklist: null, //身份证是否命中黑名单
-                          phone_in_blacklist: null, //手机号是否命中黑名单
-                          in_bank_blacklist: null, //是否命中银行黑名单
-                          offline_cash_loan_cnt: null, //线下现金贷出现次数
-                          online_cash_loan_cnt: null, //线上现金贷出现次数
-                          online_installment_cnt: null, //线上消费分期出现次数
-                          payday_loan_cnt: null, //小额快速贷出现次数
-                          credit_card_repayment_cnt: null, //信用卡代还出现次数
-                          offline_installment_cnt: null, //线下消费分期出现次数
-                          search_cnt_recent_180_days: null, //最近180天查询次数
-                          search_cnt_recent_7_days: null, //最近7天查询次数
-                          org_cnt_recent_180_days: null, //最近180天查询机构数
-                          search_cnt_recent_90_days: null, //最近90天查询次数
-                          org_cnt_recent_60_days: null, //最近60天查询次数
-                          search_cnt_recent_30_days: null, //最近30天查询次数
-                          search_cnt_recent_14_days: null, //最近14天查询次数
-                          org_cnt_recent_14_days: null, //最近14天查询次数
-                          org_cnt_recent_30_days: null, //最近30天查询次数
-                          org_cnt_recent_7_days: null, //最近7天查询次数
-                          org_cnt_recent_90_days: null, //最近90天查询次数
-                          org_cnt: null, //历史查询总机构数
-                          search_cnt_recent_60_days: null,
-                          search_cnt: null //历史查询总次数
-                        });
-                      }
-                      httpGettiqianfublacklistvarious(
-                        this.customerInformation[0].chbrealName,
-                        this.customerInformation[0].chbphoneNumber,
-                        this.customerInformation[0].chbidcard,
-                        12
-                      ).then(res => {
-                        let data = res.data;
-                        if (data.code == 200) {
-                          this.hmdReport.push({
-                            status: data.data.status,
-                            message: data.data.message
+                          let obj = JSON.parse(data.data);
+                          this.xyReport.push({
+                            status: data.data.success,
+                            desc: obj.data ? obj.data.desc : "",
+                            max_overdue_amt: obj.data
+                              ? obj.data.result_detail.max_overdue_amt
+                              : "",
+                            max_overdue_days: obj.data
+                              ? obj.data.result_detail.max_overdue_days
+                              : "",
+                            latest_overdue_time: obj.data
+                              ? obj.data.result_detail.latest_overdue_time
+                              : "",
+                            currently_overdue: obj.data
+                              ? obj.data.result_detail.currently_overdue
+                              : "",
+                            currently_performance: obj.data
+                              ? obj.data.result_detail.currently_performance
+                              : "",
+                            acc_exc: obj.data
+                              ? obj.data.result_detail.acc_exc
+                              : "",
+                            acc_sleep: obj.data
+                              ? obj.data.result_detail.acc_sleep
+                              : ""
                           });
                         } else {
-                          this.hmdReport.push({
+                          this.xyReport.push({
                             status: null,
-                            message: null
+                            desc: null,
+                            max_overdue_amt: null,
+                            max_overdue_days: null,
+                            latest_overdue_time: null,
+                            currently_overdue: null,
+                            currently_performance: null,
+                            acc_exc: null,
+                            acc_sleep: null
                           });
                         }
-                        httpGettiqianfublacklistvarious(
-                          this.customerInformation[0].chbrealName,
-                          this.customerInformation[0].chbphoneNumber,
-                          this.customerInformation[0].chbidcard,
-                          13
-                        ).then(res => {
-                          let data = res.data;
-                          if (data.code == 200) {
-                            if (data.data) {
-                              if (data.data.responseInfo) {
-                                this.shReport.push({
-                                  status: data.data.status,
-                                  risk: data.data.responseInfo
-                                    ? JSON.parse(data.data.responseInfo).data
-                                      ? JSON.parse(data.data.responseInfo).data
-                                          .risk
-                                      : ""
-                                    : "",
-                                  //金融命中黑名单时间区段（枚举值）A,近半年;B,近半年到一年;C,近一年到二年;D,两年以上;"":空
-                                  detail: JSON.parse(data.data.responseInfo)
-                                    .data
-                                    ? JSON.parse(data.data.responseInfo).data
-                                        .finance.detail
-                                    : []
-                                });
-                              } else {
-                                this.shReport.push({
-                                  status: null,
-                                  risk: null,
-                                  date: null, //金融命中黑名单时间区段（枚举值）A,近半年;B,近半年到一年;C,近一年到二年;D,两年以上;"":空
-                                  detail: []
-                                });
-                              }
-                            } else {
-                              this.shReport.push({
-                                status: null,
-                                risk: null,
-                                date: null, //金融命中黑名单时间区段（枚举值）A,近半年;B,近半年到一年;C,近一年到二年;D,两年以上;"":空
-                                detail: []
-                              });
-                            }
-                          } else {
-                            this.shReport.push({
-                              status: null,
-                              risk: null,
-                              date: null, //金融命中黑名单时间区段（枚举值）A,近半年;B,近半年到一年;C,近一年到二年;D,两年以上;"":空
-                              detail: []
-                            });
-                          }
-                          httpGettiqianfublacklistvarious(
-                            this.customerInformation[0].chbrealName,
-                            this.customerInformation[0].chbphoneNumber,
-                            this.customerInformation[0].chbidcard,
-                            9
-                          ).then(res => {
-                            let data = res.data;
-                            if (data.code == 200) {
-                              if (data.data) {
-                                this.fljkReport.push({
-                                  status: data.data.status
-                                });
-                              } else {
-                                this.fljkReport.push({
-                                  status: null
-                                });
-                              }
-                            }
-                            httpGettiqianfublacklistvarious(
-                              this.customerInformation[0].chbrealName,
-                              this.customerInformation[0].chbphoneNumber,
-                              this.customerInformation[0].chbidcard,
-                              14
-                            ).then(res => {
-                              let data = res.data;
-                              if (data.code == 200) {
-                                let obj = data.data;
-                                if (data.data) {
-                                  this.clReport.push({
-                                    status: obj.status
-                                      ? obj.status == "N" ? false : true
-                                      : false,
-                                    // isWhite: obj.isWhite ? obj.isWhite : true,
-                                    // msginfo: obj.msginfo
-                                    //   ? JSON.parse(obj.msginfo).data.result
-                                    //   : "",
-                                    blackLevel: obj.status
-                                  });
-                                } else {
-                                  this.clReport.push({
-                                    status: false,
-                                    blackLevel: null
-                                  });
-                                }
-                              }
-                              this.blackListVisible = true;
-                            });
-                          });
-                        });
-                      });
+                      }
                     });
+                    //         httpGettiqianfublacklistvarious(
+                    //           this.customerInformation[0].chbrealName,
+                    //           this.customerInformation[0].chbphoneNumber,
+                    //           this.customerInformation[0].chbidcard,
+                    //           10
+                    //         ).then(res => {
+                    //           let data = res.data;
+                    //           if (data.code == 200) {
+                    //             if (data.data) {
+                    //               let obj = JSON.parse(data.data);
+                    //               this.xyReport.push({
+                    //                 status: data.data.success,
+                    //                 desc: obj.data ? obj.data.desc : "",
+                    //                 max_overdue_amt: obj.data
+                    //                   ? obj.data.result_detail.max_overdue_amt
+                    //                   : "",
+                    //                 max_overdue_days: obj.data
+                    //                   ? obj.data.result_detail.max_overdue_days
+                    //                   : "",
+                    //                 latest_overdue_time: obj.data
+                    //                   ? obj.data.result_detail.latest_overdue_time
+                    //                   : "",
+                    //                 currently_overdue: obj.data
+                    //                   ? obj.data.result_detail.currently_overdue
+                    //                   : "",
+                    //                 currently_performance: obj.data
+                    //                   ? obj.data.result_detail.currently_performance
+                    //                   : "",
+                    //                 acc_exc: obj.data ? obj.data.result_detail.acc_exc : "",
+                    //                 acc_sleep: obj.data
+                    //                   ? obj.data.result_detail.acc_sleep
+                    //                   : ""
+                    //               });
+                    //             } else {
+                    //               this.xyReport.push({
+                    //                 status: null,
+                    //                 desc: null,
+                    //                 max_overdue_amt: null,
+                    //                 max_overdue_days: null,
+                    //                 latest_overdue_time: null,
+                    //                 currently_overdue: null,
+                    //                 currently_performance: null,
+                    //                 acc_exc: null,
+                    //                 acc_sleep: null
+                    //               });
+                    //             }
+                    //           }
+                    console.log(this.blackListVisible);
+                    this.blackListVisible = true;
                   });
                 });
-              });
+              }
             });
-          });
+          } else {
+            this.$message.error(data.msg);
+          }
+        })
+        .catch(err => {
+          this.$message.error("网络错误请联系管理员");
         });
-      });
+      // httpGettiqianfublacklistvarious(
+      //   this.customerInformation[0].chbrealName,
+      //   this.customerInformation[0].chbphoneNumber,
+      //   this.customerInformation[0].chbidcard,
+      //   2
+      // ).then(res => {
+      //   let data = res.data;
+
+      //   if (data.code == 200) {
+      //     if (data.data) {
+      //       this.txReport.push(data.data);
+      //     } else {
+      //       this.txReport.push([{ status: false }]);
+      //     }
+      //   }
+      //   httpGettiqianfublacklistvarious(
+      //     this.customerInformation[0].chbrealName,
+      //     this.customerInformation[0].chbphoneNumber,
+      //     this.customerInformation[0].chbidcard,
+      //     1
+      //   ).then(res => {
+      //     let data = res.data;
+
+      //     if (data.code == 200) {
+      //       this.brReport.push(data.data);
+      //     }
+      //     httpGettiqianfublacklistvarious(
+      //       this.customerInformation[0].chbrealName,
+      //       this.customerInformation[0].chbphoneNumber,
+      //       this.customerInformation[0].chbidcard,
+      //       3
+      //     ).then(res => {
+      //       let data = res.data;
+
+      //       if (data.code == 200) {
+      //         if (data.data) {
+      //           this.mxReport.push(data.data);
+      //         } else {
+      //           this.mxReport.push([{ status: 0 }]);
+      //         }
+      //       }
+      //       httpGettiqianfublacklistvarious(
+      //         this.customerInformation[0].chbrealName,
+      //         this.customerInformation[0].chbphoneNumber,
+      //         this.customerInformation[0].chbidcard,
+      //         4
+      //       ).then(res => {
+      //         let data = res.data;
+      //         if (data.code == 200) {
+      //           if (data.data) {
+      //             this.scReport.push({
+      //               status: data.data.status,
+      //               netLoan: data.data.scInnerBlackVO
+      //                 ? data.data.scInnerBlackVO.handlerData.netLoan
+      //                 : "",
+      //               altNumber: data.data.scInnerBlackVO
+      //                 ? data.data.scInnerBlackVO.handlerData.altNumber
+      //                 : "",
+      //               history_overdue: data.data.scInnerBlackVO
+      //                 ? data.data.scInnerBlackVO.handlerData.history_overdue
+      //                 : "",
+      //               current_overdue: data.data.scInnerBlackVO
+      //                 ? data.data.scInnerBlackVO.handlerData.current_overdue
+      //                 : ""
+      //             });
+      //           } else {
+      //             this.scReport.push({
+      //               status: "",
+      //               netLoan: "",
+      //               altNumber: "",
+      //               history_overdue: "",
+      //               current_overdue: ""
+      //             });
+      //           }
+      //         }
+
+      //         httpGettiqianfublacklistvarious(
+      //           // "王志存",
+      //           // "15176550456",
+      //           // "130230199207142313",
+      //           this.customerInformation[0].chbrealName,
+      //           this.customerInformation[0].chbphoneNumber,
+      //           this.customerInformation[0].chbidcard,
+      //           7
+      //         ).then(res => {
+      //           let data = res.data;
+      //           if (data.code == 200) {
+      //             if (data.data) {
+      //               let obj = JSON.parse(data.data.datasources[0].data);
+      //               this.gxbReport.push({
+      //                 status: obj ? obj.status : "",
+      //                 phone: obj ? obj.data.phone[0] : "",
+      //                 idcard: obj ? obj.data.idcard[0] : "",
+      //                 overdue_time: "",
+      //                 lend_time: "",
+      //                 takeback: "",
+      //                 outDays: "",
+      //                 lend_money: ""
+      //               });
+      //             } else {
+      //               this.gxbReport.push({
+      //                 status: "",
+      //                 phone: {
+      //                   overdue_time: "",
+      //                   lend_time: "",
+      //                   takeback: "",
+      //                   outDays: "",
+      //                   lend_money: ""
+      //                 },
+      //                 idcard: {
+      //                   overdue_time: "",
+      //                   lend_time: "",
+      //                   takeback: "",
+      //                   outDays: "",
+      //                   lend_money: ""
+      //                 },
+      //                 overdue_time: "",
+      //                 lend_time: "",
+      //                 takeback: "",
+      //                 outDays: "",
+      //                 lend_money: ""
+      //               });
+      //             }
+      //           }
+      //         });
+      //         httpGettiqianfublacklistvarious(
+      //           this.customerInformation[0].chbrealName,
+      //           this.customerInformation[0].chbphoneNumber,
+      //           this.customerInformation[0].chbidcard,
+      //           10
+      //         ).then(res => {
+      //           let data = res.data;
+      //           if (data.code == 200) {
+      //             if (data.data) {
+      //               let obj = JSON.parse(data.data);
+      //               this.xyReport.push({
+      //                 status: data.data.success,
+      //                 desc: obj.data ? obj.data.desc : "",
+      //                 max_overdue_amt: obj.data
+      //                   ? obj.data.result_detail.max_overdue_amt
+      //                   : "",
+      //                 max_overdue_days: obj.data
+      //                   ? obj.data.result_detail.max_overdue_days
+      //                   : "",
+      //                 latest_overdue_time: obj.data
+      //                   ? obj.data.result_detail.latest_overdue_time
+      //                   : "",
+      //                 currently_overdue: obj.data
+      //                   ? obj.data.result_detail.currently_overdue
+      //                   : "",
+      //                 currently_performance: obj.data
+      //                   ? obj.data.result_detail.currently_performance
+      //                   : "",
+      //                 acc_exc: obj.data ? obj.data.result_detail.acc_exc : "",
+      //                 acc_sleep: obj.data
+      //                   ? obj.data.result_detail.acc_sleep
+      //                   : ""
+      //               });
+      //             } else {
+      //               this.xyReport.push({
+      //                 status: null,
+      //                 desc: null,
+      //                 max_overdue_amt: null,
+      //                 max_overdue_days: null,
+      //                 latest_overdue_time: null,
+      //                 currently_overdue: null,
+      //                 currently_performance: null,
+      //                 acc_exc: null,
+      //                 acc_sleep: null
+      //               });
+      //             }
+      //           }
+      //           httpGettiqianfublacklistvarious(
+      //             this.customerInformation[0].chbrealName,
+      //             this.customerInformation[0].chbphoneNumber,
+      //             this.customerInformation[0].chbidcard,
+      //             8
+      //           ).then(res => {
+      //             let data = res.data;
+      //             if (data.code == 200) {
+      //               let obj = data.data;
+
+      //               if (data.data) {
+      //                 this.bqsReport.push({
+      //                   status: obj.status,
+      //                   finalDecision: obj.bqsDataVO
+      //                     ? obj.bqsDataVO.finalDecision
+      //                     : "", //决策结果码，
+      //                   finalScore: obj.bqsDataVO
+      //                     ? obj.bqsDataVO.finalScore
+      //                     : "", //最终风险参数
+      //                   // riskType: obj.bqsDataVO?obj.bqsDataVO.strategySet[0].riskType:'', //风险类型
+      //                   // strategyDecision:obj.bqsDataVO?
+      //                   //   obj.bqsDataVO.strategySet[0].strategyDecision:'', //策略决策结果，参见 decision 附录
+      //                   // strategyMode: obj.bqsDataVO?obj.bqsDataVO.strategySet[0].strategyMode:'', //   策略匹配模式，参见 strategyMode 附录
+      //                   // strategyScore:
+      //                   //   obj.bqsDataVO?obj.bqsDataVO.strategySet[0].strategyScore:'',
+      //                   // rejectValue: obj.bqsDataVO.strategySet[0].rejectValue,
+      //                   // reviewValue: obj.bqsDataVO.strategySet[0].reviewValue,
+      //                   // tips: obj.bqsDataVO.strategySet[0].tips,
+      //                   // hitRules: obj.bqsDataVO.strategySet[0].hitRules,
+      //                   strategySet: obj.bqsDataVO
+      //                     ? obj.bqsDataVO.strategySet
+      //                     : [],
+
+      //                   blackListFulinJinkeVo: null,
+      //                   psBalckListVO: null
+      //                 });
+      //               } else {
+      //                 this.bqsReport.push({
+      //                   status: 0,
+      //                   blackListBaiRongVo: null,
+      //                   moxieBlackVO: null,
+      //                   blackListPaipaiXinVo: null,
+      //                   scInnerBlackVO: null,
+      //                   bqsDataVO: {
+      //                     finalDecision: null,
+      //                     finalScore: null,
+      //                     flowNo: null,
+      //                     resultCode: null,
+      //                     resultDesc: null,
+      //                     strategySet: [
+      //                       {
+      //                         riskType: null,
+      //                         strategyDecision: null,
+      //                         strategyId: null,
+      //                         strategyMode: null,
+      //                         strategyName: null,
+      //                         strategyScore: 0,
+      //                         rejectValue: 0,
+      //                         reviewValue: 0,
+      //                         tips: null,
+      //                         hitRules: [
+      //                           {
+      //                             decision: null,
+      //                             memo: null,
+      //                             ruleId: null,
+      //                             ruleName: null,
+      //                             score: 0,
+      //                             template: null,
+      //                             detail: null
+      //                           }
+      //                         ]
+      //                       }
+      //                     ]
+      //                   },
+      //                   blackListFulinJinkeVo: null,
+      //                   psBalckListVO: null
+      //                 });
+      //               }
+      //             }
+      //             httpGettiqianfublacklistvarious(
+      //               this.customerInformation[0].chbrealName,
+      //               this.customerInformation[0].chbphoneNumber,
+      //               this.customerInformation[0].chbidcard,
+      //               6
+      //             ).then(res => {
+      //               let data = res.data;
+      //               if (data.code == 200) {
+      //                 let obj = data.data;
+      //                 if (data.data) {
+      //                   this.tcReport.push({
+      //                     status: obj.blackLevel == null ? false : true,
+      //                     isWhite: obj.isWhite ? obj.isWhite : true,
+      //                     msginfo: obj.msginfo
+      //                       ? JSON.parse(obj.msginfo).data.result
+      //                       : "",
+      //                     blackLevel: obj.blackLevel
+      //                   });
+      //                 } else {
+      //                   this.tcReport.push({
+      //                     status: false,
+      //                     isWhite: null,
+      //                     msginfo: {},
+      //                     blackLevel: null
+      //                   });
+      //                 }
+      //               }
+      //               httpGettiqianfublacklistvarious(
+      //                 this.customerInformation[0].chbrealName,
+      //                 this.customerInformation[0].chbphoneNumber,
+      //                 this.customerInformation[0].chbidcard,
+      //                 5
+      //               ).then(res => {
+      //                 let data = res.data;
+      //                 if (data.code == 200) {
+      //                   let obj = data.data;
+      //                   if (data.data) {
+      //                     if (data.data.blackListPaipaiXinVo) {
+      //                       this.ppxReport.push({
+      //                         status: obj.status,
+      //                         isAlert:
+      //                           obj.blackListPaipaiXinVo.resp_body.msg.data
+      //                             .isAlert,
+      //                         isBlack:
+      //                           obj.blackListPaipaiXinVo.resp_body.msg.data
+      //                             .isBlack,
+      //                         hkxw:
+      //                           obj.blackListPaipaiXinVo.resp_body.msg.data
+      //                             .blackSummary.hkxw,
+      //                         lsqz:
+      //                           obj.blackListPaipaiXinVo.resp_body.msg.data
+      //                             .blackSummary.lsqz,
+      //                         zffm:
+      //                           obj.blackListPaipaiXinVo.resp_body.msg.data
+      //                             .blackSummary.zffm
+      //                       });
+      //                     } else {
+      //                       this.ppxReport.push({
+      //                         status: null,
+      //                         isAlert: null,
+      //                         isBlack: null,
+      //                         hkxw: {},
+      //                         lsqz: {},
+      //                         zffm: {}
+      //                       });
+      //                     }
+      //                   } else {
+      //                     this.ppxReport.push({
+      //                       status: null,
+      //                       isAlert: null,
+      //                       isBlack: null,
+      //                       hkxw: {},
+      //                       lsqz: {},
+      //                       zffm: {}
+      //                     });
+      //                   }
+      //                 } else {
+      //                   this.ppxReport.push({
+      //                     status: null,
+      //                     isAlert: null,
+      //                     isBlack: null,
+      //                     hkxw: {},
+      //                     lsqz: {},
+      //                     zffm: {}
+      //                   });
+      //                 }
+      //               });
+      //               httpGettiqianfublacklistvarious(
+      //                 this.customerInformation[0].chbrealName,
+      //                 this.customerInformation[0].chbphoneNumber,
+      //                 this.customerInformation[0].chbidcard,
+      //                 11
+      //               ).then(res => {
+      //                 let data = res.data;
+      //                 if (data.code == 200) {
+      //                   let obj = data.data;
+      //                   if (data.data) {
+      //                     if (data.data.psBalckListVO) {
+      //                       this.pskjReport.push({
+      //                         status: obj.status,
+      //                         sn_order2_blacklist_contacts_cnt:
+      //                           obj.psBalckListVO.data.risk_social_network
+      //                             .sn_order2_blacklist_contacts_cnt, //间接联系人在黑名单中数量(间接黑人)
+      //                         sn_order1_blacklist_contacts_cnt:
+      //                           obj.psBalckListVO.data.risk_social_network
+      //                             .sn_order1_blacklist_contacts_cnt, //直接联系人在黑名单中数量(直接黑人)
+      //                         sn_order2_blacklist_routers_cnt:
+      //                           obj.psBalckListVO.data.risk_social_network
+      //                             .sn_order2_blacklist_routers_cnt, //认识间接黑人的直接联系人个数
+      //                         sn_order2_blacklist_routers_pct:
+      //                           obj.psBalckListVO.data.risk_social_network
+      //                             .sn_order2_blacklist_routers_pct, //认识间接黑人的直接联系人比例
+      //                         in_court_blacklist:
+      //                           obj.psBalckListVO.data.risk_blacklist
+      //                             .in_court_blacklist, //是否命中法院黑名单
+      //                         in_p2p_blacklist:
+      //                           obj.psBalckListVO.data.risk_blacklist
+      //                             .in_p2p_blacklist, //是否命中网贷黑名单
+      //                         idcard_in_blacklist:
+      //                           obj.psBalckListVO.data.risk_blacklist
+      //                             .idcard_in_blacklist, //身份证是否命中黑名单
+      //                         phone_in_blacklist:
+      //                           obj.psBalckListVO.data.risk_blacklist
+      //                             .phone_in_blacklist, //手机号是否命中黑名单
+      //                         in_bank_blacklist:
+      //                           obj.psBalckListVO.data.risk_blacklist
+      //                             .in_bank_blacklist, //是否命中银行黑名单
+      //                         offline_cash_loan_cnt:
+      //                           obj.psBalckListVO.data.history_org
+      //                             .offline_cash_loan_cnt, //线下现金贷出现次数
+      //                         online_cash_loan_cnt:
+      //                           obj.psBalckListVO.data.history_org
+      //                             .online_cash_loan_cnt, //线上现金贷出现次数
+      //                         online_installment_cnt:
+      //                           obj.psBalckListVO.data.history_org
+      //                             .online_installment_cnt, //线上消费分期出现次数
+      //                         payday_loan_cnt:
+      //                           obj.psBalckListVO.data.history_org
+      //                             .payday_loan_cnt, //小额快速贷出现次数
+      //                         credit_card_repayment_cnt:
+      //                           obj.psBalckListVO.data.history_org
+      //                             .credit_card_repayment_cnt, //信用卡代还出现次数
+      //                         offline_installment_cnt:
+      //                           obj.psBalckListVO.data.history_org
+      //                             .offline_installment_cnt, //线下消费分期出现次数
+      //                         search_cnt_recent_180_days:
+      //                           obj.psBalckListVO.data.history_search
+      //                             .search_cnt_recent_180_days, //最近180天查询次数
+      //                         search_cnt_recent_7_days:
+      //                           obj.psBalckListVO.data.history_search
+      //                             .search_cnt_recent_7_days, //最近7天查询次数
+      //                         org_cnt_recent_180_days:
+      //                           obj.psBalckListVO.data.history_search
+      //                             .org_cnt_recent_180_days, //最近180天查询机构数
+      //                         search_cnt_recent_90_days:
+      //                           obj.psBalckListVO.data.history_search
+      //                             .search_cnt_recent_90_dayss, //最近90天查询次数
+      //                         org_cnt_recent_60_days:
+      //                           obj.psBalckListVO.data.history_search
+      //                             .org_cnt_recent_60_days, //最近60天查询次数
+      //                         search_cnt_recent_30_days:
+      //                           obj.psBalckListVO.data.history_search
+      //                             .search_cnt_recent_30_days, //最近30天查询次数
+      //                         search_cnt_recent_14_days:
+      //                           obj.psBalckListVO.data.history_search
+      //                             .search_cnt_recent_14_days, //最近14天查询次数
+      //                         org_cnt_recent_14_days:
+      //                           obj.psBalckListVO.data.history_search
+      //                             .org_cnt_recent_14_days, //最近14天查询次数
+      //                         org_cnt_recent_30_days:
+      //                           obj.psBalckListVO.data.history_search
+      //                             .org_cnt_recent_30_days, //最近30天查询次数
+      //                         org_cnt_recent_7_days:
+      //                           obj.psBalckListVO.data.history_search
+      //                             .org_cnt_recent_7_days, //最近7天查询次数
+      //                         org_cnt_recent_90_days:
+      //                           obj.psBalckListVO.data.history_search
+      //                             .org_cnt_recent_90_days, //最近90天查询次数
+      //                         org_cnt:
+      //                           obj.psBalckListVO.data.history_search.org_cnt, //历史查询总机构数
+      //                         search_cnt_recent_60_days:
+      //                           obj.psBalckListVO.data.history_search
+      //                             .search_cnt_recent_60_days,
+      //                         search_cnt:
+      //                           obj.psBalckListVO.data.history_search.search_cnt //历史查询总次数
+      //                       });
+      //                     } else {
+      //                       this.pskjReport.push({
+      //                         status: 0,
+      //                         sn_order2_blacklist_contacts_cnt: null, //间接联系人在黑名单中数量(间接黑人)
+      //                         sn_order1_blacklist_contacts_cnt: null, //直接联系人在黑名单中数量(直接黑人)
+      //                         sn_order2_blacklist_routers_cnt: null, //认识间接黑人的直接联系人个数
+      //                         sn_order2_blacklist_routers_pct: null, //认识间接黑人的直接联系人比例
+      //                         in_court_blacklist: null, //是否命中法院黑名单
+      //                         in_p2p_blacklist: null, //是否命中网贷黑名单
+      //                         idcard_in_blacklist: null, //身份证是否命中黑名单
+      //                         phone_in_blacklist: null, //手机号是否命中黑名单
+      //                         in_bank_blacklist: null, //是否命中银行黑名单
+      //                         offline_cash_loan_cnt: null, //线下现金贷出现次数
+      //                         online_cash_loan_cnt: null, //线上现金贷出现次数
+      //                         online_installment_cnt: null, //线上消费分期出现次数
+      //                         payday_loan_cnt: null, //小额快速贷出现次数
+      //                         credit_card_repayment_cnt: null, //信用卡代还出现次数
+      //                         offline_installment_cnt: null, //线下消费分期出现次数
+      //                         search_cnt_recent_180_days: null, //最近180天查询次数
+      //                         search_cnt_recent_7_days: null, //最近7天查询次数
+      //                         org_cnt_recent_180_days: null, //最近180天查询机构数
+      //                         search_cnt_recent_90_days: null, //最近90天查询次数
+      //                         org_cnt_recent_60_days: null, //最近60天查询次数
+      //                         search_cnt_recent_30_days: null, //最近30天查询次数
+      //                         search_cnt_recent_14_days: null, //最近14天查询次数
+      //                         org_cnt_recent_14_days: null, //最近14天查询次数
+      //                         org_cnt_recent_30_days: null, //最近30天查询次数
+      //                         org_cnt_recent_7_days: null, //最近7天查询次数
+      //                         org_cnt_recent_90_days: null, //最近90天查询次数
+      //                         org_cnt: null, //历史查询总机构数
+      //                         search_cnt_recent_60_days: null,
+      //                         search_cnt: null //历史查询总次数
+      //                       });
+      //                     }
+      //                   }
+      //                 } else {
+      //                   this.pskjReport.push({
+      //                     status: 0,
+      //                     sn_order2_blacklist_contacts_cnt: null, //间接联系人在黑名单中数量(间接黑人)
+      //                     sn_order1_blacklist_contacts_cnt: null, //直接联系人在黑名单中数量(直接黑人)
+      //                     sn_order2_blacklist_routers_cnt: null, //认识间接黑人的直接联系人个数
+      //                     sn_order2_blacklist_routers_pct: null, //认识间接黑人的直接联系人比例
+      //                     in_court_blacklist: null, //是否命中法院黑名单
+      //                     in_p2p_blacklist: null, //是否命中网贷黑名单
+      //                     idcard_in_blacklist: null, //身份证是否命中黑名单
+      //                     phone_in_blacklist: null, //手机号是否命中黑名单
+      //                     in_bank_blacklist: null, //是否命中银行黑名单
+      //                     offline_cash_loan_cnt: null, //线下现金贷出现次数
+      //                     online_cash_loan_cnt: null, //线上现金贷出现次数
+      //                     online_installment_cnt: null, //线上消费分期出现次数
+      //                     payday_loan_cnt: null, //小额快速贷出现次数
+      //                     credit_card_repayment_cnt: null, //信用卡代还出现次数
+      //                     offline_installment_cnt: null, //线下消费分期出现次数
+      //                     search_cnt_recent_180_days: null, //最近180天查询次数
+      //                     search_cnt_recent_7_days: null, //最近7天查询次数
+      //                     org_cnt_recent_180_days: null, //最近180天查询机构数
+      //                     search_cnt_recent_90_days: null, //最近90天查询次数
+      //                     org_cnt_recent_60_days: null, //最近60天查询次数
+      //                     search_cnt_recent_30_days: null, //最近30天查询次数
+      //                     search_cnt_recent_14_days: null, //最近14天查询次数
+      //                     org_cnt_recent_14_days: null, //最近14天查询次数
+      //                     org_cnt_recent_30_days: null, //最近30天查询次数
+      //                     org_cnt_recent_7_days: null, //最近7天查询次数
+      //                     org_cnt_recent_90_days: null, //最近90天查询次数
+      //                     org_cnt: null, //历史查询总机构数
+      //                     search_cnt_recent_60_days: null,
+      //                     search_cnt: null //历史查询总次数
+      //                   });
+      //                 }
+      //                 httpGettiqianfublacklistvarious(
+      //                   this.customerInformation[0].chbrealName,
+      //                   this.customerInformation[0].chbphoneNumber,
+      //                   this.customerInformation[0].chbidcard,
+      //                   12
+      //                 ).then(res => {
+      //                   let data = res.data;
+      //                   if (data.code == 200) {
+      //                     this.hmdReport.push({
+      //                       status: data.data.status,
+      //                       message: data.data.message
+      //                     });
+      //                   } else {
+      //                     this.hmdReport.push({
+      //                       status: null,
+      //                       message: null
+      //                     });
+      //                   }
+      //                   httpGettiqianfublacklistvarious(
+      //                     this.customerInformation[0].chbrealName,
+      //                     this.customerInformation[0].chbphoneNumber,
+      //                     this.customerInformation[0].chbidcard,
+      //                     13
+      //                   ).then(res => {
+      //                     let data = res.data;
+      //                     if (data.code == 200) {
+      //                       if (data.data) {
+      //                         if (data.data.responseInfo) {
+      //                           this.shReport.push({
+      //                             status: data.data.status,
+      //                             risk: data.data.responseInfo
+      //                               ? JSON.parse(data.data.responseInfo).data
+      //                                 ? JSON.parse(data.data.responseInfo).data
+      //                                     .risk
+      //                                 : ""
+      //                               : "",
+      //                             //金融命中黑名单时间区段（枚举值）A,近半年;B,近半年到一年;C,近一年到二年;D,两年以上;"":空
+      //                             detail: JSON.parse(data.data.responseInfo)
+      //                               .data
+      //                               ? JSON.parse(data.data.responseInfo).data
+      //                                   .finance.detail
+      //                               : []
+      //                           });
+      //                         } else {
+      //                           this.shReport.push({
+      //                             status: null,
+      //                             risk: null,
+      //                             date: null, //金融命中黑名单时间区段（枚举值）A,近半年;B,近半年到一年;C,近一年到二年;D,两年以上;"":空
+      //                             detail: []
+      //                           });
+      //                         }
+      //                       } else {
+      //                         this.shReport.push({
+      //                           status: null,
+      //                           risk: null,
+      //                           date: null, //金融命中黑名单时间区段（枚举值）A,近半年;B,近半年到一年;C,近一年到二年;D,两年以上;"":空
+      //                           detail: []
+      //                         });
+      //                       }
+      //                     } else {
+      //                       this.shReport.push({
+      //                         status: null,
+      //                         risk: null,
+      //                         date: null, //金融命中黑名单时间区段（枚举值）A,近半年;B,近半年到一年;C,近一年到二年;D,两年以上;"":空
+      //                         detail: []
+      //                       });
+      //                     }
+      //                     httpGettiqianfublacklistvarious(
+      //                       this.customerInformation[0].chbrealName,
+      //                       this.customerInformation[0].chbphoneNumber,
+      //                       this.customerInformation[0].chbidcard,
+      //                       9
+      //                     ).then(res => {
+      //                       let data = res.data;
+      //                       if (data.code == 200) {
+      //                         if (data.data) {
+      //                           this.fljkReport.push({
+      //                             status: data.data.status
+      //                           });
+      //                         } else {
+      //                           this.fljkReport.push({
+      //                             status: null
+      //                           });
+      //                         }
+      //                       }
+      //                       httpGettiqianfublacklistvarious(
+      //                         this.customerInformation[0].chbrealName,
+      //                         this.customerInformation[0].chbphoneNumber,
+      //                         this.customerInformation[0].chbidcard,
+      //                         14
+      //                       ).then(res => {
+      //                         let data = res.data;
+      //                         if (data.code == 200) {
+      //                           let obj = data.data;
+      //                           if (data.data) {
+      //                             this.clReport.push({
+      //                               status: obj.status
+      //                                 ? obj.status == "N" ? false : true
+      //                                 : false,
+      //                               // isWhite: obj.isWhite ? obj.isWhite : true,
+      //                               // msginfo: obj.msginfo
+      //                               //   ? JSON.parse(obj.msginfo).data.result
+      //                               //   : "",
+      //                               blackLevel: obj.status
+      //                             });
+      //                           } else {
+      //                             this.clReport.push({
+      //                               status: false,
+      //                               blackLevel: null
+      //                             });
+      //                           }
+      //                         }
+      //                         this.blackListVisible = true;
+      //                       });
+      //                     });
+      //                   });
+      //                 });
+      //               });
+      //             });
+      //           });
+      //         });
+      //       });
+      //     });
+      //   });
+      // });
       // console.log(this.customerInformation);
     },
     // 查询审核员列表
@@ -4831,7 +5547,9 @@ export default {
     viewRiskManagementreport() {
       this.yysShow = true;
       this.lxrShow = true;
-
+      this.reportList = {};
+      this.BreportList = false;
+      this.whiteForm = {};
       httpGetCreditReport(this.listId)
         .then(res => {
           let data = res.data;
@@ -4845,7 +5563,12 @@ export default {
           //     ).data.result_detail;
           //   }
           // }
-
+          if (data.data.baiqishiReport) {
+            this.whiteForm = JSON.parse(
+              JSON.stringify(data.data.baiqishiReport)
+            );
+          }
+          console.log(data.data.baiqishiReport);
           if (data.data.mifengreport) {
             let date = data.data.mifengreport;
             this.userBasicInformation = date.mifengreportApplicationCheck;
@@ -4863,16 +5586,23 @@ export default {
                 });
               }
             });
-            console.log(data.data.xinyanReport);
-            if (data.data.xinyanReport) {
+
+            this.operatorDataTableData.sort((a, b) => {
+              return b.callOutCnt - a.callOutCnt;
+            });
+          }
+
+          if (data.data.xinyanReport) {
+        
+            if (
+              JSON.parse(data.data.xinyanReport.data).data.desc !== "查询未命中"
+            ) {
+              this.BreportList = true;
               this.reportList = JSON.parse(
                 data.data.xinyanReport.data
               ).data.result_detail;
               console.log(JSON.parse(data.data.xinyanReport.data));
             }
-            this.operatorDataTableData.sort((a, b) => {
-              return b.callOutCnt - a.callOutCnt;
-            });
           }
           this.CreditReport = true;
         })

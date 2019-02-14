@@ -1219,8 +1219,10 @@
                 </div>
             </el-row>   
             <hr>
-            <div class="xy_title" style="margin-top:20px;">新颜报告</div>
-            <el-row v-if="reportList">
+               <div  v-if="!BreportList" class="xy_title" style="margin-top:20px;">暂无报告</div>
+            
+            <div v-if="BreportList" class="xy_title" style="margin-top:20px;">新颜报告</div>
+            <el-row v-if="BreportList">
                 <el-card >
                     <div class="xy_card">
                         <div>
@@ -1239,7 +1241,7 @@
                                 <el-progress type="circle" :percentage="reportList.loans_score/10" color="red" :show-text="showText">aaaaa</el-progress>                        
                                 <div class="xy_zxd">贷款行为置信度：{{reportList.loans_credibility}}</div>
                         </div>
-                        <img class="xy_img" :src="reportList.loans_score > 500? require('../../../assets/img/u236.png'): require('../../../assets/img/u115.png')" alt="">
+                      <img class="xy_img" :src="reportList.loans_score > 500? require('../../../assets/img/u115.png'): require('../../../assets/img/u236.png')" alt="">
                     </div>
 
 
@@ -1263,8 +1265,8 @@
                     </el-col> -->
                 </el-card>
             </el-row> 
-              <div class="xy_title" style="margin-top:20px;">规则命中详情</div>
-              <el-card v-if="reportList">
+              <div  v-if="BreportList" class="xy_title" style="margin-top:20px;">规则命中详情</div>
+              <el-card v-if="BreportList">
                 <table class="xy_table">
                     <tr>
                         <th style="width:40%">命中规则详情</th>
@@ -1981,6 +1983,515 @@
                 </el-main>
               </el-row>
             </el-tab-pane>
+  <el-tab-pane label="白骑士贷款报告" name="fourth">
+            <el-row class="xy_flex">
+                <div >
+                    白骑士贷款报告
+                </div>
+                <div style="flex-grow:1">
+                </div>
+                <div >
+                    报告时间:<span>{{new Date() |dateServer}}</span>
+                </div>
+            </el-row>   
+              <div  v-if="!whiteForm.loan" class="xy_title" style="margin-top:20px;">暂无报告</div>
+            <hr>     
+            <div v-if="whiteForm&&whiteForm.loan" class="xy_title" style="margin-top:20px;">白骑士贷款报告</div>
+            <el-row v-if="whiteForm&&whiteForm.loan">
+                <el-card >
+                    <div class="xy_card">
+                        <div tyle="align-self: flex-start;">
+                            流水号{{whiteForm.loan.flowNo}}
+                        </div>
+                        <div v-if="whiteForm.loan.finalScore">
+                                <div class="progress-text">
+                                    <strong>{{whiteForm.loan.finalScore}}</strong>
+                                    <p>贷款最终风险分</p>
+                                </div>
+                                <el-progress type="circle" percentage=100 color="red" :show-text="showText">aaaaa</el-progress>    
+                        </div>
+                        <div>
+                        <img  class="xy_img"
+                         :src="whiteForm.loan.finalDecision=='Reject'?require('../../../assets/img/u236.png'):
+                            whiteForm.loan.finalDecision=='Review'?require('../../../assets/img/report_reject.png'):
+                            whiteForm.loan.finalDecision=='Accept'?require('../../../assets/img/u115.png'):''" alt="">
+                        </div>
+
+                    </div>
+                </el-card>
+            </el-row> 
+            <div v-if="whiteForm&&whiteForm.loan" class="xy_title" style="margin-top:20px;">风险情况</div>                                 
+              <el-card class="box-card" v-if="whiteForm&&whiteForm.loan">
+                <!-- <table style="font-size:14px;line-height:30px;width:100%;table-layout: fixed"  id="bqs"> -->
+                <table class="xy_table">
+                  <thead>
+                    <tr>
+                      <th style="width:200px"></th>
+                      <th style="text-align:center">检查项目</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  <template v-if="whiteForm&&whiteForm.loan" v-for="(temp,index) in whiteForm.loan.strategySet">
+                    <tr :key="index">
+                      <th style="background: #fff;text-align:right;line-height:52px;padding-right:16px;width:220px">
+                       {{temp.strategyName}}<span>( {{temp.strategyMode=='FirstMode'?'首次匹配':
+                                    temp.strategyMode=='WorstMode'?'最坏匹配':
+                                    temp.strategyMode=='WeightMode'?'权重匹配':''
+                                  }})</span>
+                      </th>
+                      <th >
+                        <template >
+                                     <span :style="{color:temp.strategyDecision=='Reject'?'red':
+                            temp.strategyDecision=='Review'?'#FF6100':
+                            temp.strategyDecision=='Accept'?'green':''}">决策分:{{temp.strategyScore}}</span> <br/>    
+                                     <span :style="{color:temp.strategyDecision=='Reject'?'red':
+                            temp.strategyDecision=='Review'?'#FF6100':
+                            temp.strategyDecision=='Accept'?'green':''}">决策结果
+                          {{temp.strategyDecision=='Reject'?'拒绝，风险评估决策为高风险建议拒绝':
+                            temp.strategyDecision=='Review'?'审核，风险评估决策为低风险建议人工审核':
+                            temp.strategyDecision=='Accept'?'通过':''
+                          }}                                       
+                                      </span>  <br/>                  
+                                <!-- <el-tag :type="temp.strategyDecision=='Reject'?'danger':
+                                    temp.strategyDecision=='Review'?'info':
+                                    temp.strategyDecision=='Accept'?'success':''"> 
+                                  {{temp.strategyDecision=='Reject'?'建议拒绝':
+                                    temp.strategyDecision=='Review'?'建议重审':
+                                    temp.strategyDecision=='Accept'?'建议通过':''
+                                  }}
+
+                                </el-tag> -->
+                            <template v-for="(t,i) in temp.hitRules">
+                              <span :key="i">
+                                <span   > 
+                                  {{t.ruleName}}
+                                  </span>
+                                  <span style="text-align:center;width:450px" v-if="t.memo">
+                                     
+                                        {{t.memo}}
+                                   
+                                    </span>
+                              </span><br/>
+                            </template>                                
+                              </span>
+                            </span>
+  
+                        </template>                        
+                      </th>
+                    </tr>
+                    <!-- <tr>
+                      <th  style="background: #fff;text-align:right;line-height:52px;padding-right:16px;">
+                        失信风险
+                      </th>
+                      <th >
+                        <span v-if="whiteForm.loan.finalScore">决策分:{{whiteForm.loan.finalScore}}</span><br v-if="whiteForm.loan.finalScore"/>
+                        <span>决策结果:     {{whiteForm.loan.finalDecision=='Reject'?'拒绝，风险评估决策为高风险建议拒绝':
+                            whiteForm.loan.finalDecision=='Review'?'审核，风险评估决策为低风险建议人工审核':
+                            whiteForm.loan.finalDecision=='Accept'?'通过':''
+                          }}</span><br/>  
+                        <template v-for="(temp,index) in whiteForm.loan.strategySet">
+                            <span :key="index">
+                                <span>{{temp.strategyName}}</span>
+                              
+                              <span >
+                              <span>匹配模式 {{temp.strategyMode=='FirstMode'?'首次匹配':
+                                    temp.strategyMode=='WorstMode'?'最坏匹配':
+                                    temp.strategyMode=='WeightMode'?'权重匹配':''
+                                  }}</span>
+                                <el-tag :type="temp.strategyDecision=='Reject'?'danger':
+                                    temp.strategyDecision=='Review'?'info':
+                                    temp.strategyDecision=='Accept'?'success':''"> 
+                                  {{temp.strategyDecision=='Reject'?'建议拒绝':
+                                    temp.strategyDecision=='Review'?'建议重审':
+                                    temp.strategyDecision=='Accept'?'建议通过':''
+                                  }}
+                                </el-tag>
+                              </span>
+                            </span><br/>
+                            <template v-for="(t,i) in temp.hitRules">
+                              <span :key="i">
+                                <span   > 
+                                  {{t.ruleName}}
+                                  </span>
+                                  <span style="text-align:center;width:450px" >
+                                      <el-tag type="danger" v-if="t.memo"> 
+                                        {{t.memo}}
+                                      </el-tag>
+                                    </span>
+                              </span>
+                            </template>
+                        </template>                                                 
+
+                      </th>
+                    </tr> -->
+                  </template>                      
+                  </tbody>
+                  <!-- <template >
+                    <tr>
+                      <th  >
+                        <el-alert
+                            title="贷款情况"
+                            type="success"
+                            center
+                            :closable="false">
+                        </el-alert>
+                      </th>
+                      <th >
+                        <el-tag :type="whiteForm.loan.finalDecision=='Reject'?'danger':
+                                whiteForm.loan.finalDecision=='Review'?'info':
+                                whiteForm.loan.finalDecision=='Accept'?'success':''"> 
+                          {{whiteForm.loan.finalDecision=='Reject'?'建议拒绝':
+                            whiteForm.loan.finalDecision=='Review'?'建议重审':
+                            whiteForm.loan.finalDecision=='Accept'?'建议通过':''
+                          }}
+                        </el-tag>
+                      </th>
+                    </tr>
+                    <template v-for="(temp,index) in whiteForm.loan.strategySet">
+                        <tr :key="index">
+                          <th >
+                            <el-alert
+                                :title="temp.strategyName"
+                                type="success"
+                                center
+                                :closable="false">
+                            </el-alert>
+                          </th>
+                          <th >
+                            <el-tag :type="temp.strategyDecision=='Reject'?'danger':
+                                temp.strategyDecision=='Review'?'info':
+                                temp.strategyDecision=='Accept'?'success':''"> 
+                              {{temp.strategyDecision=='Reject'?'建议拒绝':
+                                temp.strategyDecision=='Review'?'建议重审':
+                                temp.strategyDecision=='Accept'?'建议通过':''
+                              }}
+                            </el-tag>
+                          </th>
+                        </tr><br/>
+                        <template v-for="(t,i) in temp.hitRules">
+                          <tr :key="i" >
+                            <th   >
+                                <el-alert
+                                    :title="t.ruleName"
+                                    type="info"
+                                    center
+                                    :closable="false">
+                                </el-alert>                      
+                                </th>
+                                <td  style="text-align:center;width:450px">
+                                  <el-tag type="danger"> 
+                                    {{t.memo}}
+                                  </el-tag>
+                                </td>
+                          </tr>
+                        </template>
+                    </template>
+                  </template>
+                  <template v-if="whiteForm&&whiteForm.register">
+
+                    <tr style="background: #fff;">
+                      <th  >
+                        <el-alert
+                            title="注册情况"
+                            type="success"
+                            center
+                            :closable="false">
+                        </el-alert>
+                      </th>
+                      <th >
+                        <el-tag :type="whiteForm.register.finalDecision=='Reject'?'danger':
+                                whiteForm.register.finalDecision=='Review'?'info':
+                                whiteForm.register.finalDecision=='Accept'?'success':''"> 
+                          {{whiteForm.register.finalDecision=='Reject'?'建议拒绝':
+                            whiteForm.register.finalDecision=='Review'?'建议重审':
+                            whiteForm.register.finalDecision=='Accept'?'建议通过':''
+                          }}
+                        </el-tag>
+                      </th>
+                    </tr>
+                    <template v-for="(temp,index) in whiteForm.register.strategySet">
+                        <tr :key="index">
+                          <th  >
+                            <el-alert
+                                :title="temp.strategyName"
+                                type="success"
+                                center
+                                :closable="false">
+                            </el-alert>
+                          </th>
+                          <th >
+                            <el-tag :type="temp.strategyDecision=='Reject'?'danger':
+                                temp.strategyDecision=='Review'?'info':
+                                temp.strategyDecision=='Accept'?'success':''"> 
+                              {{temp.strategyDecision=='Reject'?'建议拒绝':
+                                temp.strategyDecision=='Review'?'建议重审':
+                                temp.strategyDecision=='Accept'?'建议通过':''
+                              }}
+                            </el-tag>
+                          </th>
+                        </tr>
+                        <template v-for="(t,i) in temp.hitRules">
+                          <tr :key="i">
+                            <th   > 
+                                <el-alert
+                                    :title="t.ruleName"
+                                    type="info"
+                                    center
+                                    :closable="false">
+                                </el-alert>                      
+                              </th>
+                              <td style="text-align:center;width:450px" >
+                                  <el-tag type="danger" v-if="t.memo"> 
+                                    {{t.memo}}
+                                  </el-tag>
+                                </td>
+                          </tr>
+                        </template>
+                    </template>
+                  </template>                   -->
+                                  
+                </table>
+              </el-card>   
+            </el-tab-pane>
+            <el-tab-pane label="白骑士注册报告" name="fived">
+            <el-row class="xy_flex">
+                <div >
+                    白骑士注册报告
+                </div>
+                <div style="flex-grow:1">
+                </div>
+                <div >
+                    报告时间:<span>{{new Date() |dateServer}}</span>
+                </div>
+            </el-row>   
+              <div  v-if="!whiteForm.register" class="xy_title" style="margin-top:20px;">暂无报告</div>
+            <hr>     
+            <div v-if="whiteForm&&whiteForm.register" class="xy_title" style="margin-top:20px;">白骑士注册报告</div>
+            <el-row v-if="whiteForm&&whiteForm.register">
+                <el-card >
+                    <div class="xy_card">
+                        <div tyle="align-self: flex-start;">
+                            流水号{{whiteForm.register.flowNo}}
+                        </div>
+                        <div v-if="whiteForm.register.finalScore">
+                                <div class="progress-text">
+                                    <strong>{{whiteForm.register.finalScore}}</strong>
+                                    <p>注册最终风险分</p>
+                                </div>
+                                <el-progress type="circle" percentage=100 color="red" :show-text="showText">aaaaa</el-progress>    
+                                                
+                        </div>
+                        <div>
+                        <img  class="xy_img"
+                         :src="whiteForm.register.finalDecision=='Reject'?require('../../../assets/img/u236.png'):
+                            whiteForm.register.finalDecision=='Review'?require('../../../assets/img/report_reject.png'):
+                            whiteForm.register.finalDecision=='Accept'?require('../../../assets/img/u115.png'):''" alt="">                            
+                        </div>
+
+                    </div>
+                </el-card>
+            </el-row> 
+            <div v-if="whiteForm&&whiteForm.register" class="xy_title" style="margin-top:20px;">风险情况</div>                                 
+              <el-card class="box-card" v-if="whiteForm&&whiteForm.register">
+                <table class="xy_table">
+                  <thead>
+                    <tr>
+                      <th style="width:200px"></th>
+                      <th style="text-align:center">检查项目</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                
+                <template v-if="whiteForm&&whiteForm.register" v-for="(temp,index) in whiteForm.register.strategySet">
+                    <tr :key="index">
+                      <th style="background: #fff;text-align:right;line-height:52px;padding-right:16px;">
+                       {{temp.strategyName}}<span>( {{temp.strategyMode=='FirstMode'?'首次匹配':
+                                    temp.strategyMode=='WorstMode'?'最坏匹配':
+                                    temp.strategyMode=='WeightMode'?'权重匹配':''
+                                  }})</span>
+                      </th>
+                      <th >
+                        <template >
+                                     <span :style="{color:temp.strategyDecision=='Reject'?'red':
+                            temp.strategyDecision=='Review'?'yellow':
+                            temp.strategyDecision=='Accept'?'green':''}">决策分:{{temp.strategyScore}}</span> <br/>    
+                                     <span :style="{color:temp.strategyDecision=='Reject'?'red':
+                            temp.strategyDecision=='Review'?'yellow':
+                            temp.strategyDecision=='Accept'?'green':''}">决策结果
+                          {{temp.strategyDecision=='Reject'?'拒绝，风险评估决策为高风险建议拒绝':
+                            temp.strategyDecision=='Review'?'审核，风险评估决策为低风险建议人工审核':
+                            temp.strategyDecision=='Accept'?'通过':''
+                          }}                                       
+                                      </span>  <br/>                  
+                                <!-- <el-tag :type="temp.strategyDecision=='Reject'?'danger':
+                                    temp.strategyDecision=='Review'?'info':
+                                    temp.strategyDecision=='Accept'?'success':''"> 
+                                  {{temp.strategyDecision=='Reject'?'建议拒绝':
+                                    temp.strategyDecision=='Review'?'建议重审':
+                                    temp.strategyDecision=='Accept'?'建议通过':''
+                                  }}
+
+                                </el-tag> -->
+                            <template v-for="(t,i) in temp.hitRules">
+                              <span :key="i">
+                                <span   > 
+                                  {{t.ruleName}}
+                                  </span>
+                                  <span style="text-align:center;width:450px" >
+                                      <el-tag type="danger" v-if="t.memo"> 
+                                        {{t.memo}}
+                                      </el-tag>
+                                    </span>
+                              </span><br/>
+                            </template>                                
+                              </span>
+                            </span>
+  
+                        </template>                        
+                      </th>
+                    </tr>
+                    <!-- <tr>
+                      <th  style="background: #fff;text-align:right;line-height:52px;padding-right:16px;">
+                        失信风险
+                      </th>
+                      <th >
+                        <span v-if="whiteForm.loan.finalScore">决策分:{{whiteForm.loan.finalScore}}</span><br v-if="whiteForm.loan.finalScore"/>
+                        <span>决策结果:     {{whiteForm.loan.finalDecision=='Reject'?'拒绝，风险评估决策为高风险建议拒绝':
+                            whiteForm.loan.finalDecision=='Review'?'审核，风险评估决策为低风险建议人工审核':
+                            whiteForm.loan.finalDecision=='Accept'?'通过':''
+                          }}</span><br/>  
+                        <template v-for="(temp,index) in whiteForm.loan.strategySet">
+                            <span :key="index">
+                                <span>{{temp.strategyName}}</span>
+                              
+                              <span >
+                              <span>匹配模式 {{temp.strategyMode=='FirstMode'?'首次匹配':
+                                    temp.strategyMode=='WorstMode'?'最坏匹配':
+                                    temp.strategyMode=='WeightMode'?'权重匹配':''
+                                  }}</span>
+                                <el-tag :type="temp.strategyDecision=='Reject'?'danger':
+                                    temp.strategyDecision=='Review'?'info':
+                                    temp.strategyDecision=='Accept'?'success':''"> 
+                                  {{temp.strategyDecision=='Reject'?'建议拒绝':
+                                    temp.strategyDecision=='Review'?'建议重审':
+                                    temp.strategyDecision=='Accept'?'建议通过':''
+                                  }}
+                                </el-tag>
+                              </span>
+                            </span><br/>
+                            <template v-for="(t,i) in temp.hitRules">
+                              <span :key="i">
+                                <span   > 
+                                  {{t.ruleName}}
+                                  </span>
+                                  <span style="text-align:center;width:450px" >
+                                      <el-tag type="danger" v-if="t.memo"> 
+                                        {{t.memo}}
+                                      </el-tag>
+                                    </span>
+                              </span>
+                            </template>
+                        </template>                                                 
+
+                      </th>
+                    </tr> -->
+                  </template>    
+                    <!-- <tr >
+                      <th style="background: #fff;text-align:right;line-height:52px;padding-right:16px;">
+                        垃圾注册
+                      </th>
+                      <th >
+                        <span>决策分:{{whiteForm.register.finalScore}}</span><br/>
+                        <span>决策结果:     {{whiteForm.register.finalDecision=='Reject'?'拒绝，风险评估决策为高风险建议拒绝':
+                            whiteForm.register.finalDecision=='Review'?'审核，风险评估决策为低风险建议人工审核':
+                            whiteForm.register.finalDecision=='Accept'?'通过':''
+                          }}</span><br/>
+                        <template v-for="(temp,index) in whiteForm.register.strategySet">
+                            <span :key="index">
+                                <span>{{temp.strategyName}}</span>
+                              
+                              <span >
+                                                              <span>匹配模式 {{temp.strategyMode=='FirstMode'?'首次匹配':
+                                    temp.strategyMode=='WorstMode'?'最坏匹配':
+                                    temp.strategyMode=='WeightMode'?'权重匹配':''
+                                  }}</span>
+                                <el-tag :type="temp.strategyDecision=='Reject'?'danger':
+                                    temp.strategyDecision=='Review'?'info':
+                                    temp.strategyDecision=='Accept'?'success':''"> 
+                                  {{temp.strategyDecision=='Reject'?'建议拒绝':
+                                    temp.strategyDecision=='Review'?'建议重审':
+                                    temp.strategyDecision=='Accept'?'建议通过':''
+                                  }}
+                                </el-tag>
+                              </span>
+                            </span>
+                            <template v-for="(t,i) in temp.hitRules">
+                              <span :key="i">
+                                <span   > 
+                                  {{t.ruleName}}
+                                  </span>
+                                  <span style="text-align:center;width:450px" >
+                                      <el-tag type="danger" v-if="t.memo"> 
+                                        {{t.memo}}
+                                      </el-tag>
+                                    </span>
+                              </span>
+                            </template>
+                        </template>                        
+                      </th>
+                    </tr>
+                    <tr>
+                      <th  style="background: #fff;text-align:right;line-height:52px;padding-right:16px;">
+                        失信风险
+                      </th>
+                      <th >
+                        <span v-if="whiteForm.loan.finalScore">决策分:{{whiteForm.loan.finalScore}}</span><br v-if="whiteForm.loan.finalScore"/>
+                        <span>决策结果:     {{whiteForm.loan.finalDecision=='Reject'?'拒绝，风险评估决策为高风险建议拒绝':
+                            whiteForm.loan.finalDecision=='Review'?'审核，风险评估决策为低风险建议人工审核':
+                            whiteForm.loan.finalDecision=='Accept'?'通过':''
+                          }}</span><br/>  
+                        <template v-for="(temp,index) in whiteForm.loan.strategySet">
+                            <span :key="index">
+                                <span>{{temp.strategyName}}</span>
+                              
+                              <span >
+                              <span>匹配模式 {{temp.strategyMode=='FirstMode'?'首次匹配':
+                                    temp.strategyMode=='WorstMode'?'最坏匹配':
+                                    temp.strategyMode=='WeightMode'?'权重匹配':''
+                                  }}</span>
+                                <el-tag :type="temp.strategyDecision=='Reject'?'danger':
+                                    temp.strategyDecision=='Review'?'info':
+                                    temp.strategyDecision=='Accept'?'success':''"> 
+                                  {{temp.strategyDecision=='Reject'?'建议拒绝':
+                                    temp.strategyDecision=='Review'?'建议重审':
+                                    temp.strategyDecision=='Accept'?'建议通过':''
+                                  }}
+                                </el-tag>
+                              </span>
+                            </span><br/>
+                            <template v-for="(t,i) in temp.hitRules">
+                              <span :key="i">
+                                <span   > 
+                                  {{t.ruleName}}
+                                  </span>
+                                  <span style="text-align:center;width:450px" >
+                                      <el-tag type="danger" v-if="t.memo"> 
+                                        {{t.memo}}
+                                      </el-tag>
+                                    </span>
+                              </span>
+                            </template>
+                        </template>                                                 
+
+                      </th>
+                    </tr> -->
+                                   
+                  </tbody>
+
+                                  
+                </table>
+              </el-card>   
+            </el-tab-pane>                          
           </el-tabs>
         </el-dialog>   
         </el-dialog>                 
@@ -2122,7 +2633,9 @@ export default {
       listId: null,
       showText: false,
       applyStatus: null,
-      activeName1: "three"
+      activeName1: "three",
+      whiteForm: {},
+      BreportList: false
     };
   },
   computed: {
@@ -2715,7 +3228,9 @@ export default {
     viewRiskManagementreport() {
       this.yysShow = true;
       this.lxrShow = true;
-
+      this.reportList = {};
+      this.whiteForm = {};
+      this.BreportList = false;
       httpGetCreditReport(this.listId)
         .then(res => {
           let data = res.data;
@@ -2751,16 +3266,31 @@ export default {
               return b.callOutCnt - a.callOutCnt;
             });
           }
+          if (data.data.baiqishiReport) {
+            this.whiteForm = JSON.parse(
+              JSON.stringify(data.data.baiqishiReport)
+            );
+          }
           if (data.data.xinyanReport) {
-            this.reportList = JSON.parse(
-              data.data.xinyanReport.data
-            ).data.result_detail;
-            console.log(JSON.parse(data.data.xinyanReport.data));
+            if (
+              JSON.parse(data.data.xinyanReport.data).data.desc !== "查询未命中"
+            ) {
+              this.BreportList = true;
+
+              this.reportList = JSON.parse(
+                data.data.xinyanReport.data
+              ).data.result_detail;
+              console.log(JSON.parse(data.data.xinyanReport.data));
+            }
+            // this.reportList = JSON.parse(
+            //   data.data.xinyanReport.data
+            // ).data.result_detail;
+            // console.log(JSON.parse(data.data.xinyanReport.data));
           }
           this.CreditReport = true;
         })
         .catch(err => {
-          console.log(err)
+          console.log(err);
           this.$message.error("网络错误请联系管理员");
         });
     },

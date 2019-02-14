@@ -1155,7 +1155,7 @@ export const powerRouter = [{
 
       path: '/discountCoupon',
       component: resolve => require(['../components/page/systemManagement/discountCouponU'], resolve),
-     // component: resolve => require(['../components/page/w/test'], resolve),
+      //component: resolve => require(['../components/page/systemManagement/uv'], resolve),
       meta: {
         title: '优惠券',
         role: 'discountCoupon'
@@ -1234,6 +1234,15 @@ export const powerRouter = [{
       meta: {
         title: '订单余量统计',
         role: 'collectremain'
+      }
+    },
+    {
+      path: '/ProductTotal',
+      component: resolve => require(['../components/page/systemManagement/uv'], resolve),
+      // component: resolve => require(['../components/page/w/test'], resolve),
+      meta: {
+        title: 'UV统计',
+        role: 'ProductTotal'
       }
     },
     // {

@@ -9,36 +9,36 @@ axios.defaults.timeout = 60000;
 //axios.defaults.baseURL = 'http://47.88.171.117:8084';
 //axios.defaults.baseURL = 'http://101.132.171.38:8084';
 axios.defaults.baseURL = 'http://101.132.171.38:7994',
-// axios.defaults.baseURL = '/api/';
-//axios.defaults.baseURL = 'http://192.168.2.110:7994';
-//axios.defaults.baseURL = 'http://192.168.25.138:8084';
-//axios.defaults.baseURL = 'http://192.168.2.112:7994';
+  // axios.defaults.baseURL = '/api/';
+  //axios.defaults.baseURL = 'http://192.168.2.110:7994';
+  //axios.defaults.baseURL = 'http://192.168.25.138:8084';
+  //axios.defaults.baseURL = 'http://192.168.2.112:7994';
 
 
 
 
-//http request 拦截器
-axios.interceptors.request.use(
-  config => {
-    console.log(store);
-    store
-      .dispatch("SETLogin")
-    // const token = ('session');
-    // config.data = JSON.stringify(config.data);
-    // config.headers = {
-    //     // 'Content-Type': 'application/x-www-form-urlencoded',
-    //     'Content-Type': 'application/json'
-    // };
-    // if (token) {
-    //     config.params = (token)
-    // };
+  //http request 拦截器
+  axios.interceptors.request.use(
+    config => {
+      console.log(store);
+      store
+        .dispatch("SETLogin")
+      // const token = ('session');
+      // config.data = JSON.stringify(config.data);
+      // config.headers = {
+      //     // 'Content-Type': 'application/x-www-form-urlencoded',
+      //     'Content-Type': 'application/json'
+      // };
+      // if (token) {
+      //     config.params = (token)
+      // };
 
-    return config;
-  },
-  err => {
-    return Promise.reject(err);
-  }
-);
+      return config;
+    },
+    err => {
+      return Promise.reject(err);
+    }
+  );
 // http response 拦截器
 /*axios.interceptors.response.use(
     response => {
@@ -2220,7 +2220,7 @@ export function httpGettiqianfublacklistvarious(
     type
   };
   return axios({
-    url: 'http://101.132.171.38:8082/sys/gettiqianfublacklistvarious',
+    url: 'http://47.102.111.2:8082/sys/gettiqianfublacklistvarious',
     // url: 'http://129.28.69.40:8082/sys/gettiqianfublacklistvarious',
     method: 'post',
     data: qs.stringify(data)
@@ -2588,12 +2588,13 @@ export function httpGetbankstatuslist() {
   })
 }
 
-export function httpUpdatebankstatus(id, bankFlag, bankDetail, asid) {
+export function httpUpdatebankstatus(id, bankFlag, bankDetail, status, createTime) {
   let data = {
     id,
     bankFlag,
     bankDetail,
-    asid
+    status,
+    createTime
   };
   return axios({
     url: '/sys/updatebankstatus',
@@ -2678,5 +2679,31 @@ export function httpCollectremain() {
   return axios({
     url: '/sys/collectremain',
     method: 'get',
+  })
+}
+
+export function httpProductTotal(startTime, endTime) {
+  let data = {
+    startTime,
+    endTime,
+  }
+  return axios({
+    url: '/productTotal',
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}
+
+export function httpPublicDetails(produectId, pageSize, pageNum, type) {
+  let data = {
+    produectId,
+    pageSize,
+    pageNum,
+    type
+  }
+  return axios({
+    url: '/publicDetails',
+    method: 'post',
+    data: qs.stringify(data)
   })
 }

@@ -19,6 +19,7 @@
                 </div>
             </el-row>   
             <hr>
+             <div  v-if="!reportList" class="xy_title" style="margin-top:20px;">暂无报告</div>
             <div class="xy_title" style="margin-top:20px;">新颜报告</div>
             <el-row >
                 <el-card >

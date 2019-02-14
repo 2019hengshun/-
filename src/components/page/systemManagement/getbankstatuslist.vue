@@ -28,7 +28,7 @@
                   </template>                
             </el-table-column>
             <el-table-column prop="createTime" label="创建时间" align="center"  min-width="140">
-                <template slot-scope="scope">
+                <template slot-scope="scope" v-if="scope.row.createTime">
                     {{scope.row.createTime|dateServer}}
                 </template> 
             </el-table-column>
@@ -105,6 +105,7 @@ import {
   httpGetbankstatuslist,
   httpUpdatebankstatus
 } from "../../../service/http";
+import { timeFormat } from "../../../config/time";
 export default {
   data() {
     return {
@@ -148,7 +149,15 @@ export default {
       })
         .then(() => {
           console.log(2);
-          this.changehttpUpdatebankstatus(row.id,row.bankFlag,row.bankDetail,true);
+          this.changehttpUpdatebankstatus(
+            row.id,
+            row.bankFlag,
+            row.bankDetail,
+            true,
+            // row.createTime
+            // '2019-02-12 16:12:40'
+            // timeFormat(row.createTime) + " 00:00:00"
+          );
         })
         .catch(() => {
           this.$message({
@@ -157,7 +166,7 @@ export default {
           });
         });
     },
-    handleClose(){
+    handleClose(index, row) {
       this.$confirm("是否关闭服务状态？", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -165,9 +174,18 @@ export default {
       })
         .then(() => {
           console.log(2);
-          this.changehttpUpdatebankstatus(row.id,row.bankFlag,row.bankDetail,false);
+          this.changehttpUpdatebankstatus(
+            row.id,
+            row.bankFlag,
+            row.bankDetail,
+            false,
+          //  row.createTime
+            // '2019-02-12 16:12:40'
+            // timeFormat(row.createTime) + " 00:00:00"
+          );
         })
-        .catch(() => {
+        .catch(err => {
+          console.log(err);
           this.$message({
             type: "info",
             message: "已取消关闭"
@@ -446,33 +464,17 @@ export default {
             this.tableData = data.data;
           }
         })
-        .catch(err => {
-          let data = {
-            code: 200,
-            msg: "提交成功",
-            data: [
-              {
-                id: 1,
-                bankFlag: "bbtv",
-                bankDetail: "建设银行",
-                createTime: "2019-01-03T01:37:52.000+0000",
-                updateTime: "2019-01-03T01:37:54.000+0000",
-                status: false
-              }
-            ]
-          };
-          if (data.code == 200) {
-            this.tableData = data.data;
-          }
-        });
+        .catch(err => {});
     },
-    changehttpUpdatebankstatus(id,bankFlag,bankDetail,asid) {
-      httpUpdatebankstatus(id,bankFlag,bankDetail,asid).then(res => {
-        let data = res.data;
-        if (res.data == 200) {
-          this.gethttpGetbankstatuslist();
+    changehttpUpdatebankstatus(id, bankFlag, bankDetail, asid, createTime) {
+      httpUpdatebankstatus(id, bankFlag, bankDetail, asid, createTime).then(
+        res => {
+          let data = res.data;
+          if (data.code == 200) {
+            this.gethttpGetbankstatuslist();
+          }
         }
-      });
+      );
     }
   },
   mounted() {

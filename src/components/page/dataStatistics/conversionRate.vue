@@ -56,7 +56,7 @@ export default {
       type: "date",
       date: new Date(),
       month: "",
-      time: [],
+      time: [new Date(new Date().getTime() - 7 * 86400000),new Date()],
       preMonth: "",
       xDate: [],
       legend: ""
