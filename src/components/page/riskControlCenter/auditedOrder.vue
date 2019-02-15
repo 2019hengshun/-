@@ -347,6 +347,11 @@
 										<el-button :type="approveResult?'primary':'danger'" :disabled="!approveResult" @click="viewRiskManagementreport">查看风控报告</el-button>
 									</template>
 								</el-table-column>
+                                <el-table-column prop="applyAmt"  label="黑名单" align="center" min-width="160">
+                                  <template    slot-scope="scope" align="center">
+                                    <el-button :type="approveResult?'primary':'danger'" :disabled="!approveResult"   @click="viewBlackList()">查看黑名单</el-button>
+                                  </template>
+                                </el-table-column>                
 								<el-table-column prop="applyAmt" label="审核结果" align="center" min-width="160">
 									<template slot-scope="scope" align="center">
 										<el-button :type="activename=='three'?'danger':'primary'" :disabled="activename=='three'" @click="addResult">添加审核结果</el-button>
@@ -1513,10 +1518,10 @@
                       <th >
                         <template >
                                      <span :style="{color:temp.strategyDecision=='Reject'?'red':
-                            temp.strategyDecision=='Review'?'yellow':
+                            temp.strategyDecision=='Review'?'#FF6100':
                             temp.strategyDecision=='Accept'?'green':''}">决策分:{{temp.strategyScore}}</span> <br/>    
                                      <span :style="{color:temp.strategyDecision=='Reject'?'red':
-                            temp.strategyDecision=='Review'?'yellow':
+                            temp.strategyDecision=='Review'?'#FF6100':
                             temp.strategyDecision=='Accept'?'green':''}">决策结果
                           {{temp.strategyDecision=='Reject'?'拒绝，风险评估决策为高风险建议拒绝':
                             temp.strategyDecision=='Review'?'审核，风险评估决策为低风险建议人工审核':
@@ -1734,6 +1739,2402 @@
 					<el-button :disabled="resultFormBoolean" type="primary" @click="submitForm('resultForm')">确 定</el-button>
 				</div>
 			</el-dialog>
+
+           <el-dialog
+          width="90%"
+          title="黑名单"
+          :visible.sync=" blackListVisible"
+          append-to-body
+          center
+        >
+          <table class="table textContent">
+          
+                    <tr>
+                        <th  class="bgcolor "  style="text-align: center;">百融</th>
+                        <td colspan="5" v-if="brReport">
+                            <el-table
+                                v-if="brReport"
+                                    :data="brReport"
+                                    border
+                                        highlight-current-row style="width: 100%;font-weight:bold">
+                               <el-table-column prop="status" align="center" label="匹配结果"  width="100">
+                                      <template slot-scope="scope">
+                                                <el-tag
+                                                  :type="scope.row.status==1?'danger':''">
+                                                  {{scope.row.status==1?'是':'否'}}
+                                                  </el-tag>
+                                               </template>                                   
+                               </el-table-column>
+                                <el-table-column align="center" label="摘要"  min-width="150">
+                                      <template slot-scope="scope">
+<el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_court_bad_time"
+    :type="scope.row.blackListBaiRongVo.sl_id_court_bad_time==2?'danger':scope.row.blackListBaiRongVo.sl_id_court_bad_time==1?'info':scope.row.blackListBaiRongVo.sl_id_court_bad_time==0?'primary':''">通过身份证号查询法院失信人距今时间
+    {{scope.row.blackListBaiRongVo.sl_id_court_bad_time==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_court_bad_time==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_court_bad_time==0?'本人直接命中':''}}
+</el-tag>     
+                                        
+                                                     <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_court_bad_time"
+    :type="scope.row.blackListBaiRongVo.sl_id_court_bad_time==2?'danger':scope.row.blackListBaiRongVo.sl_id_court_bad_time==1?'info':scope.row.blackListBaiRongVo.sl_id_court_bad_time==0?'primary':''">通过身份证号查询法院失信人距今时间
+    {{scope.row.blackListBaiRongVo.sl_id_court_bad_time==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_court_bad_time==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_court_bad_time==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_court_executed_time"
+    :type="scope.row.blackListBaiRongVo.sl_id_court_executed_time==2?'danger':scope.row.blackListBaiRongVo.sl_id_court_executed_time==1?'info':scope.row.blackListBaiRongVo.sl_id_court_executed_time==0?'primary':''">通过身份证号查询法院被执行人距今时间
+    {{scope.row.blackListBaiRongVo.sl_id_court_executed_time==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_court_executed_time==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_court_executed_time==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_bad_info_time"
+    :type="scope.row.blackListBaiRongVo.sl_id_bad_info_time==2?'danger':scope.row.blackListBaiRongVo.sl_id_bad_info_time==1?'info':scope.row.blackListBaiRongVo.sl_id_bad_info_time==0?'primary':''">通过身份证查询公安信息异常距今时间
+    {{scope.row.blackListBaiRongVo.sl_id_bad_info_time==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_bad_info_time==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_bad_info_time==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_bank_bad_time"
+    :type="scope.row.blackListBaiRongVo.sl_id_bank_bad_time==2?'danger':scope.row.blackListBaiRongVo.sl_id_bank_bad_time==1?'info':scope.row.blackListBaiRongVo.sl_id_bank_bad_time==0?'primary':''">通过身份证号查询银行(含信用卡)中风险距今时间
+    {{scope.row.blackListBaiRongVo.sl_id_bank_bad_time==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_bank_bad_time==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_bank_bad_time==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_bank_overdue_time"
+    :type="scope.row.blackListBaiRongVo.sl_id_bank_overdue_time==2?'danger':scope.row.blackListBaiRongVo.sl_id_bank_overdue_time==1?'info':scope.row.blackListBaiRongVo.sl_id_bank_overdue_time==0?'primary':''">通过身份证号查询银行(含信用卡)一般风险距今时间
+    {{scope.row.blackListBaiRongVo.sl_id_bank_overdue_time==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_bank_overdue_time==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_bank_overdue_time==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_bank_fraud_time"
+    :type="scope.row.blackListBaiRongVo.sl_id_bank_fraud_time==2?'danger':scope.row.blackListBaiRongVo.sl_id_bank_fraud_time==1?'info':scope.row.blackListBaiRongVo.sl_id_bank_fraud_time==0?'primary':''">通过身份证号查询银行(含信用卡)资信不佳距今时间
+    {{scope.row.blackListBaiRongVo.sl_id_bank_fraud_time==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_bank_fraud_time==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_bank_fraud_time==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_bank_lost_time"
+    :type="scope.row.blackListBaiRongVo.sl_id_bank_lost_time==2?'danger':scope.row.blackListBaiRongVo.sl_id_bank_lost_time==1?'info':scope.row.blackListBaiRongVo.sl_id_bank_lost_time==0?'primary':''">通过身份证号查询银行(含信用卡)高风险距今时间
+    {{scope.row.blackListBaiRongVo.sl_id_bank_lost_time==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_bank_lost_time==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_bank_lost_time==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_bank_refuse_time"
+    :type="scope.row.blackListBaiRongVo.sl_id_bank_refuse_time==2?'danger':scope.row.blackListBaiRongVo.sl_id_bank_refuse_time==1?'info':scope.row.blackListBaiRongVo.sl_id_bank_refuse_time==0?'primary':''">通过身份证号查询银行(含信用卡)拒绝距今时间
+    {{scope.row.blackListBaiRongVo.sl_id_bank_refuse_time==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_bank_refuse_time==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_bank_refuse_time==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_bad_time"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_bad_time==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_bad_time==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_bad_time==0?'primary':''">通过身份证号查询非银(含全部非银类型)中风险距今时间
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_bad_time==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_bad_time==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_bad_time==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_overdue_time"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_overdue_time==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_overdue_time==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_overdue_time==0?'primary':''">通过身份证号查询非银(含全部非银类型)一般风险距今时间
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_overdue_time==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_overdue_time==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_overdue_time==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_fraud_time"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_fraud_time==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_fraud_time==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_fraud_time==0?'primary':''">通过身份证号查询非银(含全部非银类型)资信不佳距今时间
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_fraud_time==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_fraud_time==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_fraud_time==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_lost_time"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_lost_time==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_lost_time==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_lost_time==0?'primary':''">通过身份证号查询非银(含全部非银类型)高风险距今时间
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_lost_time==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_lost_time==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_lost_time==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_refuse_time"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_refuse_time==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_refuse_time==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_refuse_time==0?'primary':''">通过身份证号查询非银(含全部非银类型)拒绝距今时间
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_refuse_time==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_refuse_time==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_refuse_time==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_bad_time"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_bad_time==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_bad_time==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_bad_time==0?'primary':''">通过身份证号查询非银-持牌网络小贷中风险距今时间
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_bad_time==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_bad_time==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_bad_time==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_overdue_time"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_overdue_time==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_overdue_time==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_overdue_time==0?'primary':''">通过身份证号查询非银-持牌网络小贷一般风险距今时间
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_overdue_time==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_overdue_time==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_overdue_time==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_fraud_time"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_fraud_time==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_fraud_time==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_fraud_time==0?'primary':''">通过身份证号查询非银-持牌网络小贷资信不佳距今时间
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_fraud_time==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_fraud_time==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_fraud_time==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_lost_time"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_lost_time==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_lost_time==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_lost_time==0?'primary':''">通过身份证号查询非银-持牌网络小贷高风险距今时间
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_lost_time==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_lost_time==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_lost_time==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_refuse_time"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_refuse_time==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_refuse_time==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_refuse_time==0?'primary':''">通过身份证号查询非银-持牌网络小贷拒绝距今时间
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_refuse_time==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_refuse_time==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_refuse_time==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_sloan_bad_time"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_sloan_bad_time==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_bad_time==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_bad_time==0?'primary':''">通过身份证号查询非银-持牌小贷中风险距今时间
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_sloan_bad_time==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_bad_time==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_bad_time==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_sloan_overdue_time"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_sloan_overdue_time==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_overdue_time==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_overdue_time==0?'primary':''">通过身份证号查询非银-持牌小贷一般风险距今时间
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_sloan_overdue_time==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_overdue_time==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_overdue_time==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_sloan_fraud_time"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_sloan_fraud_time==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_fraud_time==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_fraud_time==0?'primary':''">通过身份证号查询非银-持牌小贷资信不佳距今时间
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_sloan_fraud_time==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_fraud_time==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_fraud_time==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_sloan_lost_time"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_sloan_lost_time==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_lost_time==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_lost_time==0?'primary':''">通过身份证号查询非银-持牌小贷高风险距今时间
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_sloan_lost_time==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_lost_time==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_lost_time==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_sloan_refuse_time"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_sloan_refuse_time==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_refuse_time==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_refuse_time==0?'primary':''">通过身份证号查询非银-持牌小贷拒绝距今时间
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_sloan_refuse_time==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_refuse_time==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_refuse_time==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_cons_bad_time"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_cons_bad_time==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_cons_bad_time==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_cons_bad_time==0?'primary':''">通过身份证号查询非银-持牌消费金融中风险距今时间
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_cons_bad_time==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_cons_bad_time==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_cons_bad_time==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_cons_overdue_time"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_cons_overdue_time==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_cons_overdue_time==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_cons_overdue_time==0?'primary':''">通过身份证号查询非银-持牌消费金融一般风险距今时间
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_cons_overdue_time==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_cons_overdue_time==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_cons_overdue_time==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_cons_fraud_time"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_cons_fraud_time==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_cons_fraud_time==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_cons_fraud_time==0?'primary':''">通过身份证号查询非银-持牌消费金融资信不佳距今时间
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_cons_fraud_time==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_cons_fraud_time==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_cons_fraud_time==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_cons_lost_time"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_cons_lost_time==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_cons_lost_time==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_cons_lost_time==0?'primary':''">通过身份证号查询非银-持牌消费金融高风险距今时间
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_cons_lost_time==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_cons_lost_time==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_cons_lost_time==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_cons_refuse_time"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_cons_refuse_time==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_cons_refuse_time==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_cons_refuse_time==0?'primary':''">通过身份证号查询非银-持牌消费金融拒绝距今时间
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_cons_refuse_time==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_cons_refuse_time==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_cons_refuse_time==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_finlea_bad_time"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_finlea_bad_time==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_bad_time==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_bad_time==0?'primary':''">通过身份证号查询非银-持牌融资租赁中风险距今时间
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_finlea_bad_time==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_bad_time==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_bad_time==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_finlea_overdue_time"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_finlea_overdue_time==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_overdue_time==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_overdue_time==0?'primary':''">通过身份证号查询非银-持牌融资租赁一般风险距今时间
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_finlea_overdue_time==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_overdue_time==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_overdue_time==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_finlea_fraud_time"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_finlea_fraud_time==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_fraud_time==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_fraud_time==0?'primary':''">通过身份证号查询非银-持牌融资租赁资信不佳距今时间
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_finlea_fraud_time==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_fraud_time==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_fraud_time==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_finlea_lost_time"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_finlea_lost_time==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_lost_time==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_lost_time==0?'primary':''">通过身份证号查询非银-持牌融资租赁高风险距今时间
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_finlea_lost_time==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_lost_time==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_lost_time==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_finlea_refuse_time"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_finlea_refuse_time==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_refuse_time==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_refuse_time==0?'primary':''">通过身份证号查询非银-持牌融资租赁拒绝距今时间
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_finlea_refuse_time==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_refuse_time==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_refuse_time==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_autofin_bad_time"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_autofin_bad_time==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_bad_time==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_bad_time==0?'primary':''">通过身份证号查询非银-持牌汽车金融中风险距今时间
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_autofin_bad_time==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_bad_time==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_bad_time==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_autofin_overdue_time"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_autofin_overdue_time==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_overdue_time==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_overdue_time==0?'primary':''">通过身份证号查询非银-持牌汽车金融一般风险距今时间
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_autofin_overdue_time==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_overdue_time==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_overdue_time==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_autofin_fraud_time"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_autofin_fraud_time==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_fraud_time==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_fraud_time==0?'primary':''">通过身份证号查询非银-持牌汽车金融资信不佳距今时间
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_autofin_fraud_time==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_fraud_time==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_fraud_time==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_autofin_lost_time"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_autofin_lost_time==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_lost_time==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_lost_time==0?'primary':''">通过身份证号查询非银-持牌汽车金融高风险距今时间
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_autofin_lost_time==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_lost_time==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_lost_time==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_autofin_refuse_time"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_autofin_refuse_time==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_refuse_time==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_refuse_time==0?'primary':''">通过身份证号查询非银-持牌汽车金融拒绝距今时间
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_autofin_refuse_time==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_refuse_time==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_refuse_time==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_other_bad_time"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_other_bad_time==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_other_bad_time==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_other_bad_time==0?'primary':''">通过身份证号查询非银-其他中风险距今时间
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_other_bad_time==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_other_bad_time==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_other_bad_time==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_other_overdue_time"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_other_overdue_time==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_other_overdue_time==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_other_overdue_time==0?'primary':''">通过身份证号查询非银-其他一般风险距今时间
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_other_overdue_time==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_other_overdue_time==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_other_overdue_time==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_other_fraud_time"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_other_fraud_time==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_other_fraud_time==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_other_fraud_time==0?'primary':''">通过身份证号查询非银-其他资信不佳距今时间
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_other_fraud_time==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_other_fraud_time==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_other_fraud_time==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_other_lost_time"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_other_lost_time==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_other_lost_time==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_other_lost_time==0?'primary':''">通过身份证号查询非银-其他高风险距今时间
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_other_lost_time==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_other_lost_time==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_other_lost_time==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_other_refuse_time"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_other_refuse_time==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_other_refuse_time==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_other_refuse_time==0?'primary':''">通过身份证号查询非银-其他拒绝距今时间
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_other_refuse_time==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_other_refuse_time==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_other_refuse_time==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_court_bad_allnum"
+    :type="scope.row.blackListBaiRongVo.sl_id_court_bad_allnum==2?'danger':scope.row.blackListBaiRongVo.sl_id_court_bad_allnum==1?'info':scope.row.blackListBaiRongVo.sl_id_court_bad_allnum==0?'primary':''">通过身份证号查询法院失信人命中次数
+    {{scope.row.blackListBaiRongVo.sl_id_court_bad_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_court_bad_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_court_bad_allnum==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_court_executed_allnum"
+    :type="scope.row.blackListBaiRongVo.sl_id_court_executed_allnum==2?'danger':scope.row.blackListBaiRongVo.sl_id_court_executed_allnum==1?'info':scope.row.blackListBaiRongVo.sl_id_court_executed_allnum==0?'primary':''">通过身份证号查询法院被执行人命中次数
+    {{scope.row.blackListBaiRongVo.sl_id_court_executed_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_court_executed_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_court_executed_allnum==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_bad_info_allnum"
+    :type="scope.row.blackListBaiRongVo.sl_id_bad_info_allnum==2?'danger':scope.row.blackListBaiRongVo.sl_id_bad_info_allnum==1?'info':scope.row.blackListBaiRongVo.sl_id_bad_info_allnum==0?'primary':''">通过身份证查询公安信息异常命中次数
+    {{scope.row.blackListBaiRongVo.sl_id_bad_info_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_bad_info_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_bad_info_allnum==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_bank_bad_allnum"
+    :type="scope.row.blackListBaiRongVo.sl_id_bank_bad_allnum==2?'danger':scope.row.blackListBaiRongVo.sl_id_bank_bad_allnum==1?'info':scope.row.blackListBaiRongVo.sl_id_bank_bad_allnum==0?'primary':''">通过身份证号查询银行(含信用卡)中风险命中次数
+    {{scope.row.blackListBaiRongVo.sl_id_bank_bad_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_bank_bad_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_bank_bad_allnum==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_bank_overdue_allnum"
+    :type="scope.row.blackListBaiRongVo.sl_id_bank_overdue_allnum==2?'danger':scope.row.blackListBaiRongVo.sl_id_bank_overdue_allnum==1?'info':scope.row.blackListBaiRongVo.sl_id_bank_overdue_allnum==0?'primary':''">通过身份证号查询银行(含信用卡)一般风险命中次数
+    {{scope.row.blackListBaiRongVo.sl_id_bank_overdue_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_bank_overdue_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_bank_overdue_allnum==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_bank_fraud_allnum"
+    :type="scope.row.blackListBaiRongVo.sl_id_bank_fraud_allnum==2?'danger':scope.row.blackListBaiRongVo.sl_id_bank_fraud_allnum==1?'info':scope.row.blackListBaiRongVo.sl_id_bank_fraud_allnum==0?'primary':''">通过身份证号查询银行(含信用卡)资信不佳命中次数
+    {{scope.row.blackListBaiRongVo.sl_id_bank_fraud_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_bank_fraud_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_bank_fraud_allnum==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_bank_lost_allnum"
+    :type="scope.row.blackListBaiRongVo.sl_id_bank_lost_allnum==2?'danger':scope.row.blackListBaiRongVo.sl_id_bank_lost_allnum==1?'info':scope.row.blackListBaiRongVo.sl_id_bank_lost_allnum==0?'primary':''">通过身份证号查询银行(含信用卡)高风险命中次数
+    {{scope.row.blackListBaiRongVo.sl_id_bank_lost_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_bank_lost_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_bank_lost_allnum==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_bank_refuse_allnum"
+    :type="scope.row.blackListBaiRongVo.sl_id_bank_refuse_allnum==2?'danger':scope.row.blackListBaiRongVo.sl_id_bank_refuse_allnum==1?'info':scope.row.blackListBaiRongVo.sl_id_bank_refuse_allnum==0?'primary':''">通过身份证号查询银行(含信用卡)拒绝命中次数
+    {{scope.row.blackListBaiRongVo.sl_id_bank_refuse_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_bank_refuse_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_bank_refuse_allnum==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_bad_allnum"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_bad_allnum==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_bad_allnum==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_bad_allnum==0?'primary':''">通过身份证号查询非银(含全部非银类型)中风险命中次数
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_bad_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_bad_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_bad_allnum==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_overdue_allnum"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_overdue_allnum==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_overdue_allnum==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_overdue_allnum==0?'primary':''">通过身份证号查询非银(含全部非银类型)一般风险命中次数
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_overdue_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_overdue_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_overdue_allnum==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_fraud_allnum"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_fraud_allnum==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_fraud_allnum==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_fraud_allnum==0?'primary':''">通过身份证号查询非银(含全部非银类型)资信不佳命中次数
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_fraud_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_fraud_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_fraud_allnum==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_lost_allnum"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_lost_allnum==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_lost_allnum==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_lost_allnum==0?'primary':''">通过身份证号查询非银(含全部非银类型)高风险命中次数
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_lost_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_lost_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_lost_allnum==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_refuse_allnum"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_refuse_allnum==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_refuse_allnum==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_refuse_allnum==0?'primary':''">通过身份证号查询非银(含全部非银类型)拒绝命中次数
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_refuse_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_refuse_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_refuse_allnum==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_bad_allnum"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_bad_allnum==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_bad_allnum==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_bad_allnum==0?'primary':''">通过身份证号查询非银-持牌网络小贷中风险命中次数
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_bad_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_bad_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_bad_allnum==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_overdue_allnum"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_overdue_allnum==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_overdue_allnum==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_overdue_allnum==0?'primary':''">通过身份证号查询非银-持牌网络小贷一般风险命中次数
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_overdue_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_overdue_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_overdue_allnum==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_fraud_allnum"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_fraud_allnum==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_fraud_allnum==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_fraud_allnum==0?'primary':''">通过身份证号查询非银-持牌网络小贷资信不佳命中次数
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_fraud_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_fraud_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_fraud_allnum==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_lost_allnum"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_lost_allnum==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_lost_allnum==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_lost_allnum==0?'primary':''">通过身份证号查询非银-持牌网络小贷高风险命中次数
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_lost_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_lost_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_lost_allnum==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_refuse_allnum"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_refuse_allnum==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_refuse_allnum==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_refuse_allnum==0?'primary':''">通过身份证号查询非银-持牌网络小贷拒绝命中次数
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_refuse_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_refuse_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_refuse_allnum==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_sloan_bad_allnum"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_sloan_bad_allnum==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_bad_allnum==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_bad_allnum==0?'primary':''">通过身份证号查询非银-持牌小贷中风险命中次数
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_sloan_bad_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_bad_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_bad_allnum==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_sloan_overdue_allnum"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_sloan_overdue_allnum==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_overdue_allnum==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_overdue_allnum==0?'primary':''">通过身份证号查询非银-持牌小贷一般风险命中次数
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_sloan_overdue_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_overdue_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_overdue_allnum==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_sloan_fraud_allnum"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_sloan_fraud_allnum==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_fraud_allnum==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_fraud_allnum==0?'primary':''">通过身份证号查询非银-持牌小贷资信不佳命中次数
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_sloan_fraud_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_fraud_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_fraud_allnum==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_sloan_lost_allnum"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_sloan_lost_allnum==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_lost_allnum==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_lost_allnum==0?'primary':''">通过身份证号查询非银-持牌小贷高风险命中次数
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_sloan_lost_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_lost_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_lost_allnum==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_sloan_refuse_allnum"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_sloan_refuse_allnum==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_refuse_allnum==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_refuse_allnum==0?'primary':''">通过身份证号查询非银-持牌小贷拒绝命中次数
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_sloan_refuse_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_refuse_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_refuse_allnum==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_cons_bad_allnum"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_cons_bad_allnum==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_cons_bad_allnum==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_cons_bad_allnum==0?'primary':''">通过身份证号查询非银-持牌消费金融中风险命中次数
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_cons_bad_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_cons_bad_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_cons_bad_allnum==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_cons_overdue_allnum"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_cons_overdue_allnum==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_cons_overdue_allnum==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_cons_overdue_allnum==0?'primary':''">通过身份证号查询非银-持牌消费金融一般风险命中次数
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_cons_overdue_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_cons_overdue_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_cons_overdue_allnum==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_cons_fraud_allnum"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_cons_fraud_allnum==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_cons_fraud_allnum==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_cons_fraud_allnum==0?'primary':''">通过身份证号查询非银-持牌消费金融资信不佳命中次数
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_cons_fraud_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_cons_fraud_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_cons_fraud_allnum==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_cons_lost_allnum"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_cons_lost_allnum==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_cons_lost_allnum==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_cons_lost_allnum==0?'primary':''">通过身份证号查询非银-持牌消费金融高风险命中次数
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_cons_lost_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_cons_lost_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_cons_lost_allnum==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_cons_refuse_allnum"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_cons_refuse_allnum==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_cons_refuse_allnum==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_cons_refuse_allnum==0?'primary':''">通过身份证号查询非银-持牌消费金融拒绝命中次数
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_cons_refuse_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_cons_refuse_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_cons_refuse_allnum==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_finlea_bad_allnum"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_finlea_bad_allnum==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_bad_allnum==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_bad_allnum==0?'primary':''">通过身份证号查询非银-持牌融资租赁中风险命中次数
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_finlea_bad_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_bad_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_bad_allnum==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_finlea_overdue_allnum"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_finlea_overdue_allnum==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_overdue_allnum==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_overdue_allnum==0?'primary':''">通过身份证号查询非银-持牌融资租赁一般风险命中次数
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_finlea_overdue_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_overdue_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_overdue_allnum==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_finlea_fraud_allnum"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_finlea_fraud_allnum==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_fraud_allnum==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_fraud_allnum==0?'primary':''">通过身份证号查询非银-持牌融资租赁资信不佳命中次数
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_finlea_fraud_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_fraud_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_fraud_allnum==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_finlea_lost_allnum"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_finlea_lost_allnum==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_lost_allnum==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_lost_allnum==0?'primary':''">通过身份证号查询非银-持牌融资租赁高风险命中次数
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_finlea_lost_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_lost_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_lost_allnum==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_finlea_refuse_allnum"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_finlea_refuse_allnum==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_refuse_allnum==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_refuse_allnum==0?'primary':''">通过身份证号查询非银-持牌融资租赁拒绝命中次数
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_finlea_refuse_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_refuse_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_refuse_allnum==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_autofin_bad_allnum"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_autofin_bad_allnum==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_bad_allnum==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_bad_allnum==0?'primary':''">通过身份证号查询非银-持牌汽车金融中风险命中次数
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_autofin_bad_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_bad_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_bad_allnum==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_autofin_overdue_allnum"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_autofin_overdue_allnum==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_overdue_allnum==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_overdue_allnum==0?'primary':''">通过身份证号查询非银-持牌汽车金融一般风险命中次数
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_autofin_overdue_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_overdue_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_overdue_allnum==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_autofin_fraud_allnum"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_autofin_fraud_allnum==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_fraud_allnum==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_fraud_allnum==0?'primary':''">通过身份证号查询非银-持牌汽车金融资信不佳命中次数
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_autofin_fraud_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_fraud_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_fraud_allnum==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_autofin_lost_allnum"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_autofin_lost_allnum==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_lost_allnum==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_lost_allnum==0?'primary':''">通过身份证号查询非银-持牌汽车金融高风险命中次数
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_autofin_lost_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_lost_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_lost_allnum==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_autofin_refuse_allnum"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_autofin_refuse_allnum==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_refuse_allnum==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_refuse_allnum==0?'primary':''">通过身份证号查询非银-持牌汽车金融拒绝命中次数
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_autofin_refuse_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_refuse_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_refuse_allnum==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_other_bad_allnum"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_other_bad_allnum==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_other_bad_allnum==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_other_bad_allnum==0?'primary':''">通过身份证号查询非银-其他中风险命中次数
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_other_bad_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_other_bad_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_other_bad_allnum==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_other_overdue_allnum"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_other_overdue_allnum==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_other_overdue_allnum==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_other_overdue_allnum==0?'primary':''">通过身份证号查询非银-其他一般风险命中次数
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_other_overdue_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_other_overdue_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_other_overdue_allnum==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_other_fraud_allnum"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_other_fraud_allnum==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_other_fraud_allnum==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_other_fraud_allnum==0?'primary':''">通过身份证号查询非银-其他资信不佳命中次数
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_other_fraud_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_other_fraud_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_other_fraud_allnum==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_other_lost_allnum"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_other_lost_allnum==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_other_lost_allnum==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_other_lost_allnum==0?'primary':''">通过身份证号查询非银-其他高风险命中次数
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_other_lost_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_other_lost_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_other_lost_allnum==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_other_refuse_allnum"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_other_refuse_allnum==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_other_refuse_allnum==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_other_refuse_allnum==0?'primary':''">通过身份证号查询非银-其他拒绝命中次数
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_other_refuse_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_other_refuse_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_other_refuse_allnum==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_court_bad"
+    :type="scope.row.blackListBaiRongVo.sl_id_court_bad==2?'danger':scope.row.blackListBaiRongVo.sl_id_court_bad==1?'info':scope.row.blackListBaiRongVo.sl_id_court_bad==0?'primary':''">通过身份证号查询法院失信人
+    {{scope.row.blackListBaiRongVo.sl_id_court_bad==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_court_bad==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_court_bad==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_court_executed"
+    :type="scope.row.blackListBaiRongVo.sl_id_court_executed==2?'danger':scope.row.blackListBaiRongVo.sl_id_court_executed==1?'info':scope.row.blackListBaiRongVo.sl_id_court_executed==0?'primary':''">通过身份证号查询法院被执行人
+    {{scope.row.blackListBaiRongVo.sl_id_court_executed==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_court_executed==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_court_executed==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_bad_info"
+    :type="scope.row.blackListBaiRongVo.sl_id_bad_info==2?'danger':scope.row.blackListBaiRongVo.sl_id_bad_info==1?'info':scope.row.blackListBaiRongVo.sl_id_bad_info==0?'primary':''">通过身份证查询公安信息异常
+    {{scope.row.blackListBaiRongVo.sl_id_bad_info==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_bad_info==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_bad_info==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_bank_bad"
+    :type="scope.row.blackListBaiRongVo.sl_id_bank_bad==2?'danger':scope.row.blackListBaiRongVo.sl_id_bank_bad==1?'info':scope.row.blackListBaiRongVo.sl_id_bank_bad==0?'primary':''">通过身份证号查询银行(含信用卡)中风险
+    {{scope.row.blackListBaiRongVo.sl_id_bank_bad==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_bank_bad==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_bank_bad==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_bank_overdue"
+    :type="scope.row.blackListBaiRongVo.sl_id_bank_overdue==2?'danger':scope.row.blackListBaiRongVo.sl_id_bank_overdue==1?'info':scope.row.blackListBaiRongVo.sl_id_bank_overdue==0?'primary':''">通过身份证号查询银行(含信用卡)一般风险
+    {{scope.row.blackListBaiRongVo.sl_id_bank_overdue==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_bank_overdue==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_bank_overdue==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_bank_fraud"
+    :type="scope.row.blackListBaiRongVo.sl_id_bank_fraud==2?'danger':scope.row.blackListBaiRongVo.sl_id_bank_fraud==1?'info':scope.row.blackListBaiRongVo.sl_id_bank_fraud==0?'primary':''">通过身份证号查询银行(含信用卡)资信不佳
+    {{scope.row.blackListBaiRongVo.sl_id_bank_fraud==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_bank_fraud==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_bank_fraud==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_bank_lost"
+    :type="scope.row.blackListBaiRongVo.sl_id_bank_lost==2?'danger':scope.row.blackListBaiRongVo.sl_id_bank_lost==1?'info':scope.row.blackListBaiRongVo.sl_id_bank_lost==0?'primary':''">通过身份证号查询银行(含信用卡)高风险
+    {{scope.row.blackListBaiRongVo.sl_id_bank_lost==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_bank_lost==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_bank_lost==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_bank_refuse"
+    :type="scope.row.blackListBaiRongVo.sl_id_bank_refuse==2?'danger':scope.row.blackListBaiRongVo.sl_id_bank_refuse==1?'info':scope.row.blackListBaiRongVo.sl_id_bank_refuse==0?'primary':''">通过身份证号查询银行(含信用卡)拒绝
+    {{scope.row.blackListBaiRongVo.sl_id_bank_refuse==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_bank_refuse==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_bank_refuse==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_bad"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_bad==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_bad==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_bad==0?'primary':''">通过身份证号查询非银(含全部非银类型)中风险
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_bad==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_bad==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_bad==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_overdue"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_overdue==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_overdue==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_overdue==0?'primary':''">通过身份证号查询非银(含全部非银类型)一般风险
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_overdue==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_overdue==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_overdue==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_fraud"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_fraud==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_fraud==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_fraud==0?'primary':''">通过身份证号查询非银(含全部非银类型)资信不佳
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_fraud==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_fraud==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_fraud==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_lost"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_lost==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_lost==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_lost==0?'primary':''">通过身份证号查询非银(含全部非银类型)高风险
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_lost==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_lost==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_lost==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_refuse"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_refuse==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_refuse==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_refuse==0?'primary':''">通过身份证号查询非银(含全部非银类型)拒绝
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_refuse==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_refuse==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_refuse==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_bad"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_bad==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_bad==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_bad==0?'primary':''">通过身份证号查询非银-持牌网络小贷中风险
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_bad==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_bad==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_bad==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_overdue"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_overdue==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_overdue==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_overdue==0?'primary':''">通过身份证号查询非银-持牌网络小贷一般风险
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_overdue==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_overdue==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_overdue==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_fraud"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_fraud==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_fraud==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_fraud==0?'primary':''">通过身份证号查询非银-持牌网络小贷资信不佳
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_fraud==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_fraud==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_fraud==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_lost"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_lost==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_lost==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_lost==0?'primary':''">通过身份证号查询非银-持牌网络小贷高风险
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_lost==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_lost==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_lost==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_refuse"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_refuse==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_refuse==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_refuse==0?'primary':''">通过身份证号查询非银-持牌网络小贷拒绝
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_refuse==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_refuse==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_nsloan_refuse==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_sloan_bad"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_sloan_bad==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_bad==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_bad==0?'primary':''">通过身份证号查询非银-持牌小贷中风险
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_sloan_bad==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_bad==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_bad==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_sloan_overdue"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_sloan_overdue==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_overdue==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_overdue==0?'primary':''">通过身份证号查询非银-持牌小贷一般风险
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_sloan_overdue==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_overdue==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_overdue==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_sloan_fraud"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_sloan_fraud==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_fraud==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_fraud==0?'primary':''">通过身份证号查询非银-持牌小贷资信不佳
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_sloan_fraud==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_fraud==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_fraud==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_sloan_lost"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_sloan_lost==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_lost==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_lost==0?'primary':''">通过身份证号查询非银-持牌小贷高风险
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_sloan_lost==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_lost==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_lost==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_sloan_refuse"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_sloan_refuse==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_refuse==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_refuse==0?'primary':''">通过身份证号查询非银-持牌小贷拒绝
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_sloan_refuse==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_refuse==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_sloan_refuse==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_cons_bad"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_cons_bad==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_cons_bad==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_cons_bad==0?'primary':''">通过身份证号查询非银-持牌消费金融中风险
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_cons_bad==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_cons_bad==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_cons_bad==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_cons_overdue"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_cons_overdue==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_cons_overdue==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_cons_overdue==0?'primary':''">通过身份证号查询非银-持牌消费金融一般风险
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_cons_overdue==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_cons_overdue==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_cons_overdue==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_cons_fraud"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_cons_fraud==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_cons_fraud==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_cons_fraud==0?'primary':''">通过身份证号查询非银-持牌消费金融资信不佳
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_cons_fraud==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_cons_fraud==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_cons_fraud==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_cons_lost"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_cons_lost==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_cons_lost==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_cons_lost==0?'primary':''">通过身份证号查询非银-持牌消费金融高风险
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_cons_lost==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_cons_lost==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_cons_lost==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_cons_refuse"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_cons_refuse==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_cons_refuse==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_cons_refuse==0?'primary':''">通过身份证号查询非银-持牌消费金融拒绝
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_cons_refuse==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_cons_refuse==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_cons_refuse==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_finlea_bad"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_finlea_bad==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_bad==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_bad==0?'primary':''">通过身份证号查询非银-持牌融资租赁中风险
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_finlea_bad==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_bad==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_bad==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_finlea_overdue"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_finlea_overdue==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_overdue==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_overdue==0?'primary':''">通过身份证号查询非银-持牌融资租赁一般风险
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_finlea_overdue==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_overdue==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_overdue==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_finlea_fraud"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_finlea_fraud==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_fraud==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_fraud==0?'primary':''">通过身份证号查询非银-持牌融资租赁资信不佳
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_finlea_fraud==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_fraud==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_fraud==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_finlea_lost"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_finlea_lost==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_lost==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_lost==0?'primary':''">通过身份证号查询非银-持牌融资租赁高风险
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_finlea_lost==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_lost==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_lost==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_finlea_refuse"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_finlea_refuse==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_refuse==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_refuse==0?'primary':''">通过身份证号查询非银-持牌融资租赁拒绝
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_finlea_refuse==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_refuse==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_finlea_refuse==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_autofin_bad"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_autofin_bad==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_bad==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_bad==0?'primary':''">通过身份证号查询非银-持牌汽车金融中风险
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_autofin_bad==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_bad==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_bad==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_autofin_overdue"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_autofin_overdue==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_overdue==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_overdue==0?'primary':''">通过身份证号查询非银-持牌汽车金融一般风险
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_autofin_overdue==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_overdue==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_overdue==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_autofin_fraud"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_autofin_fraud==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_fraud==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_fraud==0?'primary':''">通过身份证号查询非银-持牌汽车金融资信不佳
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_autofin_fraud==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_fraud==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_fraud==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_autofin_lost"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_autofin_lost==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_lost==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_lost==0?'primary':''">通过身份证号查询非银-持牌汽车金融高风险
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_autofin_lost==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_lost==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_lost==0?'本人直接命中':''}}
+</el-tag>                
+                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_autofin_refuse"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_autofin_refuse==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_refuse==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_refuse==0?'primary':''">通过身份证号查询非银-持牌汽车金融拒绝
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_autofin_refuse==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_refuse==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_autofin_refuse==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_other_bad"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_other_bad==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_other_bad==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_other_bad==0?'primary':''">通过身份证号查询非银-其他中风险
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_other_bad==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_other_bad==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_other_bad==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_other_overdue"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_other_overdue==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_other_overdue==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_other_overdue==0?'primary':''">通过身份证号查询非银-其他一般风险
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_other_overdue==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_other_overdue==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_other_overdue==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_other_fraud"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_other_fraud==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_other_fraud==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_other_fraud==0?'primary':''">通过身份证号查询非银-其他资信不佳
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_other_fraud==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_other_fraud==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_other_fraud==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_other_lost"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_other_lost==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_other_lost==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_other_lost==0?'primary':''">通过身份证号查询非银-其他高风险
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_other_lost==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_other_lost==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_other_lost==0?'本人直接命中':''}}
+</el-tag>                                            <el-tag
+    v-if="scope.row.blackListBaiRongVo.sl_id_nbank_other_refuse"
+    :type="scope.row.blackListBaiRongVo.sl_id_nbank_other_refuse==2?'danger':scope.row.blackListBaiRongVo.sl_id_nbank_other_refuse==1?'info':scope.row.blackListBaiRongVo.sl_id_nbank_other_refuse==0?'primary':''">通过身份证号查询非银-其他拒绝
+    {{scope.row.blackListBaiRongVo.sl_id_nbank_other_refuse==2?'二度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_other_refuse==1?'一度关系命中':scope.row.blackListBaiRongVo.sl_id_nbank_other_refuse==0?'本人直接命中':''}}
+</el-tag>     
+   <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_bad_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_bad_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_bad_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_bad_time==0?'primary':''">通过联系人手机查询银行(含信用卡)中风险距今时间
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_bad_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_bad_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_bad_time==0?'本人直接命中':''}}
+  </el-tag>  
+      <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_overdue_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_overdue_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_overdue_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_overdue_time==0?'primary':''">通过联系人手机查询银行(含信用卡)一般风险距今时间
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_overdue_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_overdue_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_overdue_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_fraud_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_fraud_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_fraud_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_fraud_time==0?'primary':''">通过联系人手机查询银行(含信用卡)资信不佳距今时间
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_fraud_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_fraud_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_fraud_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_lost_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_lost_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_lost_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_lost_time==0?'primary':''">通过联系人手机查询银行(含信用卡)高风险距今时间
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_lost_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_lost_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_lost_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_refuse_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_refuse_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_refuse_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_refuse_time==0?'primary':''">通过联系人手机查询银行(含信用卡)拒绝距今时间
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_refuse_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_refuse_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_refuse_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_bad_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_bad_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_bad_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_bad_time==0?'primary':''">通过联系人手机号查询非银(含全部非银类型)中风险距今时间
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_bad_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_bad_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_bad_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_overdue_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_overdue_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_overdue_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_overdue_time==0?'primary':''">通过联系人手机号查询非银(含全部非银类型)一般风险距今时间
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_overdue_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_overdue_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_overdue_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_fraud_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_fraud_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_fraud_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_fraud_time==0?'primary':''">通过联系人手机号查询非银(含全部非银类型)资信不佳距今时间
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_fraud_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_fraud_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_fraud_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_lost_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_lost_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_lost_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_lost_time==0?'primary':''">通过联系人手机号查询非银(含全部非银类型)高风险距今时间
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_lost_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_lost_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_lost_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_refuse_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_refuse_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_refuse_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_refuse_time==0?'primary':''">通过联系人手机号查询非银(含全部非银类型)拒绝距今时间
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_refuse_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_refuse_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_refuse_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_bad_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_bad_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_bad_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_bad_time==0?'primary':''">通过联系人手机号查询非银-持牌网络小贷中风险距今时间
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_bad_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_bad_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_bad_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_overdue_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_overdue_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_overdue_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_overdue_time==0?'primary':''">通过联系人手机号查询非银-持牌网络小贷一般风险距今时间
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_overdue_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_overdue_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_overdue_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_fraud_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_fraud_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_fraud_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_fraud_time==0?'primary':''">通过联系人手机号查询非银-持牌网络小贷资信不佳距今时间
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_fraud_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_fraud_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_fraud_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_lost_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_lost_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_lost_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_lost_time==0?'primary':''">通过联系人手机号查询非银-持牌网络小贷高风险距今时间
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_lost_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_lost_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_lost_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_refuse_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_refuse_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_refuse_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_refuse_time==0?'primary':''">通过联系人手机号查询非银-持牌网络小贷拒绝距今时间
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_refuse_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_refuse_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_refuse_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_bad_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_bad_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_bad_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_bad_time==0?'primary':''">通过联系人手机号查询非银-持牌小贷中风险距今时间
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_bad_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_bad_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_bad_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_overdue_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_overdue_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_overdue_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_overdue_time==0?'primary':''">通过联系人手机号查询非银-持牌小贷一般风险距今时间
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_overdue_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_overdue_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_overdue_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_fraud_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_fraud_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_fraud_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_fraud_time==0?'primary':''">通过联系人手机号查询非银-持牌小贷资信不佳距今时间
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_fraud_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_fraud_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_fraud_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_lost_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_lost_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_lost_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_lost_time==0?'primary':''">通过联系人手机号查询非银-持牌小贷高风险距今时间
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_lost_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_lost_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_lost_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_refuse_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_refuse_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_refuse_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_refuse_time==0?'primary':''">通过联系人手机号查询非银-持牌小贷拒绝距今时间
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_refuse_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_refuse_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_refuse_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_bad_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_bad_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_bad_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_bad_time==0?'primary':''">通过联系人手机号查询非银-持牌消费金融中风险距今时间
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_bad_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_bad_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_bad_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_overdue_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_overdue_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_overdue_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_overdue_time==0?'primary':''">通过联系人手机号查询非银-持牌消费金融一般风险距今时间
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_overdue_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_overdue_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_overdue_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_fraud_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_fraud_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_fraud_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_fraud_time==0?'primary':''">通过联系人手机号查询非银-持牌消费金融资信不佳距今时间
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_fraud_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_fraud_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_fraud_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_lost_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_lost_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_lost_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_lost_time==0?'primary':''">通过联系人手机号查询非银-持牌消费金融高风险距今时间
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_lost_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_lost_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_lost_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_refuse_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_refuse_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_refuse_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_refuse_time==0?'primary':''">通过联系人手机号查询非银-持牌消费金融拒绝距今时间
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_refuse_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_refuse_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_refuse_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_bad_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_bad_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_bad_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_bad_time==0?'primary':''">通过联系人手机号查询非银-持牌融资租赁中风险距今时间
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_bad_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_bad_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_bad_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_overdue_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_overdue_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_overdue_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_overdue_time==0?'primary':''">通过联系人手机号查询非银-持牌融资租赁一般风险距今时间
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_overdue_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_overdue_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_overdue_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_fraud_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_fraud_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_fraud_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_fraud_time==0?'primary':''">通过联系人手机号查询非银-持牌融资租赁资信不佳距今时间
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_fraud_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_fraud_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_fraud_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_lost_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_lost_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_lost_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_lost_time==0?'primary':''">通过联系人手机号查询非银-持牌融资租赁高风险距今时间
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_lost_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_lost_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_lost_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_refuse_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_refuse_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_refuse_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_refuse_time==0?'primary':''">通过联系人手机号查询非银-持牌融资租赁拒绝距今时间
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_refuse_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_refuse_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_refuse_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_bad_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_bad_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_bad_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_bad_time==0?'primary':''">通过联系人手机号查询非银-持牌汽车金融中风险距今时间
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_bad_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_bad_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_bad_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_overdue_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_overdue_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_overdue_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_overdue_time==0?'primary':''">通过联系人手机号查询非银-持牌汽车金融一般风险距今时间
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_overdue_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_overdue_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_overdue_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_fraud_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_fraud_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_fraud_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_fraud_time==0?'primary':''">通过联系人手机号查询非银-持牌汽车金融资信不佳距今时间
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_fraud_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_fraud_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_fraud_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_lost_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_lost_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_lost_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_lost_time==0?'primary':''">通过联系人手机号查询非银-持牌汽车金融高风险距今时间
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_lost_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_lost_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_lost_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_refuse_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_refuse_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_refuse_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_refuse_time==0?'primary':''">通过联系人手机号查询非银-持牌汽车金融拒绝距今时间
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_refuse_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_refuse_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_refuse_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_bad_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_bad_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_bad_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_bad_time==0?'primary':''">通过联系人手机查询非银-其他中风险距今时间
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_bad_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_bad_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_bad_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_overdue_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_overdue_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_overdue_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_overdue_time==0?'primary':''">通过联系人手机查询非银-其他一般风险距今时间
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_overdue_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_overdue_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_overdue_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_fraud_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_fraud_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_fraud_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_fraud_time==0?'primary':''">通过联系人手机查询非银-其他资信不佳距今时间
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_fraud_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_fraud_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_fraud_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_lost_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_lost_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_lost_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_lost_time==0?'primary':''">通过联系人手机查询非银-其他高风险距今时间
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_lost_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_lost_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_lost_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_refuse_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_refuse_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_refuse_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_refuse_time==0?'primary':''">通过联系人手机查询非银-其他拒绝距今时间
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_refuse_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_refuse_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_refuse_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_bad_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_bad_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_bad_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_bad_allnum==0?'primary':''">通过联系人手机查询银行(含信用卡)中风险命中次数
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_bad_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_bad_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_bad_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_overdue_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_overdue_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_overdue_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_overdue_allnum==0?'primary':''">通过联系人手机查询银行(含信用卡)一般风险命中次数
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_overdue_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_overdue_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_overdue_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_fraud_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_fraud_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_fraud_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_fraud_allnum==0?'primary':''">通过联系人手机查询银行(含信用卡)资信不佳命中次数
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_fraud_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_fraud_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_fraud_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_lost_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_lost_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_lost_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_lost_allnum==0?'primary':''">通过联系人手机查询银行(含信用卡)高风险命中次数
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_lost_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_lost_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_lost_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_refuse_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_refuse_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_refuse_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_refuse_allnum==0?'primary':''">通过联系人手机查询银行(含信用卡)拒绝命中次数
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_refuse_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_refuse_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_refuse_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_bad_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_bad_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_bad_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_bad_allnum==0?'primary':''">通过联系人手机号查询非银(含全部非银类型)中风险命中次数
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_bad_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_bad_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_bad_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_overdue_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_overdue_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_overdue_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_overdue_allnum==0?'primary':''">通过联系人手机号查询非银(含全部非银类型)一般风险命中次数
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_overdue_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_overdue_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_overdue_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_fraud_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_fraud_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_fraud_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_fraud_allnum==0?'primary':''">通过联系人手机号查询非银(含全部非银类型)资信不佳命中次数
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_fraud_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_fraud_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_fraud_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_lost_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_lost_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_lost_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_lost_allnum==0?'primary':''">通过联系人手机号查询非银(含全部非银类型)高风险命中次数
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_lost_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_lost_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_lost_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_refuse_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_refuse_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_refuse_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_refuse_allnum==0?'primary':''">通过联系人手机号查询非银(含全部非银类型)拒绝命中次数
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_refuse_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_refuse_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_refuse_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_bad_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_bad_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_bad_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_bad_allnum==0?'primary':''">通过联系人手机号查询非银-持牌网络小贷中风险命中次数
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_bad_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_bad_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_bad_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_overdue_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_overdue_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_overdue_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_overdue_allnum==0?'primary':''">通过联系人手机号查询非银-持牌网络小贷一般风险命中次数
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_overdue_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_overdue_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_overdue_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_fraud_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_fraud_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_fraud_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_fraud_allnum==0?'primary':''">通过联系人手机号查询非银-持牌网络小贷资信不佳命中次数
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_fraud_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_fraud_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_fraud_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_lost_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_lost_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_lost_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_lost_allnum==0?'primary':''">通过联系人手机号查询非银-持牌网络小贷高风险命中次数
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_lost_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_lost_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_lost_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_refuse_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_refuse_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_refuse_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_refuse_allnum==0?'primary':''">通过联系人手机号查询非银-持牌网络小贷拒绝命中次数
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_refuse_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_refuse_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_refuse_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_bad_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_bad_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_bad_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_bad_allnum==0?'primary':''">通过联系人手机号查询非银-持牌小贷中风险命中次数
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_bad_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_bad_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_bad_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_overdue_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_overdue_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_overdue_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_overdue_allnum==0?'primary':''">通过联系人手机号查询非银-持牌小贷一般风险命中次数
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_overdue_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_overdue_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_overdue_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_fraud_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_fraud_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_fraud_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_fraud_allnum==0?'primary':''">通过联系人手机号查询非银-持牌小贷资信不佳命中次数
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_fraud_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_fraud_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_fraud_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_lost_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_lost_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_lost_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_lost_allnum==0?'primary':''">通过联系人手机号查询非银-持牌小贷高风险命中次数
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_lost_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_lost_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_lost_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_refuse_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_refuse_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_refuse_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_refuse_allnum==0?'primary':''">通过联系人手机号查询非银-持牌小贷拒绝命中次数
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_refuse_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_refuse_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_refuse_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_bad_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_bad_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_bad_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_bad_allnum==0?'primary':''">通过联系人手机号查询非银-持牌消费金融中风险命中次数
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_bad_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_bad_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_bad_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_overdue_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_overdue_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_overdue_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_overdue_allnum==0?'primary':''">通过联系人手机号查询非银-持牌消费金融一般风险命中次数
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_overdue_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_overdue_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_overdue_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_fraud_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_fraud_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_fraud_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_fraud_allnum==0?'primary':''">通过联系人手机号查询非银-持牌消费金融资信不佳命中次数
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_fraud_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_fraud_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_fraud_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_lost_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_lost_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_lost_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_lost_allnum==0?'primary':''">通过联系人手机号查询非银-持牌消费金融高风险命中次数
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_lost_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_lost_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_lost_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_refuse_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_refuse_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_refuse_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_refuse_allnum==0?'primary':''">通过联系人手机号查询非银-持牌消费金融拒绝命中次数
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_refuse_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_refuse_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_refuse_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_bad_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_bad_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_bad_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_bad_allnum==0?'primary':''">通过联系人手机号查询非银-持牌融资租赁中风险命中次数
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_bad_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_bad_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_bad_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_overdue_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_overdue_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_overdue_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_overdue_allnum==0?'primary':''">通过联系人手机号查询非银-持牌融资租赁一般风险命中次数
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_overdue_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_overdue_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_overdue_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_fraud_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_fraud_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_fraud_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_fraud_allnum==0?'primary':''">通过联系人手机号查询非银-持牌融资租赁资信不佳命中次数
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_fraud_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_fraud_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_fraud_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_lost_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_lost_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_lost_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_lost_allnum==0?'primary':''">通过联系人手机号查询非银-持牌融资租赁高风险命中次数
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_lost_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_lost_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_lost_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_refuse_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_refuse_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_refuse_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_refuse_allnum==0?'primary':''">通过联系人手机号查询非银-持牌融资租赁拒绝命中次数
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_refuse_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_refuse_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_refuse_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_bad_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_bad_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_bad_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_bad_allnum==0?'primary':''">通过联系人手机号查询非银-持牌汽车金融中风险命中次数
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_bad_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_bad_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_bad_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_overdue_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_overdue_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_overdue_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_overdue_allnum==0?'primary':''">通过联系人手机号查询非银-持牌汽车金融一般风险命中次数
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_overdue_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_overdue_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_overdue_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_fraud_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_fraud_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_fraud_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_fraud_allnum==0?'primary':''">通过联系人手机号查询非银-持牌汽车金融资信不佳命中次数
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_fraud_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_fraud_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_fraud_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_lost_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_lost_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_lost_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_lost_allnum==0?'primary':''">通过联系人手机号查询非银-持牌汽车金融高风险命中次数
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_lost_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_lost_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_lost_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_refuse_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_refuse_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_refuse_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_refuse_allnum==0?'primary':''">通过联系人手机号查询非银-持牌汽车金融拒绝命中次数
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_refuse_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_refuse_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_refuse_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_bad_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_bad_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_bad_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_bad_allnum==0?'primary':''">通过联系人手机查询非银-其他中风险命中次数
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_bad_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_bad_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_bad_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_overdue_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_overdue_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_overdue_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_overdue_allnum==0?'primary':''">通过联系人手机查询非银-其他一般风险命中次数
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_overdue_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_overdue_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_overdue_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_fraud_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_fraud_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_fraud_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_fraud_allnum==0?'primary':''">通过联系人手机查询非银-其他资信不佳命中次数
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_fraud_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_fraud_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_fraud_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_lost_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_lost_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_lost_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_lost_allnum==0?'primary':''">通过联系人手机查询非银-其他高风险命中次数
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_lost_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_lost_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_lost_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_refuse_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_refuse_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_refuse_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_refuse_allnum==0?'primary':''">通过联系人手机查询非银-其他拒绝命中次数
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_refuse_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_refuse_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_refuse_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_bad"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_bad==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_bad==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_bad==0?'primary':''">通过联系人手机查询银行(含信用卡)中风险
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_bad==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_bad==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_bad==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_overdue"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_overdue==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_overdue==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_overdue==0?'primary':''">通过联系人手机查询银行(含信用卡)一般风险
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_overdue==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_overdue==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_overdue==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_fraud"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_fraud==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_fraud==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_fraud==0?'primary':''">通过联系人手机查询银行(含信用卡)资信不佳
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_fraud==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_fraud==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_fraud==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_lost"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_lost==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_lost==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_lost==0?'primary':''">通过联系人手机查询银行(含信用卡)高风险
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_lost==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_lost==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_lost==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_refuse"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_refuse==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_refuse==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_refuse==0?'primary':''">通过联系人手机查询银行(含信用卡)拒绝
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_refuse==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_refuse==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_bank_refuse==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_bad"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_bad==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_bad==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_bad==0?'primary':''">通过联系人手机号查询非银(含全部非银类型)中风险
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_bad==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_bad==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_bad==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_overdue"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_overdue==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_overdue==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_overdue==0?'primary':''">通过联系人手机号查询非银(含全部非银类型)一般风险
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_overdue==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_overdue==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_overdue==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_fraud"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_fraud==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_fraud==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_fraud==0?'primary':''">通过联系人手机号查询非银(含全部非银类型)资信不佳
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_fraud==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_fraud==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_fraud==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_lost"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_lost==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_lost==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_lost==0?'primary':''">通过联系人手机号查询非银(含全部非银类型)高风险
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_lost==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_lost==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_lost==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_refuse"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_refuse==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_refuse==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_refuse==0?'primary':''">通过联系人手机号查询非银(含全部非银类型)拒绝
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_refuse==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_refuse==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_refuse==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_bad"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_bad==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_bad==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_bad==0?'primary':''">通过联系人手机号查询非银-持牌网络小贷中风险
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_bad==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_bad==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_bad==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_overdue"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_overdue==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_overdue==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_overdue==0?'primary':''">通过联系人手机号查询非银-持牌网络小贷一般风险
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_overdue==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_overdue==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_overdue==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_fraud"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_fraud==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_fraud==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_fraud==0?'primary':''">通过联系人手机号查询非银-持牌网络小贷资信不佳
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_fraud==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_fraud==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_fraud==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_lost"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_lost==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_lost==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_lost==0?'primary':''">通过联系人手机号查询非银-持牌网络小贷高风险
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_lost==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_lost==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_lost==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_refuse"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_refuse==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_refuse==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_refuse==0?'primary':''">通过联系人手机号查询非银-持牌网络小贷拒绝
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_refuse==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_refuse==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_nsloan_refuse==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_bad"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_bad==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_bad==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_bad==0?'primary':''">通过联系人手机号查询非银-持牌小贷中风险
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_bad==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_bad==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_bad==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_overdue"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_overdue==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_overdue==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_overdue==0?'primary':''">通过联系人手机号查询非银-持牌小贷一般风险
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_overdue==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_overdue==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_overdue==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_fraud"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_fraud==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_fraud==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_fraud==0?'primary':''">通过联系人手机号查询非银-持牌小贷资信不佳
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_fraud==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_fraud==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_fraud==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_lost"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_lost==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_lost==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_lost==0?'primary':''">通过联系人手机号查询非银-持牌小贷高风险
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_lost==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_lost==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_lost==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_refuse"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_refuse==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_refuse==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_refuse==0?'primary':''">通过联系人手机号查询非银-持牌小贷拒绝
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_refuse==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_refuse==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_sloan_refuse==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_bad"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_bad==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_bad==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_bad==0?'primary':''">通过联系人手机号查询非银-持牌消费金融中风险
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_bad==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_bad==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_bad==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_overdue"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_overdue==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_overdue==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_overdue==0?'primary':''">通过联系人手机号查询非银-持牌消费金融一般风险
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_overdue==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_overdue==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_overdue==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_fraud"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_fraud==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_fraud==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_fraud==0?'primary':''">通过联系人手机号查询非银-持牌消费金融资信不佳
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_fraud==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_fraud==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_fraud==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_lost"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_lost==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_lost==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_lost==0?'primary':''">通过联系人手机号查询非银-持牌消费金融高风险
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_lost==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_lost==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_lost==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_refuse"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_refuse==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_refuse==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_refuse==0?'primary':''">通过联系人手机号查询非银-持牌消费金融拒绝
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_refuse==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_refuse==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_cons_refuse==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_bad"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_bad==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_bad==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_bad==0?'primary':''">通过联系人手机号查询非银-持牌融资租赁中风险
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_bad==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_bad==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_bad==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_overdue"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_overdue==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_overdue==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_overdue==0?'primary':''">通过联系人手机号查询非银-持牌融资租赁一般风险
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_overdue==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_overdue==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_overdue==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_fraud"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_fraud==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_fraud==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_fraud==0?'primary':''">通过联系人手机号查询非银-持牌融资租赁资信不佳
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_fraud==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_fraud==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_fraud==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_lost"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_lost==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_lost==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_lost==0?'primary':''">通过联系人手机号查询非银-持牌融资租赁高风险
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_lost==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_lost==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_lost==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_refuse"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_refuse==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_refuse==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_refuse==0?'primary':''">通过联系人手机号查询非银-持牌融资租赁拒绝
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_refuse==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_refuse==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_finlea_refuse==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_bad"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_bad==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_bad==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_bad==0?'primary':''">通过联系人手机号查询非银-持牌汽车金融中风险
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_bad==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_bad==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_bad==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_overdue"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_overdue==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_overdue==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_overdue==0?'primary':''">通过联系人手机号查询非银-持牌汽车金融一般风险
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_overdue==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_overdue==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_overdue==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_fraud"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_fraud==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_fraud==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_fraud==0?'primary':''">通过联系人手机号查询非银-持牌汽车金融资信不佳
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_fraud==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_fraud==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_fraud==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_lost"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_lost==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_lost==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_lost==0?'primary':''">通过联系人手机号查询非银-持牌汽车金融高风险
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_lost==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_lost==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_lost==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_refuse"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_refuse==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_refuse==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_refuse==0?'primary':''">通过联系人手机号查询非银-持牌汽车金融拒绝
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_refuse==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_refuse==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_autofin_refuse==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_bad"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_bad==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_bad==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_bad==0?'primary':''">通过联系人手机查询非银-其他中风险
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_bad==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_bad==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_bad==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_overdue"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_overdue==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_overdue==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_overdue==0?'primary':''">通过联系人手机查询非银-其他一般风险
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_overdue==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_overdue==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_overdue==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_fraud"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_fraud==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_fraud==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_fraud==0?'primary':''">通过联系人手机查询非银-其他资信不佳
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_fraud==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_fraud==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_fraud==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_lost"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_lost==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_lost==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_lost==0?'primary':''">通过联系人手机查询非银-其他高风险
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_lost==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_lost==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_lost==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_refuse"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_refuse==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_refuse==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_refuse==0?'primary':''">通过联系人手机查询非银-其他拒绝
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_refuse==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_refuse==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_lm.sl_lm_cell_nbank_other_refuse==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_bad_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_bad_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_bad_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_bad_time==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_bad_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_bad_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_bad_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_overdue_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_overdue_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_overdue_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_overdue_time==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_overdue_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_overdue_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_overdue_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_fraud_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_fraud_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_fraud_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_fraud_time==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_fraud_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_fraud_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_fraud_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_lost_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_lost_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_lost_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_lost_time==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_lost_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_lost_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_lost_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_refuse_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_refuse_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_refuse_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_refuse_time==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_refuse_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_refuse_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_refuse_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_bad_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_bad_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_bad_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_bad_time==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_bad_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_bad_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_bad_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_overdue_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_overdue_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_overdue_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_overdue_time==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_overdue_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_overdue_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_overdue_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_fraud_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_fraud_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_fraud_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_fraud_time==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_fraud_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_fraud_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_fraud_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_lost_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_lost_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_lost_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_lost_time==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_lost_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_lost_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_lost_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_refuse_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_refuse_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_refuse_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_refuse_time==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_refuse_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_refuse_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_refuse_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_bad_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_bad_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_bad_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_bad_time==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_bad_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_bad_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_bad_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_overdue_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_overdue_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_overdue_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_overdue_time==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_overdue_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_overdue_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_overdue_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_fraud_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_fraud_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_fraud_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_fraud_time==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_fraud_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_fraud_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_fraud_time==0?'本人直接命中':''}}
+  </el-tag>    
+    <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_lost_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_lost_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_lost_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_lost_time==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_lost_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_lost_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_lost_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_refuse_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_refuse_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_refuse_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_refuse_time==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_refuse_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_refuse_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_refuse_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_bad_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_bad_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_bad_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_bad_time==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_bad_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_bad_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_bad_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_overdue_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_overdue_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_overdue_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_overdue_time==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_overdue_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_overdue_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_overdue_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_fraud_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_fraud_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_fraud_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_fraud_time==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_fraud_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_fraud_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_fraud_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_lost_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_lost_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_lost_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_lost_time==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_lost_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_lost_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_lost_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_refuse_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_refuse_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_refuse_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_refuse_time==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_refuse_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_refuse_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_refuse_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_bad_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_bad_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_bad_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_bad_time==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_bad_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_bad_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_bad_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_overdue_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_overdue_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_overdue_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_overdue_time==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_overdue_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_overdue_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_overdue_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_fraud_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_fraud_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_fraud_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_fraud_time==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_fraud_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_fraud_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_fraud_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_lost_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_lost_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_lost_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_lost_time==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_lost_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_lost_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_lost_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_refuse_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_refuse_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_refuse_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_refuse_time==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_refuse_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_refuse_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_refuse_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_bad_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_bad_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_bad_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_bad_time==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_bad_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_bad_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_bad_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_overdue_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_overdue_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_overdue_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_overdue_time==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_overdue_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_overdue_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_overdue_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_fraud_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_fraud_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_fraud_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_fraud_time==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_fraud_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_fraud_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_fraud_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_lost_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_lost_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_lost_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_lost_time==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_lost_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_lost_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_lost_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_refuse_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_refuse_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_refuse_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_refuse_time==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_refuse_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_refuse_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_refuse_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_bad_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_bad_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_bad_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_bad_time==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_bad_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_bad_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_bad_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_overdue_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_overdue_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_overdue_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_overdue_time==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_overdue_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_overdue_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_overdue_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_fraud_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_fraud_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_fraud_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_fraud_time==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_fraud_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_fraud_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_fraud_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_lost_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_lost_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_lost_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_lost_time==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_lost_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_lost_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_lost_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_refuse_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_refuse_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_refuse_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_refuse_time==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_refuse_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_refuse_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_refuse_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_bad_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_bad_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_bad_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_bad_allnum==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_bad_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_bad_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_bad_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_overdue_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_overdue_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_overdue_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_overdue_allnum==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_overdue_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_overdue_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_overdue_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_fraud_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_fraud_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_fraud_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_fraud_allnum==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_fraud_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_fraud_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_fraud_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_lost_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_lost_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_lost_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_lost_allnum==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_lost_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_lost_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_lost_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_refuse_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_refuse_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_refuse_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_refuse_allnum==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_refuse_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_refuse_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_refuse_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_bad_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_bad_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_bad_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_bad_allnum==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_bad_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_bad_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_bad_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_overdue_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_overdue_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_overdue_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_overdue_allnum==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_overdue_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_overdue_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_overdue_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_fraud_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_fraud_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_fraud_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_fraud_allnum==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_fraud_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_fraud_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_fraud_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_lost_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_lost_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_lost_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_lost_allnum==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_lost_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_lost_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_lost_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_refuse_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_refuse_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_refuse_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_refuse_allnum==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_refuse_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_refuse_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_refuse_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_bad_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_bad_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_bad_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_bad_allnum==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_bad_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_bad_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_bad_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_overdue_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_overdue_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_overdue_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_overdue_allnum==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_overdue_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_overdue_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_overdue_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_fraud_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_fraud_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_fraud_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_fraud_allnum==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_fraud_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_fraud_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_fraud_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_lost_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_lost_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_lost_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_lost_allnum==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_lost_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_lost_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_lost_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_refuse_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_refuse_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_refuse_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_refuse_allnum==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_refuse_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_refuse_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_refuse_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_bad_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_bad_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_bad_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_bad_allnum==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_bad_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_bad_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_bad_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_overdue_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_overdue_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_overdue_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_overdue_allnum==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_overdue_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_overdue_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_overdue_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_fraud_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_fraud_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_fraud_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_fraud_allnum==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_fraud_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_fraud_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_fraud_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_lost_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_lost_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_lost_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_lost_allnum==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_lost_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_lost_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_lost_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_refuse_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_refuse_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_refuse_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_refuse_allnum==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_refuse_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_refuse_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_refuse_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_bad_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_bad_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_bad_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_bad_allnum==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_bad_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_bad_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_bad_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_overdue_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_overdue_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_overdue_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_overdue_allnum==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_overdue_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_overdue_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_overdue_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_fraud_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_fraud_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_fraud_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_fraud_allnum==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_fraud_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_fraud_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_fraud_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_lost_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_lost_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_lost_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_lost_allnum==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_lost_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_lost_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_lost_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_refuse_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_refuse_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_refuse_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_refuse_allnum==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_refuse_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_refuse_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_refuse_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_bad_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_bad_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_bad_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_bad_allnum==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_bad_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_bad_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_bad_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_overdue_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_overdue_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_overdue_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_overdue_allnum==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_overdue_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_overdue_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_overdue_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_fraud_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_fraud_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_fraud_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_fraud_allnum==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_fraud_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_fraud_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_fraud_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_lost_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_lost_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_lost_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_lost_allnum==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_lost_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_lost_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_lost_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_refuse_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_refuse_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_refuse_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_refuse_allnum==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_refuse_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_refuse_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_refuse_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_bad_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_bad_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_bad_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_bad_allnum==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_bad_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_bad_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_bad_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_overdue_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_overdue_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_overdue_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_overdue_allnum==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_overdue_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_overdue_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_overdue_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_fraud_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_fraud_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_fraud_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_fraud_allnum==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_fraud_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_fraud_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_fraud_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_lost_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_lost_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_lost_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_lost_allnum==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_lost_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_lost_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_lost_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_refuse_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_refuse_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_refuse_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_refuse_allnum==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_refuse_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_refuse_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_refuse_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_bad"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_bad==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_bad==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_bad==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_bad==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_bad==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_bad==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_overdue"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_overdue==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_overdue==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_overdue==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_overdue==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_overdue==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_overdue==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_fraud"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_fraud==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_fraud==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_fraud==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_fraud==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_fraud==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_fraud==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_lost"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_lost==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_lost==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_lost==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_lost==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_lost==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_lost==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_refuse"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_refuse==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_refuse==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_refuse==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_refuse==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_refuse==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_refuse==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_bad"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_bad==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_bad==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_bad==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_bad==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_bad==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_bad==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_overdue"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_overdue==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_overdue==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_overdue==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_overdue==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_overdue==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_overdue==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_fraud"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_fraud==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_fraud==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_fraud==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_fraud==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_fraud==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_fraud==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_lost"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_lost==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_lost==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_lost==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_lost==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_lost==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_lost==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_refuse"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_refuse==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_refuse==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_refuse==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_refuse==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_refuse==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_nsloan_refuse==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_bad"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_bad==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_bad==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_bad==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_bad==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_bad==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_bad==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_overdue"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_overdue==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_overdue==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_overdue==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_overdue==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_overdue==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_overdue==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_fraud"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_fraud==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_fraud==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_fraud==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_fraud==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_fraud==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_fraud==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_lost"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_lost==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_lost==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_lost==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_lost==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_lost==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_lost==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_refuse"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_refuse==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_refuse==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_refuse==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_refuse==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_refuse==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_sloan_refuse==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_bad"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_bad==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_bad==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_bad==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_bad==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_bad==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_bad==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_overdue"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_overdue==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_overdue==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_overdue==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_overdue==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_overdue==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_overdue==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_fraud"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_fraud==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_fraud==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_fraud==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_fraud==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_fraud==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_fraud==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_lost"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_lost==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_lost==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_lost==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_lost==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_lost==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_lost==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_refuse"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_refuse==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_refuse==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_refuse==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_refuse==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_refuse==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_cons_refuse==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_bad"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_bad==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_bad==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_bad==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_bad==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_bad==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_bad==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_overdue"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_overdue==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_overdue==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_overdue==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_overdue==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_overdue==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_overdue==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_fraud"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_fraud==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_fraud==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_fraud==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_fraud==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_fraud==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_fraud==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_lost"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_lost==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_lost==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_lost==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_lost==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_lost==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_lost==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_refuse"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_refuse==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_refuse==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_refuse==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_refuse==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_refuse==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_finlea_refuse==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_bad"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_bad==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_bad==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_bad==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_bad==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_bad==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_bad==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_overdue"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_overdue==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_overdue==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_overdue==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_overdue==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_overdue==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_overdue==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_fraud"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_fraud==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_fraud==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_fraud==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_fraud==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_fraud==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_fraud==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_lost"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_lost==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_lost==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_lost==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_lost==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_lost==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_lost==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_refuse"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_refuse==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_refuse==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_refuse==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_refuse==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_refuse==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_autofin_refuse==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_bad"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_bad==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_bad==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_bad==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_bad==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_bad==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_bad==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_overdue"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_overdue==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_overdue==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_overdue==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_overdue==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_overdue==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_overdue==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_fraud"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_fraud==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_fraud==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_fraud==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_fraud==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_fraud==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_fraud==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_lost"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_lost==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_lost==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_lost==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_lost==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_lost==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_lost==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_refuse"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_refuse==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_refuse==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_refuse==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_refuse==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_refuse==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_nbank_other_refuse==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_bad"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_bad==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_bad==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_bad==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_bad==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_bad==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_bad==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_overdue"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_overdue==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_overdue==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_overdue==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_overdue==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_overdue==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_overdue==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_fraud"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_fraud==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_fraud==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_fraud==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_fraud==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_fraud==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_fraud==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_lost"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_lost==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_lost==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_lost==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_lost==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_lost==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_lost==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_refuse"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_refuse==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_refuse==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_refuse==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_refuse==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_refuse==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_refuse==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_bad_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_bad_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_bad_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_bad_allnum==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_bad_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_bad_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_bad_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_overdue_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_overdue_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_overdue_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_overdue_allnum==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_overdue_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_overdue_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_overdue_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_fraud_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_fraud_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_fraud_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_fraud_allnum==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_fraud_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_fraud_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_fraud_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_lost_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_lost_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_lost_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_lost_allnum==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_lost_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_lost_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_lost_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_refuse_allnum"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_refuse_allnum==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_refuse_allnum==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_refuse_allnum==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_refuse_allnum==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_refuse_allnum==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_refuse_allnum==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_bad_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_bad_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_bad_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_bad_time==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_bad_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_bad_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_bad_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_overdue_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_overdue_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_overdue_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_overdue_time==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_overdue_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_overdue_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_overdue_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_fraud_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_fraud_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_fraud_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_fraud_time==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_fraud_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_fraud_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_fraud_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_lost_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_lost_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_lost_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_lost_time==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_lost_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_lost_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_lost_time==0?'本人直接命中':''}}
+  </el-tag>         <el-tag
+      v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_refuse_time"
+      :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_refuse_time==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_refuse_time==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_refuse_time==0?'primary':''">null
+      {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_refuse_time==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_refuse_time==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell.sl_cell_bank_refuse_time==0?'本人直接命中':''}}
+  </el-tag>                                    
+          <!-- <el-tag
+    v-if="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell"
+    :type="scope.row.blackListBaiRongVo.blackListBaiRongVo_cell==2?'danger':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell==1?'info':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell==0?'primary':''">[object Object]
+    {{scope.row.blackListBaiRongVo.blackListBaiRongVo_cell==2?'二度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell==1?'一度关系命中':scope.row.blackListBaiRongVo.blackListBaiRongVo_cell==0?'本人直接命中':''}}
+</el-tag>  -->
+                                 </template>                                    
+                                </el-table-column>                                     
+                            </el-table>
+                          </td>
+                    </tr>  
+                    <tr>
+                        <th  class="bgcolor "  style="text-align: center;">腾讯反欺诈</th>
+                        <td colspan="5" >
+                            <el-table
+                            v-if="txReport"
+                                    :data="txReport"
+                                    border
+                                        highlight-current-row style="width: 100%;font-weight:bold">
+
+                               <el-table-column prop="status" align="center" label="匹配结果"  width="100">
+                                      <template slot-scope="scope">
+                                                <el-tag
+                                                  :type="scope.row.status?'danger':''">
+                                                  {{scope.row.status?'是':'否'}}
+                                                  </el-tag>
+                                               </template>                                   
+                               </el-table-column>
+            
+                                <el-table-column prop="found" align="center" label="记录是否查到"  width="100">
+                                      <template slot-scope="scope" v-if="scope.row.msginfo">
+                                                <el-tag
+                                                  :type="scope.row.msginfo.found ==1?'success':''">
+                                                  {{scope.row.msginfo.found==1?'是':'否'}}
+                                                  </el-tag>
+                                               </template>                                    
+                                </el-table-column>
+                                <el-table-column prop="idFound" align="center" label="身份证是否查到"  width="150">
+                                      <template slot-scope="scope" v-if="scope.row.msginfo">
+                                                <el-tag
+                                                  :type="scope.row.msginfo.idFound ==1?'success':''">
+                                                  {{scope.row.msginfo.idFound==1?'是':'否'}}
+                                                  </el-tag>
+                                               </template>                                    
+                                </el-table-column>   
+                                <el-table-column prop="idFound" align="center" label="摘要"  min-width="150">
+                                      <template slot-scope="scope" v-if="scope.row.msginfo">
+                                                <el-tag
+                                                  >
+                                                  分数{{scope.row.msginfo.riskScore}}
+                                                  </el-tag>
+                                                  <strong style="color:red;margin-left:10px">(腾讯反欺诈80分为高危)</strong>
+                                                  <template v-for="(item,i) in scope.row.msginfo.riskInfo">
+                                                    <el-tag  :key="i"
+                                                    :type="item.riskCodeValue==1?'primary':item.riskCodeValue==2?'info':item.riskCodeValue==3?'danger':''"
+                                                   >
+                                                {{item.riskCode==1?'信贷中介':item.riskCode==2?'不法分子':item.riskCode==3?'虚假资料':item.riskCode==4?'羊毛党':item.riskCode==5?'身份认证失败':item.riskCode==6?'疑似恶意欺诈':item.riskCode==7?'失信名单':item.riskCode==8?'异常支付行':''}}
+                                                {{item.riskCodeValue==1?'低风险':item.riskCodeValue==2?'中风险':item.riskCodeValue==3?'高风险':''}}
+                                                  </el-tag>
+                                                  </template>
+                                      </template>                                    
+                                </el-table-column>                                     
+                            </el-table>
+                          </td>
+                    </tr>   
+                    <!-- <tr>
+                        <th  class="bgcolor "  style="text-align: center;">魔蝎</th>
+                        <td colspan="5" >
+                            <el-table
+                            v-if="mxReport"
+                                    :data="mxReport"
+                                    border
+                                        highlight-current-row style="width: 100%;font-weight:bold">
+
+                               <el-table-column prop="status" align="center" label="匹配结果"  width="100">
+                                      <template slot-scope="scope">
+                                                <el-tag
+                                                  :type="scope.row.status==1?'danger':''">
+                                                  {{scope.row.status==1?'是':'否'}}
+                                                  </el-tag>
+                                      </template>                                   
+                               </el-table-column>
+                                <el-table-column  align="center" label="摘要"  min-width="150" >
+                                      <template slot-scope="scope" >
+                                            <template v-if="scope.row.moxieBlackVO.data.black_info_detail">
+                                                  <el-tag
+                                                  v-if="scope.row.moxieBlackVO.data.black_info_detail.black_types!=''"
+                                                    >
+                                                  黑名单类型列表{{scope.row.moxieBlackVO.data.black_info_detail.black_types}}
+                                                  </el-tag>  
+                                                  <el-tag
+                                                  :type="scope.row.moxieBlackVO.data.black_info_detail.mobile_name_in_blacklist?'danger':''"
+                                                    >
+                                                  手机和姓名{{scope.row.moxieBlackVO.data.black_info_detail.mobile_name_in_blacklist?'在':'不在'}}黑名单
+                                                  </el-tag>  
+                                                  <el-tag
+                                                  :type="scope.row.moxieBlackVO.data.black_info_detail.idcard_name_in_blacklist?'danger':''"
+                                                    >
+                                                  身份证和姓名{{scope.row.moxieBlackVO.data.black_info_detail.idcard_name_in_blacklist?'在':'不在'}}黑名单
+                                                  </el-tag>  
+                                                      <el-tag
+                                                      v-if="scope.row.moxieBlackVO.data.black_info_detail.blacklist_record.overdue_amount!=''"
+                                                        >
+                                                      最大逾期金额{{scope.row.moxieBlackVO.data.black_info_detail.blacklist_record.overdue_amount}}
+                                                      </el-tag>  
+                                                      <el-tag
+                                                      v-if="scope.row.moxieBlackVO.data.black_info_detail.blacklist_record.overdue_count>0"
+                                                        >
+                                                      逾期次数{{scope.row.moxieBlackVO.data.black_info_detail.blacklist_record.overdue_count}}
+                                                      </el-tag>  
+                                                      <el-tag
+                                                      v-if="scope.row.moxieBlackVO.data.black_info_detail.blacklist_record.overdue_status!=''"
+                                                      type="danger"
+                                                        >
+                                                      最大预期天数{{scope.row.moxieBlackVO.data.black_info_detail.blacklist_record.overdue_status=='M0'?
+                                                      '0-15天':scope.row.moxieBlackVO.data.black_info_detail.blacklist_record.overdue_status=='M1'?
+                                                      '16-30天':scope.row.moxieBlackVO.data.black_info_detail.blacklist_record.overdue_status=='M2'?
+                                                      '31-60天':scope.row.moxieBlackVO.data.black_info_detail.blacklist_record.overdue_status=='M3'?
+                                                      '61-90天':scope.row.moxieBlackVO.data.black_info_detail.blacklist_record.overdue_status=='M4'?
+                                                      '91-120天':scope.row.moxieBlackVO.data.black_info_detail.blacklist_record.overdue_status=='M5'?
+                                                      '121-150天':scope.row.moxieBlackVO.data.black_info_detail.blacklist_record.overdue_status=='M6'?
+                                                      '151-180天':scope.row.moxieBlackVO.data.black_info_detail.blacklist_record.overdue_status=='M6+'?'大于180天':''}}
+                                                      </el-tag>                                                      
+                                            </template>
+                                            <template v-if="scope.row.moxieBlackVO.data.gray_info_detail">
+                                                  <el-tag
+                                                  v-if="scope.row.moxieBlackVO.data.gray_info_detail.gray_types!=''"
+                                                    >
+                                                 灰名单类型列表{{scope.row.moxieBlackVO.data.gray_info_detail.gray_types}}
+                                                  </el-tag>  
+                                                  <el-tag
+                                                    >
+                                                  手机和姓名{{scope.row.moxieBlackVO.data.gray_info_detail.mobile_name_in_gray?'在':'不在'}}灰名单
+                                                  </el-tag>  
+                                                  <el-tag
+                                                    >
+                                                  身份证和姓名{{scope.row.moxieBlackVO.data.gray_info_detail.idcard_name_in_gray?'在':'不在'}}灰名单
+                                                  </el-tag>  
+                                                  <template v-if="scope.row.moxieBlackVO.data.gray_info_detail.graylist_record!=''">
+                                                      <el-tag
+                                                      v-if="scope.row.moxieBlackVO.data.gray_info_detail.graylist_record.overdue_amount!=''"
+                                                        >
+                                                      最大逾期金额{{scope.row.moxieBlackVO.data.gray_info_detail.graylist_record.overdue_amount}}
+                                                      </el-tag>  
+                                                      <el-tag
+                                                      v-if="scope.row.moxieBlackVO.data.gray_info_detail.graylist_record.overdue_count>0"
+                                                        >
+                                                      逾期次数{{scope.row.moxieBlackVO.data.gray_info_detail.graylist_record.overdue_count}}
+                                                      </el-tag>  
+                                                      <el-tag
+                                                      v-if="scope.row.moxieBlackVO.data.gray_info_detail.graylist_record.overdue_status!=''"
+                                                        >
+                                                      最大预期天数{{scope.row.moxieBlackVO.data.gray_info_detail.graylist_record.overdue_status=='M0'?
+                                                      '0-15天':scope.row.moxieBlackVO.data.black_info_detail.blacklist_record.overdue_status=='M1'?
+                                                      '16-30天':scope.row.moxieBlackVO.data.black_info_detail.blacklist_record.overdue_status=='M2'?
+                                                      '31-60天':scope.row.moxieBlackVO.data.black_info_detail.blacklist_record.overdue_status=='M3'?
+                                                      '61-90天':scope.row.moxieBlackVO.data.black_info_detail.blacklist_record.overdue_status=='M4'?
+                                                      '91-120天':scope.row.moxieBlackVO.data.black_info_detail.blacklist_record.overdue_status=='M5'?
+                                                      '121-150天':scope.row.moxieBlackVO.data.black_info_detail.blacklist_record.overdue_status=='M6'?
+                                                      '151-180天':scope.row.moxieBlackVO.data.black_info_detail.blacklist_record.overdue_status=='M6+'?
+                                                      '大于180天':''}}
+                                                      </el-tag>                                                      
+                                                  </template>
+                                                                                                                                                                                                                                                                                                                                                                                                                       
+
+                                            </template>                                            
+                                      </template>                                    
+                                </el-table-column>                                     
+                            </el-table>
+                          </td>
+                    </tr>  -->
+                    <!-- <tr>
+                        <th  class="bgcolor "  style="text-align: center;">数创</th>
+                        <td colspan="5" >
+                            <el-table
+                            v-if="scReport"
+                                    :data="scReport"
+                                    border
+                                        highlight-current-row style="width: 100%;font-weight:bold">
+
+                               <el-table-column prop="status" align="center" label="匹配结果"  width="100">
+                                      <template slot-scope="scope">
+                                                <el-tag
+                                                  :type="scope.row.status==1?'danger':''">
+                                                  {{scope.row.status==1?'是':'否'}}
+                                                  </el-tag>
+                                      </template>                                   
+                               </el-table-column>
+                                <el-table-column  align="center" label="摘要"  min-width="150" >
+                                      <template slot-scope="scope" >
+                                            <template >
+                                                  <el-tag
+                                                  v-if="scope.row.netLoan!=''"
+                                                  :type="scope.row.netLoan==1?'danger':''"
+                                                    >
+                                                  网贷中介{{scope.row.netLoan==1?'命中':"未命中"}}
+                                                  </el-tag>  
+                                                  <el-tag
+                                                  v-if="scope.row.altNumber!=''"
+                                                  :type="scope.row.altNumber==1?'danger':''"
+                                                    >
+                                                  小号类{{scope.row.altNumber==1?'命中':"未命中"}}
+                                                  </el-tag>                                                    
+                                                  <el-tag
+                                                  v-if="scope.row.history_overdue!=''"
+                                                  :type="scope.row.history_overdue=='S'?'':scope.row.history_overdue=='A'?'success':scope.row.history_overdue=='B'?'warning':scope.row.history_overdue=='C'?'danger':''"
+                                                    >
+                                                  逾期历史{{scope.row.history_overdue=='S'?'未命中':scope.row.history_overdue=='A'?'短期逾期1-3天':scope.row.history_overdue=='B'?'中期逾期4-30天':scope.row.history_overdue=='C'?'长期逾期30+':""}}
+                                                  </el-tag>  
+                                                  <el-tag
+                                                  v-if="scope.row.current_overdue!=''"
+                                                  :type="scope.row.current_overdue=='S'?'':scope.row.current_overdue=='A'?'success':scope.row.current_overdue=='B'?'warning':scope.row.current_overdue=='C'?'danger':''"
+                                                    >
+                                                  近期逾期{{scope.row.current_overdue=='S'?'未命中':scope.row.current_overdue=='A'?'短期逾期1-3天':scope.row.current_overdue=='B'?'中期逾期4-30天':scope.row.current_overdue=='C'?'长期逾期30+':""}}
+                                                  </el-tag>                                                                                                      
+                                            </template>
+                                      </template>                                    
+                                </el-table-column>                                     
+                            </el-table>
+                          </td>
+                    </tr>  -->
+                    <!-- <tr>
+                        <th  class="bgcolor "  style="text-align: center;">公信宝</th>
+                        <td colspan="5" >
+                            <el-table
+                            v-if="gxbReport"
+                                    :data="gxbReport"
+                                    border
+                                        highlight-current-row style="width: 100%;font-weight:bold">
+
+                               <el-table-column prop="status" align="center" label="匹配结果"  width="100">
+                                      <template slot-scope="scope">
+                                                <el-tag
+                                                  :type="scope.row.status=='success'?'danger':''">
+                                                  {{scope.row.status=='success'?'是':'否'}}
+                                                  </el-tag>
+                                      </template>                                   
+                               </el-table-column>
+                                <el-table-column  align="center" label="摘要"  min-width="150" >
+                                      <template slot-scope="scope" >
+                                            <template  v-if="scope.row.phone">
+                                                  <el-tag
+                                                  v-if="scope.row.phone.overdue_time"
+                                                    >
+                                                  手机逾期时间{{scope.row.phone.overdue_time|dateServer3}}
+                                                  </el-tag>  
+                                                  <el-tag
+                                                  v-if="scope.row.phone.lend_time"
+                                                    >
+                                                  手机借款时间{{scope.row.phone.lend_time|dateServer3}}
+                                                  </el-tag>  
+                                                <el-tag
+                                                  :type="scope.row.phone.takeback==2?'danger':''">
+                                                  {{scope.row.phone.takeback==2?'未催回':'已催回'}}
+                                                  </el-tag>
+                                                 <el-tag
+                                                  v-if="scope.row.phone.outDays"
+                                                  type="danger"
+                                                    >
+                                                  逾期{{scope.row.phone.outDays}}天数
+                                                  </el-tag> 
+                                                 <el-tag
+                                                  v-if="scope.row.idcard.lend_money"
+                                                  type="danger"
+                                                    >
+                                                  借款区间{{scope.row.idcard.lend_money}}
+                                                  </el-tag>  
+                                                  <el-tag
+                                                  v-if="scope.row.idcard.overdue_time"
+                                                    >
+                                                  身份证逾期时间{{scope.row.idcard.overdue_time|dateServer3}}
+                                                  </el-tag>  
+                                                  <el-tag
+                                                  v-if="scope.row.idcard.lend_time"
+                                                    >
+                                                  身份证借款时间{{scope.row.idcard.lend_time|dateServer3}}
+                                                  </el-tag>  
+                                                <el-tag
+                                                  :type="scope.row.idcard.takeback==2?'danger':''">
+                                                  {{scope.row.idcard.takeback==2?'未催回':'已催回'}}
+                                                  </el-tag>
+                                                 <el-tag
+                                                  v-if="scope.row.idcard.outDays"
+                                                  type="danger"
+                                                    >
+                                                  逾期{{scope.row.idcard.outDays}}天数
+                                                  </el-tag> 
+                                                 <el-tag
+                                                  v-if="scope.row.idcard.lend_money"
+                                                  type="danger"
+                                                    >
+                                                  借款区间{{scope.row.idcard.lend_money}}
+                                                  </el-tag>                                                                                                                                                       
+                                            </template>
+                                      </template>                                    
+                                </el-table-column>                                     
+                            </el-table>
+                          </td>
+                    </tr>   -->
+                    <tr>
+                        <th  class="bgcolor "  style="text-align: center;">新颜</th>
+                        <td colspan="5" >
+                            <el-table
+                            v-if="scReport"
+                                    :data="xyReport"
+                                    border
+                                        highlight-current-row style="width: 100%;font-weight:bold">
+
+                               <el-table-column prop="status" align="center" label="匹配结果"  width="100">
+                                      <template slot-scope="scope">
+                                                <el-tag
+                                                  :type="scope.row.status?'danger':''">
+                                                  {{scope.row.status?'是':'否'}}
+                                                  </el-tag>
+                                      </template>                                   
+                               </el-table-column>
+                                <el-table-column  align="center" label="摘要"  min-width="150" >
+                                      <template slot-scope="scope" >
+                                            <template >
+                                              <el-tag
+                                                   type="danger"
+                                                  v-if="scope.row.desc"
+                                                    >
+                                                  {{scope.row.desc=='A'?'建议拉黑':scope.row.desc=='U'?'无法确认':scope.row.desc=='N'?'空值未知':scope.row.desc=='Overdue'?'逾期未还款':''}}
+                                                  </el-tag>                                                
+                                                  <el-tag
+                                                   type="danger"
+                                                  v-if="scope.row.max_overdue_amt"
+                                                    >
+                                                  最大逾期金额{{scope.row.max_overdue_amt}}
+                                                  </el-tag>  
+                                                  <el-tag
+                                                   type="danger"
+                                                  v-if="scope.row.max_overdue_days"
+                                                    >
+                                                  最长逾期天数{{scope.row.max_overdue_days}}
+                                                  </el-tag>  
+                                                  <el-tag
+                                                   type="danger"
+                                                  v-if="scope.row.latest_overdue_time"
+                                                    >
+                                                  最近逾期时间{{scope.row.latest_overdue_time}}
+                                                  </el-tag>  
+                                                  <el-tag
+                                                   type="danger"
+                                                  v-if="scope.row.currently_overdue"
+                                                    >
+                                                  当前逾期机构数{{scope.row.currently_overdue}}
+                                                  </el-tag>  
+                                                  <el-tag
+                                                   type="danger"
+                                                  v-if="scope.row.currently_performance"
+                                                    >
+                                                  当前履约机构数{{scope.row.currently_performance}}
+                                                  </el-tag>  
+                                                  <el-tag
+                                                   type="danger"
+                                                  v-if="scope.row.acc_exc"
+                                                    >
+                                                  异常还款机构数{{scope.row.acc_exc}}
+                                                  </el-tag>  
+                                                  <el-tag
+                                                   type="danger"
+                                                  v-if="scope.row.acc_sleep"
+                                                    >
+                                                  睡眠机构数{{scope.row.acc_sleep}}
+                                                  </el-tag>                                                                                                                                                                                                                                                                                                                                                                
+                                            </template>
+                                      </template>                                    
+                                </el-table-column>                                     
+                            </el-table>
+                          </td>
+                    </tr>   
+                    <!-- <tr>
+                        <th  class="bgcolor "  style="text-align: center;">白骑士</th>
+                        <td colspan="5" >
+                            <el-table
+                            v-if="bqsReport"
+                                    :data="bqsReport"
+                                    border
+                                        highlight-current-row style="width: 100%;font-weight:bold">
+
+                               <el-table-column prop="status" align="center" label="匹配结果"  width="100">
+                                      <template slot-scope="scope">
+                                                <el-tag
+                                                  :type="scope.row.status?'danger':''">
+                                                  {{scope.row.status?'是':'否'}}
+                                                  </el-tag>
+                                      </template>                                   
+                               </el-table-column>
+                                <el-table-column  align="center" label="摘要"  min-width="150" >
+                                      <template slot-scope="scope" >
+                                                  <el-tag
+                                                   :type="scope.row.finalDecision=='Accept'?'':scope.row.finalDecision=='Reject'?'danger':scope.row.finalDecision=='Review'?'info':''"
+                                                  v-if="scope.row.finalDecision"
+                                                    >
+                                                  {{scope.row.finalDecision=='Accept'?'无风险':scope.row.finalDecision=='Reject'?'高风险建议拒绝':scope.row.finalDecision=='Review'?'低风险建议人工审核':''}}
+                                                  </el-tag>  
+                                                  <el-tag
+                                                   type="danger"
+                                                  v-if="scope.row.finalScore"
+                                                    >
+                                                  风险系数{{scope.row.finalScore}}
+                                                  </el-tag>  
+                                                  <el-tag
+                                                   type="danger"
+                                                  v-if="scope.row.riskType"
+                                                    >
+                                                  风险类型{{scope.row.riskType=='botAction'?'机器行为':scope.row.riskType=='fakeRegister'?'伪冒申请':scope.row.riskType=='dynamicCode'?'动码攻击':scope.row.riskType=='suspiciousAction'?'异常行为':
+                                                  scope.row.riskType=='bruteForce'?'暴力破解':scope.row.riskType=='userFraud'?'本人欺诈':scope.row.riskType=='accountTakeover'?'账户盗用':scope.row.riskType=='garbageRegister'?'垃圾注册':scope.row.riskType=='creditRisk'?'失信风险':scope.row.riskType=='agencyCash'?'中介套现':''}}
+                                                  </el-tag>   
+                                                  <template v-for="(tem,i) in  scope.row.strategySet" v-if="scope.row.strategySet">
+                                                 <el-tag :key="i"
+                                                   :type="tem.strategyDecision=='Accept'?'':tem.strategyDecision=='Reject'?'danger':tem.strategyDecision=='Review'?'info':''"
+                                                  v-if="tem.strategyDecision"
+                                                    >
+                                                  决策结果{{tem.strategyDecision=='Accept'?'无风险':tem.strategyDecision=='Reject'?'高风险建议拒绝':tem.strategyDecision=='Review'?'低风险建议人工审核':''}}
+                                                  </el-tag> 
+                                                  <el-tag :key="i"
+                                                   type="danger"
+                                                  v-if="tem.strategyScore"
+                                                    >
+                                                  策略风险系数{{tem.strategyScore}}
+                                                  </el-tag>  
+                                                  <el-tag :key="i"
+                                                   type="danger"
+                                                  v-if="tem.strategyMode"
+                                                    >
+                                                  {{tem.strategyName}}-{{tem.strategyMode=="FirstMode"?'首次匹配':tem.strategyMode=="WorstMode"?'最坏匹配':tem.strategyMode=="WeightMode"?'权重匹配':''}}
+                                                  </el-tag>                                                     
+                                                  <template v-for="(t,ii) in tem.hitRules ">
+                                                  <el-tag :key="ii"
+                                                   type="danger"
+                                                  v-if="t.memo"
+                                                    >
+                                                  {{t.memo}}
+                                                  </el-tag>
+                                                  <el-tag :key="ii"
+                                                   type="danger"
+                                                  v-if="t.ruleName"
+                                                    >
+                                                  {{t.ruleName}}
+                                                  </el-tag>    
+                                                  <el-tag :key="ii"
+                                                   :type="t.decision=='Accept'?'':t.decision=='Reject'?'danger':t.decision=='Review'?'info':''"
+                                                  v-if="t.decision"
+                                                    >
+                                                  {{t.decision=='Accept'?'无风险':t.decision=='Reject'?'高风险建议拒绝':t.decision=='Review'?'低风险建议人工审核':''}}
+                                                  </el-tag>                                                                                                                                                      
+                                                  </template>
+                                                  </template>
+                                      </template>                                    
+                                </el-table-column>                                     
+                            </el-table>
+                          </td>
+                    </tr>   -->
+                    <!-- <tr>
+                        <th  class="bgcolor "  style="text-align: center;">天创</th>
+                        <td colspan="5" >
+                            <el-table
+                            v-if="tcReport"
+                                    :data="tcReport"
+                                    border
+                                        highlight-current-row style="width: 100%;font-weight:bold">
+
+                               <el-table-column prop="status" align="center" label="匹配结果"  width="100">
+                                      <template slot-scope="scope">
+                                                <el-tag
+                                                  :type="scope.row.status?'danger':''">
+                                                  {{scope.row.status?'是':'否'}}
+                                                  </el-tag>
+                                      </template>                                   
+                               </el-table-column>
+                                <el-table-column  align="center" label="摘要"  min-width="150" >
+                                      <template slot-scope="scope" >
+                                                  <el-tag
+                                                   :type="scope.row.blackLevel=='A'?'danger':scope.row.blackLevel=='B'?'info':scope.row.blackLevel=='C'?'warning':scope.row.blackLevel=='D'?'':''"
+                                                  v-if="scope.row.blackLevel"
+                                                    >
+                                                  黑名单等级{{scope.row.blackLevel=='A'?'严重':scope.row.blackLevel=='B'?'中高等':scope.row.blackLevel=='C'?'中等':scope.row.blackLevel=='D'?'低等':'未命中'}}
+                                                  </el-tag>  
+                                                  <el-tag
+                                                  v-if="!scope.row.isWhite"
+                                                  :type="scope.row.isWhite?'':'danger'">
+                                                  {{scope.row.isWhite?'白名单':'黑名单'}}
+                                                  </el-tag>    
+                                                                                                
+                                      </template>                                    
+                                </el-table-column>                                     
+                            </el-table>
+                          </td>
+                    </tr>    -->
+                    <tr>
+                        <th  class="bgcolor "  style="text-align: center;">拍拍信</th>
+                        <td colspan="5" >
+                            <el-table
+                            v-if="ppxReport"
+                                    :data="ppxReport"
+                                    border
+                                        highlight-current-row style="width: 100%;font-weight:bold">
+
+                               <el-table-column prop="status" align="center" label="匹配结果"  width="100">
+                                      <template slot-scope="scope">
+                                                <el-tag
+                                                  :type="scope.row.status?'danger':''">
+                                                  {{scope.row.status?'是':'否'}}
+                                                  </el-tag>
+                                      </template>                                   
+                               </el-table-column>
+                                <el-table-column  align="center" label="摘要"  min-width="150" >
+                                      <template slot-scope="scope" >
+                                                  <el-tag
+                                                  v-if="scope.row.isBlack==1"
+                                                  type="danger">
+                                                  {{scope.row.isBlack==1?'不良用户':''}}
+                                                  </el-tag> 
+                                                  <el-tag
+                                                  v-if="scope.row.isAlert ==1"
+                                                  type="danger">
+                                                  {{scope.row.isAlert ==1?'是关注用户':''}}
+                                                  </el-tag>  
+                                                <template v-if="scope.row.hkxw">
+                                              <el-tag
+                                                  v-if="scope.row.hkxw.HK001 "
+                                                 >
+                                                  逾期最早出现时间{{scope.row.hkxw.HK001}}
+                                                  </el-tag> 
+                                              <el-tag
+                                                  v-if="scope.row.hkxw.HK002 "
+                                                 >
+                                                  逾期最近出现时间{{scope.row.hkxw.HK002}}
+                                                  </el-tag> 
+                                              <el-tag
+                                                  v-if="scope.row.hkxw.HK003"
+                                                  type="danger"
+                                                 >
+                                                  逾期累计出现次数{{scope.row.hkxw.HK003}}
+                                                  </el-tag> 
+                                              <el-tag
+                                                  v-if="scope.row.hkxw.HK004"
+                                                  type="danger"
+                                                 >
+                                                  当前总逾期金额{{scope.row.hkxw.HK004==1?'1~1000':
+                                                                scope.row.hkxw.HK004==2?'1000~2000':
+                                                                scope.row.hkxw.HK004==3?'2000~3000':
+                                                                scope.row.hkxw.HK004==4?'3000~4000':
+                                                                scope.row.hkxw.HK004==5?'4000~6000':
+                                                                scope.row.hkxw.HK004==6?'6000~8000':
+                                                                scope.row.hkxw.HK004==7?'8000~10000':
+                                                                scope.row.hkxw.HK004==8?'10000~30000':
+                                                                scope.row.hkxw.HK004==9?'30000~50000 ':
+                                                                scope.row.hkxw.HK004==10?'50000~100000 ':                                                                
+                                                                scope.row.hkxw.HK004==11?'≥100000':''
+                                                  }}
+                                                  </el-tag>   
+                                              <el-tag
+                                                  v-if="scope.row.hkxw.HK005"
+                                                  type="danger"
+                                                 >
+                                                  当前逾期时长{{scope.row.hkxw.HK005==1?'1~30':
+                                                                scope.row.hkxw.HK005==2?'31~60':
+                                                                scope.row.hkxw.HK005==3?'61~90':
+                                                                scope.row.hkxw.HK005==4?'91~120':
+                                                                scope.row.hkxw.HK005==5?'121~150':
+                                                                scope.row.hkxw.HK005==6?'151~180':
+                                                                scope.row.hkxw.HK005==7?'>180':
+                                                     ''
+                                                  }}
+                                                  </el-tag>  
+                                              <el-tag
+                                                  v-if="scope.row.hkxw.HK006"
+                                                  type="danger"
+                                                 >
+                                                  历史总逾期金额{{scope.row.hkxw.HK006==1?'1~1000':
+                                                                scope.row.hkxw.HK006==2?'1000~2000':
+                                                                scope.row.hkxw.HK006==3?'2000~3000':
+                                                                scope.row.hkxw.HK006==4?'3000~4000':
+                                                                scope.row.hkxw.HK006==5?'4000~6000':
+                                                                scope.row.hkxw.HK006==6?'6000~8000':
+                                                                scope.row.hkxw.HK006==7?'8000~10000':
+                                                                scope.row.hkxw.HK006==8?'10000~30000':
+                                                                scope.row.hkxw.HK006==9?'30000~50000 ':
+                                                                scope.row.hkxw.HK006==10?'50000~100000 ':                                                                
+                                                                scope.row.hkxw.HK006==11?'≥100000':''
+                                                  }}
+                                                  </el-tag>   
+                                              <el-tag
+                                                  v-if="scope.row.hkxw.HK007"
+                                                  type="danger"
+                                                 >
+                                                  历史逾期时长{{scope.row.hkxw.HK007==1?'1~30':
+                                                                scope.row.hkxw.HK007==2?'31~60':
+                                                                scope.row.hkxw.HK007==3?'61~90':
+                                                                scope.row.hkxw.HK007==4?'91~120':
+                                                                scope.row.hkxw.HK007==5?'121~150':
+                                                                scope.row.hkxw.HK007==6?'151~180':
+                                                                scope.row.hkxw.HK007==7?'>180':
+                                                     ''
+                                                  }}
+                                                  </el-tag> 
+                                                </template>
+                                                    <template v-if="scope.row.lsqz">
+                                            <el-tag
+                                                  v-if="scope.row.lsqz.QZ001"
+                                                  type="danger"
+                                                 >
+                                                  欺诈最早出现时间{{scope.row.lsqz.QZ001}}
+                                                  </el-tag>
+                                            <el-tag
+                                                  v-if="scope.row.lsqz.QZ002"
+                                                  type="danger"
+                                                 >
+                                                  欺诈最近出现时间{{scope.row.lsqz.QZ002}}
+                                                  </el-tag>
+                                            <el-tag
+                                                  v-if="scope.row.lsqz.QZ003"
+                                                  type="danger"
+                                                 >
+                                                  欺诈累计出现次数{{scope.row.lsqz.QZ003}}
+                                                  </el-tag>                                                       
+                                                    
+                                                    </template>                                                                                                                                                                                                                                                                                                          
+                                          <template v-if="scope.row.zffm">
+                                         <el-tag
+                                                  v-if="scope.row.zffm.FM001"
+                                                  type="danger"
+                                                 >
+                                                  欺诈最早出现时间{{scope.row.zffm.FM001}}
+                                                  </el-tag>
+                                            <el-tag
+                                                  v-if="scope.row.zffm.FM002"
+                                                  type="danger"
+                                                 >
+                                                  欺诈最近出现时间{{scope.row.zffm.FM002}}
+                                                  </el-tag>
+                                            <el-tag
+                                                  v-if="scope.row.zffm.FM003"
+                                                  type="danger"
+                                                 >
+                                                  欺诈累计出现次数{{scope.row.zffm.FM003}}
+                                                  </el-tag>  
+                                          </template>
+                                                                                                                                                                                                                                             
+                                      </template>                                    
+                                </el-table-column>                                     
+                            </el-table>
+                          </td>
+                    </tr> 
+                    <!-- <tr>
+                        <th  class="bgcolor "  style="text-align: center;">鹏数科技</th>
+                        <td colspan="5" >
+                            <el-table
+                            v-if="pskjReport"
+                                    :data="pskjReport"
+                                    border
+                                        highlight-current-row style="width: 100%;font-weight:bold">
+
+                               <el-table-column prop="status" align="center" label="匹配结果"  width="100">
+                                      <template slot-scope="scope">
+                                                <el-tag
+                                                  :type="scope.row.status==1?'danger':''">
+                                                  {{scope.row.status==1?'是':'否'}}
+                                                  </el-tag>
+                                      </template>                                   
+                               </el-table-column>
+                                <el-table-column  align="center" label="摘要"  min-width="150" >
+                                      <template slot-scope="scope" >
+                                                  <el-tag
+                                                    v-if="scope.row.sn_order2_blacklist_contacts_cnt&&scope.row.sn_order2_blacklist_contacts_cnt!=0"
+                                                    type="danger">
+                                                    间接黑名单数量{{scope.row.sn_order2_blacklist_contacts_cnt}}
+                                                  </el-tag> 
+                                                  <el-tag
+                                                    v-if="scope.row.sn_order1_blacklist_contacts_cnt&&scope.row.sn_order1_blacklist_contacts_cnt!=0"
+                                                    type="danger">
+                                                    直接黑名单数量{{scope.row.sn_order1_blacklist_contacts_cnt}}
+                                                  </el-tag> 
+                                                  <el-tag
+                                                    v-if="scope.row.sn_order2_blacklist_routers_cnt&&scope.row.sn_order2_blacklist_routers_cnt!=0"
+                                                    type="danger">
+                                                    间接黑人的直接联系人个数{{scope.row.sn_order2_blacklist_routers_cnt}}
+                                                  </el-tag> 
+                                                  <el-tag
+                                                    v-if="scope.row.sn_order2_blacklist_routers_pct"
+                                                    type="danger">
+                                                    间接黑人的直接联系人比例{{scope.row.sn_order2_blacklist_routers_pct}}
+                                                  </el-tag> 
+
+                                                  <el-tag
+                                                    v-if="scope.row.in_court_blacklist"
+                                                    type="danger">
+                                                    法院黑名单
+                                                  </el-tag>   
+                                                  <el-tag
+                                                    v-if="scope.row.in_p2p_blacklist"
+                                                    type="danger">
+                                                    网贷黑名单
+                                                  </el-tag>   
+                                                  <el-tag
+                                                    v-if="scope.row.idcard_in_blacklist"
+                                                    type="danger">
+                                                    身份证黑名单
+                                                  </el-tag>   
+                                                  <el-tag
+                                                    v-if="scope.row.phone_in_blacklist"
+                                                    type="danger">
+                                                    手机黑名单
+                                                  </el-tag>   
+                                                  <el-tag
+                                                    v-if="scope.row.in_bank_blacklist"
+                                                    type="danger">
+                                                    银行黑名单
+                                                  </el-tag>   
+
+                                                  <el-tag
+                                                    v-if="scope.row.offline_cash_loan_cnt"
+                                                    type="danger">
+                                                    线下现金贷{{scope.row.offline_cash_loan_cnt}}次
+                                                  </el-tag> 
+                                                  <el-tag
+                                                    v-if="scope.row.online_cash_loan_cnt"
+                                                    type="danger">
+                                                    线上现金贷{{scope.row.online_cash_loan_cnt}}次
+                                                  </el-tag> 
+                                                  <el-tag
+                                                    v-if="scope.row.payday_loan_cnt"
+                                                    type="danger">
+                                                    线上消费分期{{scope.row.payday_loan_cnt}}次
+                                                  </el-tag> 
+                                                  <el-tag
+                                                    v-if="scope.row.payday_loan_cnt"
+                                                    type="danger">
+                                                    小额快速贷{{scope.row.payday_loan_cnt}}次
+                                                  </el-tag> 
+                                                  <el-tag
+                                                    v-if="scope.row.credit_card_repayment_cnt"
+                                                    type="danger">
+                                                    信用卡代还{{scope.row.credit_card_repayment_cnt}}次
+                                                  </el-tag> 
+                                                  <el-tag
+                                                    v-if="scope.row.offline_installment_cnt"
+                                                    type="danger">
+                                                    线下分期{{scope.row.offline_installment_cnt}}次
+                                                  </el-tag> 
+                                                  <el-tag
+                                                    v-if="scope.row.search_cnt_recent_180_days"
+                                                    type="danger">
+                                                    最近180天查询{{scope.row.search_cnt_recent_180_days}}次
+                                                  </el-tag> 
+                                                  <el-tag
+                                                    v-if="scope.row.org_cnt"
+                                                    type="danger">
+                                                   历史查询总机构数{{scope.row.org_cnt}}次
+                                                  </el-tag> 
+                                                  <el-tag
+                                                    v-if="scope.row.search_cnt "
+                                                    type="danger">
+                                                    历史查询总次数{{scope.row.search_cnt }}次
+                                                  </el-tag>                                                                                                                                                                                                                                                                                                                                                                                                                   
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+                                      </template>                                    
+                                </el-table-column>                                     
+                            </el-table>
+                          </td>
+                    </tr> 
+                    <tr>
+                        <th  class="bgcolor "  style="text-align: center;">小视科技</th>
+                        <td colspan="5" >
+                            <el-table
+                            v-if="hmdReport"
+                                    :data="hmdReport"
+                                    border
+                                        highlight-current-row style="width: 100%;font-weight:bold">
+
+                               <el-table-column prop="status" align="center" label="匹配结果"  width="100">
+                                      <template slot-scope="scope">
+                                                <el-tag
+                                                  :type="scope.row.status?'danger':''">
+                                                  {{scope.row.status?'是':'否'}}
+                                                  </el-tag>
+                                      </template>                                   
+                               </el-table-column>
+                                <el-table-column  align="center" label="摘要"  min-width="150" >
+                                      <template slot-scope="scope" >
+                                                  <el-tag
+                                                    v-if="scope.row.message"
+                                                    :type="scope.row.status?'danger':''">
+                                                    {{scope.row.message}}
+                                                  </el-tag> 
+                                      </template>                                    
+                                </el-table-column>                                     
+                            </el-table>
+                          </td>
+                    </tr>   
+                    <tr>
+                        <th  class="bgcolor "  style="text-align: center;">算话征信</th>
+                        <td colspan="5" >
+                            <el-table
+                            v-if="shReport"
+                                    :data="shReport"
+                                    border
+                                        highlight-current-row style="width: 100%;font-weight:bold">
+
+                               <el-table-column prop="status" align="center" label="匹配结果"  width="100">
+                                      <template slot-scope="scope">
+                                                <el-tag
+                                                  :type="scope.row.status==1?'danger':''">
+                                                  {{scope.row.status==1?'是':'否'}}
+                                                  </el-tag>
+                                      </template>                                   
+                               </el-table-column>
+                                <el-table-column  align="center" label="摘要"  min-width="150" >
+                                      <template slot-scope="scope" >
+                                                  <el-tag
+                                                    v-if="scope.row.risk"
+                                                    :type="scope.row.risk=='high'?'danger':scope.row.risk=='medium-high'?'danger':scope.row.risk=='medium'?'warning':scope.row.risk=='low'?'':''">
+                                                    风险等级{{scope.row.risk=='high'?'非常高':scope.row.risk=='medium-high'?'高':scope.row.risk=='medium'?'中等':scope.row.risk=='low'?'低':''}}
+                                                  </el-tag> 
+                                                <template v-for="(tem,i) in scope.row.detail" v-if="scope.row.detail">
+                                                  <el-tag :key="i"
+                                                    v-if="tem.riskType">
+                                                    {{tem.riskType == 'loan'?'小贷':
+                                                    tem.riskType =='bank'?'银行':tem.riskType =='p2p'?'p2p':tem.riskType =='consumer_finance'?'消费金融':tem.riskType =='insurance'?'保险':'其他金融类'
+                                                    }}{{tem.riskDescription}}
+                                                  </el-tag> 
+                                                </template>
+                                      </template>                                    
+                                </el-table-column>                                     
+                            </el-table>
+                          </td>
+                    </tr>    
+                    <tr>
+                        <th  class="bgcolor "  style="text-align: center;">孚临金科</th>
+                        <td colspan="5" >
+                            <el-table
+                            v-if="fljkReport"
+                                    :data="fljkReport"
+                                    border
+                                        highlight-current-row style="width: 100%;font-weight:bold">
+
+                               <el-table-column prop="status" align="center" label="匹配结果"  width="100">
+                                      <template slot-scope="scope">
+                                                <el-tag
+                                                  :type="scope.row.status==1?'danger':''">
+                                                  {{scope.row.status==1?'是':'否'}}
+                                                  </el-tag>
+                                      </template>                                   
+                               </el-table-column>
+                            </el-table>
+                          </td>
+                    </tr>    -->
+                    <tr>
+                        <th  class="bgcolor "  style="text-align: center;">创蓝</th>
+                        <td colspan="5" >
+                            <el-table
+                            v-if="clReport"
+                                    :data="clReport"
+                                    border
+                                        highlight-current-row style="width: 100%;font-weight:bold">
+
+                               <el-table-column prop="status" align="center" label="匹配结果"  width="100">
+                                      <template slot-scope="scope">
+                                                <el-tag
+                                                  :type="scope.row.status=='W1'?'':scope.row.status=='N'?'':'danger'">
+                                                  {{scope.row.status?'否':scope.row.status=='W1'?'否':scope.row.status=='N'?'否':'是'}}
+                                                  </el-tag>
+                                      </template>                                   
+                               </el-table-column>
+                                <el-table-column  align="center" label="摘要"  min-width="150" >
+                                      <template slot-scope="scope" >
+                                                  <el-tag
+                                                     v-if="scope.row.blackLevel=='B1'||scope.row.blackLevel=='B2'||scope.row.blackLevel=='W1'||scope.row.blackLevel=='N'"
+                                                    :type="scope.row.blackLevel='B1'?'danger':scope.row.blackLevel=='B2'?'danger':scope.row.blackLevel=='W1'?'warning':scope.row.blackLevel=='N'?'':''">
+                                                    {{scope.row.blackLevel=='B1'?'黑名单':scope.row.blackLevel=='B2'?'可信度低':scope.row.blackLevel=='W1'?'白名单':scope.row.blackLevel=='N'?'未找到':''}}
+                                                  </el-tag> 
+                                      </template>                                    
+                                </el-table-column>                                    
+                            </el-table>
+                          </td>
+                    </tr>                                                                                                                                                                                                                                                                       
+          </table>
+        </el-dialog>
 		</el-dialog>
 	</div>
 </template>
@@ -1749,6 +4150,7 @@ import {
   httpSetReviewe,
   httpGetCustomterMesage,
   httpGetCreditReport,
+  httpGettiqianfublacklistvarious,
   httpParametershow,
   httpUpdataLoanApply,
   httpAssignedList
@@ -1897,7 +4299,24 @@ export default {
       chooseMoneyVo: {}, //金钱判断
       resultForm: {},
       whiteForm: {},
-      BreportList : false
+      BreportList : false,
+            txReport: [],
+      brReport: [],
+      mxReport: [],
+      scReport: [],
+      gxbReport: [],
+      xyReport: [],
+      bqsReport: [],
+      tcReport: [],
+      ppxReport: [],
+      pskjReport: [],
+      hmdReport: [],
+      shReport: [],
+      fljkReport: [],
+      clReport: [],
+      reportList: {},
+            blackListVisible:false,
+      //
     };
   },
   computed: {
@@ -1908,6 +4327,874 @@ export default {
     ])
   },
   methods: {
+    //查看黑名单
+    viewBlackList(realName, mobNum, idNum, type) {
+      var i = 0;
+      this.txReport.length = 0;
+      this.brReport.length = 0;
+      this.mxReport.length = 0;
+      this.scReport.length = 0;
+      this.gxbReport.length = 0;
+      this.xyReport.length = 0;
+      this.bqsReport.length = 0;
+      this.tcReport.length = 0;
+      this.ppxReport.length = 0;
+      this.pskjReport.length = 0;
+      this.hmdReport.length = 0;
+      this.shReport.length = 0;
+      this.fljkReport.length = 0;
+      this.clReport.length = 0;
+      httpGettiqianfublacklistvarious(
+        this.customerInformation[0].chbrealName,
+        this.customerInformation[0].chbphoneNumber,
+        this.customerInformation[0].chbidcard,
+        1
+      )
+        .then(res => {
+          let data = res.data;
+          if (data.code == 200) {
+            this.brReport.push(data.data);
+            httpGettiqianfublacklistvarious(
+              this.customerInformation[0].chbrealName,
+              this.customerInformation[0].chbphoneNumber,
+              this.customerInformation[0].chbidcard,
+              2
+            ).then(res => {
+              let data = res.data;
+              if (data.code == 200) {
+                if (data.data) {
+                  this.txReport.push(data.data);
+                } else {
+                  this.txReport.push([{ status: false }]);
+                }
+                httpGettiqianfublacklistvarious(
+                  this.customerInformation[0].chbrealName,
+                  this.customerInformation[0].chbphoneNumber,
+                  this.customerInformation[0].chbidcard,
+                  5
+                ).then(res => {
+                  let data = res.data;
+                  if (data.code == 200) {
+                    let obj = data.data;
+                    if (data.data) {
+                      if (
+                        data.data.blackListPaipaiXinVo.resp_msg ==
+                        "调用接口成功"
+                      ) {
+                        this.ppxReport.push({
+                          status: obj.status,
+                          isAlert:
+                            obj.blackListPaipaiXinVo.resp_body.msg.data.isAlert,
+                          isBlack:
+                            obj.blackListPaipaiXinVo.resp_body.msg.data.isBlack,
+                          hkxw:
+                            obj.blackListPaipaiXinVo.resp_body.msg.data
+                              .blackSummary.hkxw,
+                          lsqz:
+                            obj.blackListPaipaiXinVo.resp_body.msg.data
+                              .blackSummary.lsqz,
+                          zffm:
+                            obj.blackListPaipaiXinVo.resp_body.msg.data
+                              .blackSummary.zffm
+                        });
+                      } else {
+                        this.ppxReport.push({
+                          status: null,
+                          isAlert: null,
+                          isBlack: null,
+                          hkxw: {},
+                          lsqz: {},
+                          zffm: {}
+                        });
+                      }
+                    } else {
+                      this.ppxReport.push({
+                        status: null,
+                        isAlert: null,
+                        isBlack: null,
+                        hkxw: {},
+                        lsqz: {},
+                        zffm: {}
+                      });
+                    }
+                  } else {
+                    this.ppxReport.push({
+                      status: null,
+                      isAlert: null,
+                      isBlack: null,
+                      hkxw: {},
+                      lsqz: {},
+                      zffm: {}
+                    });
+                  }
+                  httpGettiqianfublacklistvarious(
+                    this.customerInformation[0].chbrealName,
+                    this.customerInformation[0].chbphoneNumber,
+                    this.customerInformation[0].chbidcard,
+                    14
+                  ).then(res => {
+                    let data = res.data;
+                    if (data.code == 200) {
+                      let obj = data.data;
+                      if (data.data) {
+                        console.log(obj.status);
+                        this.clReport.push({
+                          status: obj.status,
+                          // status: obj.status
+                          //   ? obj.status == "N" ? false : true
+                          //   : false,
+                          blackLevel: obj.status
+                        });
+                      } else {
+                        this.clReport.push({
+                          status: false,
+                          blackLevel: null
+                        });
+                      }
+                    }
+                    httpGettiqianfublacklistvarious(
+                      this.customerInformation[0].chbrealName,
+                      this.customerInformation[0].chbphoneNumber,
+                      this.customerInformation[0].chbidcard,
+                      10
+                    ).then(res => {
+                      let data = res.data;
+                      if (data.code == 200) {
+                        if (data.data) {
+                          let obj = JSON.parse(data.data);
+                          this.xyReport.push({
+                            status: data.data.success,
+                            desc: obj.data ? obj.data.desc : "",
+                            max_overdue_amt: obj.data
+                              ? obj.data.result_detail.max_overdue_amt
+                              : "",
+                            max_overdue_days: obj.data
+                              ? obj.data.result_detail.max_overdue_days
+                              : "",
+                            latest_overdue_time: obj.data
+                              ? obj.data.result_detail.latest_overdue_time
+                              : "",
+                            currently_overdue: obj.data
+                              ? obj.data.result_detail.currently_overdue
+                              : "",
+                            currently_performance: obj.data
+                              ? obj.data.result_detail.currently_performance
+                              : "",
+                            acc_exc: obj.data
+                              ? obj.data.result_detail.acc_exc
+                              : "",
+                            acc_sleep: obj.data
+                              ? obj.data.result_detail.acc_sleep
+                              : ""
+                          });
+                        } else {
+                          this.xyReport.push({
+                            status: null,
+                            desc: null,
+                            max_overdue_amt: null,
+                            max_overdue_days: null,
+                            latest_overdue_time: null,
+                            currently_overdue: null,
+                            currently_performance: null,
+                            acc_exc: null,
+                            acc_sleep: null
+                          });
+                        }
+                      }
+                    });
+                    //         httpGettiqianfublacklistvarious(
+                    //           this.customerInformation[0].chbrealName,
+                    //           this.customerInformation[0].chbphoneNumber,
+                    //           this.customerInformation[0].chbidcard,
+                    //           10
+                    //         ).then(res => {
+                    //           let data = res.data;
+                    //           if (data.code == 200) {
+                    //             if (data.data) {
+                    //               let obj = JSON.parse(data.data);
+                    //               this.xyReport.push({
+                    //                 status: data.data.success,
+                    //                 desc: obj.data ? obj.data.desc : "",
+                    //                 max_overdue_amt: obj.data
+                    //                   ? obj.data.result_detail.max_overdue_amt
+                    //                   : "",
+                    //                 max_overdue_days: obj.data
+                    //                   ? obj.data.result_detail.max_overdue_days
+                    //                   : "",
+                    //                 latest_overdue_time: obj.data
+                    //                   ? obj.data.result_detail.latest_overdue_time
+                    //                   : "",
+                    //                 currently_overdue: obj.data
+                    //                   ? obj.data.result_detail.currently_overdue
+                    //                   : "",
+                    //                 currently_performance: obj.data
+                    //                   ? obj.data.result_detail.currently_performance
+                    //                   : "",
+                    //                 acc_exc: obj.data ? obj.data.result_detail.acc_exc : "",
+                    //                 acc_sleep: obj.data
+                    //                   ? obj.data.result_detail.acc_sleep
+                    //                   : ""
+                    //               });
+                    //             } else {
+                    //               this.xyReport.push({
+                    //                 status: null,
+                    //                 desc: null,
+                    //                 max_overdue_amt: null,
+                    //                 max_overdue_days: null,
+                    //                 latest_overdue_time: null,
+                    //                 currently_overdue: null,
+                    //                 currently_performance: null,
+                    //                 acc_exc: null,
+                    //                 acc_sleep: null
+                    //               });
+                    //             }
+                    //           }
+                    console.log(this.blackListVisible);
+                    this.blackListVisible = true;
+                  });
+                });
+              }
+            });
+          } else {
+            this.$message.error(data.msg);
+          }
+        })
+        .catch(err => {
+          this.$message.error("网络错误请联系管理员");
+        });
+      // httpGettiqianfublacklistvarious(
+      //   this.customerInformation[0].chbrealName,
+      //   this.customerInformation[0].chbphoneNumber,
+      //   this.customerInformation[0].chbidcard,
+      //   2
+      // ).then(res => {
+      //   let data = res.data;
+
+      //   if (data.code == 200) {
+      //     if (data.data) {
+      //       this.txReport.push(data.data);
+      //     } else {
+      //       this.txReport.push([{ status: false }]);
+      //     }
+      //   }
+      //   httpGettiqianfublacklistvarious(
+      //     this.customerInformation[0].chbrealName,
+      //     this.customerInformation[0].chbphoneNumber,
+      //     this.customerInformation[0].chbidcard,
+      //     1
+      //   ).then(res => {
+      //     let data = res.data;
+
+      //     if (data.code == 200) {
+      //       this.brReport.push(data.data);
+      //     }
+      //     httpGettiqianfublacklistvarious(
+      //       this.customerInformation[0].chbrealName,
+      //       this.customerInformation[0].chbphoneNumber,
+      //       this.customerInformation[0].chbidcard,
+      //       3
+      //     ).then(res => {
+      //       let data = res.data;
+
+      //       if (data.code == 200) {
+      //         if (data.data) {
+      //           this.mxReport.push(data.data);
+      //         } else {
+      //           this.mxReport.push([{ status: 0 }]);
+      //         }
+      //       }
+      //       httpGettiqianfublacklistvarious(
+      //         this.customerInformation[0].chbrealName,
+      //         this.customerInformation[0].chbphoneNumber,
+      //         this.customerInformation[0].chbidcard,
+      //         4
+      //       ).then(res => {
+      //         let data = res.data;
+      //         if (data.code == 200) {
+      //           if (data.data) {
+      //             this.scReport.push({
+      //               status: data.data.status,
+      //               netLoan: data.data.scInnerBlackVO
+      //                 ? data.data.scInnerBlackVO.handlerData.netLoan
+      //                 : "",
+      //               altNumber: data.data.scInnerBlackVO
+      //                 ? data.data.scInnerBlackVO.handlerData.altNumber
+      //                 : "",
+      //               history_overdue: data.data.scInnerBlackVO
+      //                 ? data.data.scInnerBlackVO.handlerData.history_overdue
+      //                 : "",
+      //               current_overdue: data.data.scInnerBlackVO
+      //                 ? data.data.scInnerBlackVO.handlerData.current_overdue
+      //                 : ""
+      //             });
+      //           } else {
+      //             this.scReport.push({
+      //               status: "",
+      //               netLoan: "",
+      //               altNumber: "",
+      //               history_overdue: "",
+      //               current_overdue: ""
+      //             });
+      //           }
+      //         }
+
+      //         httpGettiqianfublacklistvarious(
+      //           // "王志存",
+      //           // "15176550456",
+      //           // "130230199207142313",
+      //           this.customerInformation[0].chbrealName,
+      //           this.customerInformation[0].chbphoneNumber,
+      //           this.customerInformation[0].chbidcard,
+      //           7
+      //         ).then(res => {
+      //           let data = res.data;
+      //           if (data.code == 200) {
+      //             if (data.data) {
+      //               let obj = JSON.parse(data.data.datasources[0].data);
+      //               this.gxbReport.push({
+      //                 status: obj ? obj.status : "",
+      //                 phone: obj ? obj.data.phone[0] : "",
+      //                 idcard: obj ? obj.data.idcard[0] : "",
+      //                 overdue_time: "",
+      //                 lend_time: "",
+      //                 takeback: "",
+      //                 outDays: "",
+      //                 lend_money: ""
+      //               });
+      //             } else {
+      //               this.gxbReport.push({
+      //                 status: "",
+      //                 phone: {
+      //                   overdue_time: "",
+      //                   lend_time: "",
+      //                   takeback: "",
+      //                   outDays: "",
+      //                   lend_money: ""
+      //                 },
+      //                 idcard: {
+      //                   overdue_time: "",
+      //                   lend_time: "",
+      //                   takeback: "",
+      //                   outDays: "",
+      //                   lend_money: ""
+      //                 },
+      //                 overdue_time: "",
+      //                 lend_time: "",
+      //                 takeback: "",
+      //                 outDays: "",
+      //                 lend_money: ""
+      //               });
+      //             }
+      //           }
+      //         });
+      //         httpGettiqianfublacklistvarious(
+      //           this.customerInformation[0].chbrealName,
+      //           this.customerInformation[0].chbphoneNumber,
+      //           this.customerInformation[0].chbidcard,
+      //           10
+      //         ).then(res => {
+      //           let data = res.data;
+      //           if (data.code == 200) {
+      //             if (data.data) {
+      //               let obj = JSON.parse(data.data);
+      //               this.xyReport.push({
+      //                 status: data.data.success,
+      //                 desc: obj.data ? obj.data.desc : "",
+      //                 max_overdue_amt: obj.data
+      //                   ? obj.data.result_detail.max_overdue_amt
+      //                   : "",
+      //                 max_overdue_days: obj.data
+      //                   ? obj.data.result_detail.max_overdue_days
+      //                   : "",
+      //                 latest_overdue_time: obj.data
+      //                   ? obj.data.result_detail.latest_overdue_time
+      //                   : "",
+      //                 currently_overdue: obj.data
+      //                   ? obj.data.result_detail.currently_overdue
+      //                   : "",
+      //                 currently_performance: obj.data
+      //                   ? obj.data.result_detail.currently_performance
+      //                   : "",
+      //                 acc_exc: obj.data ? obj.data.result_detail.acc_exc : "",
+      //                 acc_sleep: obj.data
+      //                   ? obj.data.result_detail.acc_sleep
+      //                   : ""
+      //               });
+      //             } else {
+      //               this.xyReport.push({
+      //                 status: null,
+      //                 desc: null,
+      //                 max_overdue_amt: null,
+      //                 max_overdue_days: null,
+      //                 latest_overdue_time: null,
+      //                 currently_overdue: null,
+      //                 currently_performance: null,
+      //                 acc_exc: null,
+      //                 acc_sleep: null
+      //               });
+      //             }
+      //           }
+      //           httpGettiqianfublacklistvarious(
+      //             this.customerInformation[0].chbrealName,
+      //             this.customerInformation[0].chbphoneNumber,
+      //             this.customerInformation[0].chbidcard,
+      //             8
+      //           ).then(res => {
+      //             let data = res.data;
+      //             if (data.code == 200) {
+      //               let obj = data.data;
+
+      //               if (data.data) {
+      //                 this.bqsReport.push({
+      //                   status: obj.status,
+      //                   finalDecision: obj.bqsDataVO
+      //                     ? obj.bqsDataVO.finalDecision
+      //                     : "", //决策结果码，
+      //                   finalScore: obj.bqsDataVO
+      //                     ? obj.bqsDataVO.finalScore
+      //                     : "", //最终风险参数
+      //                   // riskType: obj.bqsDataVO?obj.bqsDataVO.strategySet[0].riskType:'', //风险类型
+      //                   // strategyDecision:obj.bqsDataVO?
+      //                   //   obj.bqsDataVO.strategySet[0].strategyDecision:'', //策略决策结果，参见 decision 附录
+      //                   // strategyMode: obj.bqsDataVO?obj.bqsDataVO.strategySet[0].strategyMode:'', //   策略匹配模式，参见 strategyMode 附录
+      //                   // strategyScore:
+      //                   //   obj.bqsDataVO?obj.bqsDataVO.strategySet[0].strategyScore:'',
+      //                   // rejectValue: obj.bqsDataVO.strategySet[0].rejectValue,
+      //                   // reviewValue: obj.bqsDataVO.strategySet[0].reviewValue,
+      //                   // tips: obj.bqsDataVO.strategySet[0].tips,
+      //                   // hitRules: obj.bqsDataVO.strategySet[0].hitRules,
+      //                   strategySet: obj.bqsDataVO
+      //                     ? obj.bqsDataVO.strategySet
+      //                     : [],
+
+      //                   blackListFulinJinkeVo: null,
+      //                   psBalckListVO: null
+      //                 });
+      //               } else {
+      //                 this.bqsReport.push({
+      //                   status: 0,
+      //                   blackListBaiRongVo: null,
+      //                   moxieBlackVO: null,
+      //                   blackListPaipaiXinVo: null,
+      //                   scInnerBlackVO: null,
+      //                   bqsDataVO: {
+      //                     finalDecision: null,
+      //                     finalScore: null,
+      //                     flowNo: null,
+      //                     resultCode: null,
+      //                     resultDesc: null,
+      //                     strategySet: [
+      //                       {
+      //                         riskType: null,
+      //                         strategyDecision: null,
+      //                         strategyId: null,
+      //                         strategyMode: null,
+      //                         strategyName: null,
+      //                         strategyScore: 0,
+      //                         rejectValue: 0,
+      //                         reviewValue: 0,
+      //                         tips: null,
+      //                         hitRules: [
+      //                           {
+      //                             decision: null,
+      //                             memo: null,
+      //                             ruleId: null,
+      //                             ruleName: null,
+      //                             score: 0,
+      //                             template: null,
+      //                             detail: null
+      //                           }
+      //                         ]
+      //                       }
+      //                     ]
+      //                   },
+      //                   blackListFulinJinkeVo: null,
+      //                   psBalckListVO: null
+      //                 });
+      //               }
+      //             }
+      //             httpGettiqianfublacklistvarious(
+      //               this.customerInformation[0].chbrealName,
+      //               this.customerInformation[0].chbphoneNumber,
+      //               this.customerInformation[0].chbidcard,
+      //               6
+      //             ).then(res => {
+      //               let data = res.data;
+      //               if (data.code == 200) {
+      //                 let obj = data.data;
+      //                 if (data.data) {
+      //                   this.tcReport.push({
+      //                     status: obj.blackLevel == null ? false : true,
+      //                     isWhite: obj.isWhite ? obj.isWhite : true,
+      //                     msginfo: obj.msginfo
+      //                       ? JSON.parse(obj.msginfo).data.result
+      //                       : "",
+      //                     blackLevel: obj.blackLevel
+      //                   });
+      //                 } else {
+      //                   this.tcReport.push({
+      //                     status: false,
+      //                     isWhite: null,
+      //                     msginfo: {},
+      //                     blackLevel: null
+      //                   });
+      //                 }
+      //               }
+      //               httpGettiqianfublacklistvarious(
+      //                 this.customerInformation[0].chbrealName,
+      //                 this.customerInformation[0].chbphoneNumber,
+      //                 this.customerInformation[0].chbidcard,
+      //                 5
+      //               ).then(res => {
+      //                 let data = res.data;
+      //                 if (data.code == 200) {
+      //                   let obj = data.data;
+      //                   if (data.data) {
+      //                     if (data.data.blackListPaipaiXinVo) {
+      //                       this.ppxReport.push({
+      //                         status: obj.status,
+      //                         isAlert:
+      //                           obj.blackListPaipaiXinVo.resp_body.msg.data
+      //                             .isAlert,
+      //                         isBlack:
+      //                           obj.blackListPaipaiXinVo.resp_body.msg.data
+      //                             .isBlack,
+      //                         hkxw:
+      //                           obj.blackListPaipaiXinVo.resp_body.msg.data
+      //                             .blackSummary.hkxw,
+      //                         lsqz:
+      //                           obj.blackListPaipaiXinVo.resp_body.msg.data
+      //                             .blackSummary.lsqz,
+      //                         zffm:
+      //                           obj.blackListPaipaiXinVo.resp_body.msg.data
+      //                             .blackSummary.zffm
+      //                       });
+      //                     } else {
+      //                       this.ppxReport.push({
+      //                         status: null,
+      //                         isAlert: null,
+      //                         isBlack: null,
+      //                         hkxw: {},
+      //                         lsqz: {},
+      //                         zffm: {}
+      //                       });
+      //                     }
+      //                   } else {
+      //                     this.ppxReport.push({
+      //                       status: null,
+      //                       isAlert: null,
+      //                       isBlack: null,
+      //                       hkxw: {},
+      //                       lsqz: {},
+      //                       zffm: {}
+      //                     });
+      //                   }
+      //                 } else {
+      //                   this.ppxReport.push({
+      //                     status: null,
+      //                     isAlert: null,
+      //                     isBlack: null,
+      //                     hkxw: {},
+      //                     lsqz: {},
+      //                     zffm: {}
+      //                   });
+      //                 }
+      //               });
+      //               httpGettiqianfublacklistvarious(
+      //                 this.customerInformation[0].chbrealName,
+      //                 this.customerInformation[0].chbphoneNumber,
+      //                 this.customerInformation[0].chbidcard,
+      //                 11
+      //               ).then(res => {
+      //                 let data = res.data;
+      //                 if (data.code == 200) {
+      //                   let obj = data.data;
+      //                   if (data.data) {
+      //                     if (data.data.psBalckListVO) {
+      //                       this.pskjReport.push({
+      //                         status: obj.status,
+      //                         sn_order2_blacklist_contacts_cnt:
+      //                           obj.psBalckListVO.data.risk_social_network
+      //                             .sn_order2_blacklist_contacts_cnt, //间接联系人在黑名单中数量(间接黑人)
+      //                         sn_order1_blacklist_contacts_cnt:
+      //                           obj.psBalckListVO.data.risk_social_network
+      //                             .sn_order1_blacklist_contacts_cnt, //直接联系人在黑名单中数量(直接黑人)
+      //                         sn_order2_blacklist_routers_cnt:
+      //                           obj.psBalckListVO.data.risk_social_network
+      //                             .sn_order2_blacklist_routers_cnt, //认识间接黑人的直接联系人个数
+      //                         sn_order2_blacklist_routers_pct:
+      //                           obj.psBalckListVO.data.risk_social_network
+      //                             .sn_order2_blacklist_routers_pct, //认识间接黑人的直接联系人比例
+      //                         in_court_blacklist:
+      //                           obj.psBalckListVO.data.risk_blacklist
+      //                             .in_court_blacklist, //是否命中法院黑名单
+      //                         in_p2p_blacklist:
+      //                           obj.psBalckListVO.data.risk_blacklist
+      //                             .in_p2p_blacklist, //是否命中网贷黑名单
+      //                         idcard_in_blacklist:
+      //                           obj.psBalckListVO.data.risk_blacklist
+      //                             .idcard_in_blacklist, //身份证是否命中黑名单
+      //                         phone_in_blacklist:
+      //                           obj.psBalckListVO.data.risk_blacklist
+      //                             .phone_in_blacklist, //手机号是否命中黑名单
+      //                         in_bank_blacklist:
+      //                           obj.psBalckListVO.data.risk_blacklist
+      //                             .in_bank_blacklist, //是否命中银行黑名单
+      //                         offline_cash_loan_cnt:
+      //                           obj.psBalckListVO.data.history_org
+      //                             .offline_cash_loan_cnt, //线下现金贷出现次数
+      //                         online_cash_loan_cnt:
+      //                           obj.psBalckListVO.data.history_org
+      //                             .online_cash_loan_cnt, //线上现金贷出现次数
+      //                         online_installment_cnt:
+      //                           obj.psBalckListVO.data.history_org
+      //                             .online_installment_cnt, //线上消费分期出现次数
+      //                         payday_loan_cnt:
+      //                           obj.psBalckListVO.data.history_org
+      //                             .payday_loan_cnt, //小额快速贷出现次数
+      //                         credit_card_repayment_cnt:
+      //                           obj.psBalckListVO.data.history_org
+      //                             .credit_card_repayment_cnt, //信用卡代还出现次数
+      //                         offline_installment_cnt:
+      //                           obj.psBalckListVO.data.history_org
+      //                             .offline_installment_cnt, //线下消费分期出现次数
+      //                         search_cnt_recent_180_days:
+      //                           obj.psBalckListVO.data.history_search
+      //                             .search_cnt_recent_180_days, //最近180天查询次数
+      //                         search_cnt_recent_7_days:
+      //                           obj.psBalckListVO.data.history_search
+      //                             .search_cnt_recent_7_days, //最近7天查询次数
+      //                         org_cnt_recent_180_days:
+      //                           obj.psBalckListVO.data.history_search
+      //                             .org_cnt_recent_180_days, //最近180天查询机构数
+      //                         search_cnt_recent_90_days:
+      //                           obj.psBalckListVO.data.history_search
+      //                             .search_cnt_recent_90_dayss, //最近90天查询次数
+      //                         org_cnt_recent_60_days:
+      //                           obj.psBalckListVO.data.history_search
+      //                             .org_cnt_recent_60_days, //最近60天查询次数
+      //                         search_cnt_recent_30_days:
+      //                           obj.psBalckListVO.data.history_search
+      //                             .search_cnt_recent_30_days, //最近30天查询次数
+      //                         search_cnt_recent_14_days:
+      //                           obj.psBalckListVO.data.history_search
+      //                             .search_cnt_recent_14_days, //最近14天查询次数
+      //                         org_cnt_recent_14_days:
+      //                           obj.psBalckListVO.data.history_search
+      //                             .org_cnt_recent_14_days, //最近14天查询次数
+      //                         org_cnt_recent_30_days:
+      //                           obj.psBalckListVO.data.history_search
+      //                             .org_cnt_recent_30_days, //最近30天查询次数
+      //                         org_cnt_recent_7_days:
+      //                           obj.psBalckListVO.data.history_search
+      //                             .org_cnt_recent_7_days, //最近7天查询次数
+      //                         org_cnt_recent_90_days:
+      //                           obj.psBalckListVO.data.history_search
+      //                             .org_cnt_recent_90_days, //最近90天查询次数
+      //                         org_cnt:
+      //                           obj.psBalckListVO.data.history_search.org_cnt, //历史查询总机构数
+      //                         search_cnt_recent_60_days:
+      //                           obj.psBalckListVO.data.history_search
+      //                             .search_cnt_recent_60_days,
+      //                         search_cnt:
+      //                           obj.psBalckListVO.data.history_search.search_cnt //历史查询总次数
+      //                       });
+      //                     } else {
+      //                       this.pskjReport.push({
+      //                         status: 0,
+      //                         sn_order2_blacklist_contacts_cnt: null, //间接联系人在黑名单中数量(间接黑人)
+      //                         sn_order1_blacklist_contacts_cnt: null, //直接联系人在黑名单中数量(直接黑人)
+      //                         sn_order2_blacklist_routers_cnt: null, //认识间接黑人的直接联系人个数
+      //                         sn_order2_blacklist_routers_pct: null, //认识间接黑人的直接联系人比例
+      //                         in_court_blacklist: null, //是否命中法院黑名单
+      //                         in_p2p_blacklist: null, //是否命中网贷黑名单
+      //                         idcard_in_blacklist: null, //身份证是否命中黑名单
+      //                         phone_in_blacklist: null, //手机号是否命中黑名单
+      //                         in_bank_blacklist: null, //是否命中银行黑名单
+      //                         offline_cash_loan_cnt: null, //线下现金贷出现次数
+      //                         online_cash_loan_cnt: null, //线上现金贷出现次数
+      //                         online_installment_cnt: null, //线上消费分期出现次数
+      //                         payday_loan_cnt: null, //小额快速贷出现次数
+      //                         credit_card_repayment_cnt: null, //信用卡代还出现次数
+      //                         offline_installment_cnt: null, //线下消费分期出现次数
+      //                         search_cnt_recent_180_days: null, //最近180天查询次数
+      //                         search_cnt_recent_7_days: null, //最近7天查询次数
+      //                         org_cnt_recent_180_days: null, //最近180天查询机构数
+      //                         search_cnt_recent_90_days: null, //最近90天查询次数
+      //                         org_cnt_recent_60_days: null, //最近60天查询次数
+      //                         search_cnt_recent_30_days: null, //最近30天查询次数
+      //                         search_cnt_recent_14_days: null, //最近14天查询次数
+      //                         org_cnt_recent_14_days: null, //最近14天查询次数
+      //                         org_cnt_recent_30_days: null, //最近30天查询次数
+      //                         org_cnt_recent_7_days: null, //最近7天查询次数
+      //                         org_cnt_recent_90_days: null, //最近90天查询次数
+      //                         org_cnt: null, //历史查询总机构数
+      //                         search_cnt_recent_60_days: null,
+      //                         search_cnt: null //历史查询总次数
+      //                       });
+      //                     }
+      //                   }
+      //                 } else {
+      //                   this.pskjReport.push({
+      //                     status: 0,
+      //                     sn_order2_blacklist_contacts_cnt: null, //间接联系人在黑名单中数量(间接黑人)
+      //                     sn_order1_blacklist_contacts_cnt: null, //直接联系人在黑名单中数量(直接黑人)
+      //                     sn_order2_blacklist_routers_cnt: null, //认识间接黑人的直接联系人个数
+      //                     sn_order2_blacklist_routers_pct: null, //认识间接黑人的直接联系人比例
+      //                     in_court_blacklist: null, //是否命中法院黑名单
+      //                     in_p2p_blacklist: null, //是否命中网贷黑名单
+      //                     idcard_in_blacklist: null, //身份证是否命中黑名单
+      //                     phone_in_blacklist: null, //手机号是否命中黑名单
+      //                     in_bank_blacklist: null, //是否命中银行黑名单
+      //                     offline_cash_loan_cnt: null, //线下现金贷出现次数
+      //                     online_cash_loan_cnt: null, //线上现金贷出现次数
+      //                     online_installment_cnt: null, //线上消费分期出现次数
+      //                     payday_loan_cnt: null, //小额快速贷出现次数
+      //                     credit_card_repayment_cnt: null, //信用卡代还出现次数
+      //                     offline_installment_cnt: null, //线下消费分期出现次数
+      //                     search_cnt_recent_180_days: null, //最近180天查询次数
+      //                     search_cnt_recent_7_days: null, //最近7天查询次数
+      //                     org_cnt_recent_180_days: null, //最近180天查询机构数
+      //                     search_cnt_recent_90_days: null, //最近90天查询次数
+      //                     org_cnt_recent_60_days: null, //最近60天查询次数
+      //                     search_cnt_recent_30_days: null, //最近30天查询次数
+      //                     search_cnt_recent_14_days: null, //最近14天查询次数
+      //                     org_cnt_recent_14_days: null, //最近14天查询次数
+      //                     org_cnt_recent_30_days: null, //最近30天查询次数
+      //                     org_cnt_recent_7_days: null, //最近7天查询次数
+      //                     org_cnt_recent_90_days: null, //最近90天查询次数
+      //                     org_cnt: null, //历史查询总机构数
+      //                     search_cnt_recent_60_days: null,
+      //                     search_cnt: null //历史查询总次数
+      //                   });
+      //                 }
+      //                 httpGettiqianfublacklistvarious(
+      //                   this.customerInformation[0].chbrealName,
+      //                   this.customerInformation[0].chbphoneNumber,
+      //                   this.customerInformation[0].chbidcard,
+      //                   12
+      //                 ).then(res => {
+      //                   let data = res.data;
+      //                   if (data.code == 200) {
+      //                     this.hmdReport.push({
+      //                       status: data.data.status,
+      //                       message: data.data.message
+      //                     });
+      //                   } else {
+      //                     this.hmdReport.push({
+      //                       status: null,
+      //                       message: null
+      //                     });
+      //                   }
+      //                   httpGettiqianfublacklistvarious(
+      //                     this.customerInformation[0].chbrealName,
+      //                     this.customerInformation[0].chbphoneNumber,
+      //                     this.customerInformation[0].chbidcard,
+      //                     13
+      //                   ).then(res => {
+      //                     let data = res.data;
+      //                     if (data.code == 200) {
+      //                       if (data.data) {
+      //                         if (data.data.responseInfo) {
+      //                           this.shReport.push({
+      //                             status: data.data.status,
+      //                             risk: data.data.responseInfo
+      //                               ? JSON.parse(data.data.responseInfo).data
+      //                                 ? JSON.parse(data.data.responseInfo).data
+      //                                     .risk
+      //                                 : ""
+      //                               : "",
+      //                             //金融命中黑名单时间区段（枚举值）A,近半年;B,近半年到一年;C,近一年到二年;D,两年以上;"":空
+      //                             detail: JSON.parse(data.data.responseInfo)
+      //                               .data
+      //                               ? JSON.parse(data.data.responseInfo).data
+      //                                   .finance.detail
+      //                               : []
+      //                           });
+      //                         } else {
+      //                           this.shReport.push({
+      //                             status: null,
+      //                             risk: null,
+      //                             date: null, //金融命中黑名单时间区段（枚举值）A,近半年;B,近半年到一年;C,近一年到二年;D,两年以上;"":空
+      //                             detail: []
+      //                           });
+      //                         }
+      //                       } else {
+      //                         this.shReport.push({
+      //                           status: null,
+      //                           risk: null,
+      //                           date: null, //金融命中黑名单时间区段（枚举值）A,近半年;B,近半年到一年;C,近一年到二年;D,两年以上;"":空
+      //                           detail: []
+      //                         });
+      //                       }
+      //                     } else {
+      //                       this.shReport.push({
+      //                         status: null,
+      //                         risk: null,
+      //                         date: null, //金融命中黑名单时间区段（枚举值）A,近半年;B,近半年到一年;C,近一年到二年;D,两年以上;"":空
+      //                         detail: []
+      //                       });
+      //                     }
+      //                     httpGettiqianfublacklistvarious(
+      //                       this.customerInformation[0].chbrealName,
+      //                       this.customerInformation[0].chbphoneNumber,
+      //                       this.customerInformation[0].chbidcard,
+      //                       9
+      //                     ).then(res => {
+      //                       let data = res.data;
+      //                       if (data.code == 200) {
+      //                         if (data.data) {
+      //                           this.fljkReport.push({
+      //                             status: data.data.status
+      //                           });
+      //                         } else {
+      //                           this.fljkReport.push({
+      //                             status: null
+      //                           });
+      //                         }
+      //                       }
+      //                       httpGettiqianfublacklistvarious(
+      //                         this.customerInformation[0].chbrealName,
+      //                         this.customerInformation[0].chbphoneNumber,
+      //                         this.customerInformation[0].chbidcard,
+      //                         14
+      //                       ).then(res => {
+      //                         let data = res.data;
+      //                         if (data.code == 200) {
+      //                           let obj = data.data;
+      //                           if (data.data) {
+      //                             this.clReport.push({
+      //                               status: obj.status
+      //                                 ? obj.status == "N" ? false : true
+      //                                 : false,
+      //                               // isWhite: obj.isWhite ? obj.isWhite : true,
+      //                               // msginfo: obj.msginfo
+      //                               //   ? JSON.parse(obj.msginfo).data.result
+      //                               //   : "",
+      //                               blackLevel: obj.status
+      //                             });
+      //                           } else {
+      //                             this.clReport.push({
+      //                               status: false,
+      //                               blackLevel: null
+      //                             });
+      //                           }
+      //                         }
+      //                         this.blackListVisible = true;
+      //                       });
+      //                     });
+      //                   });
+      //                 });
+      //               });
+      //             });
+      //           });
+      //         });
+      //       });
+      //     });
+      //   });
+      // });
+      // console.log(this.customerInformation);
+    },    
     getData(
       loginId,
       npage,
@@ -2161,12 +5448,12 @@ export default {
                 data.data.xinyanReport.data
               ).data.result_detail;
                this.BreportList = true;
-              console.log(JSON.parse(data.data.xinyanReport.data.desc));
             }               
           }
           this.CreditReport = true;
         })
         .catch(err => {
+          console.log(err);
           this.$message.error("网络错误请联系管理员");
         });
     },

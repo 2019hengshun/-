@@ -2313,10 +2313,10 @@
                       <th >
                         <template >
                                      <span :style="{color:temp.strategyDecision=='Reject'?'red':
-                            temp.strategyDecision=='Review'?'yellow':
+                            temp.strategyDecision=='Review'?'#FF6100':
                             temp.strategyDecision=='Accept'?'green':''}">决策分:{{temp.strategyScore}}</span> <br/>    
                                      <span :style="{color:temp.strategyDecision=='Reject'?'red':
-                            temp.strategyDecision=='Review'?'yellow':
+                            temp.strategyDecision=='Review'?'#FF6100':
                             temp.strategyDecision=='Accept'?'green':''}">决策结果
                           {{temp.strategyDecision=='Reject'?'拒绝，风险评估决策为高风险建议拒绝':
                             temp.strategyDecision=='Review'?'审核，风险评估决策为低风险建议人工审核':
@@ -3272,6 +3272,7 @@ export default {
             );
           }
           if (data.data.xinyanReport) {
+            console.log(1);
             if (
               JSON.parse(data.data.xinyanReport.data).data.desc !== "查询未命中"
             ) {

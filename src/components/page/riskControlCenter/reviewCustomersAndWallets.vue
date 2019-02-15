@@ -416,7 +416,7 @@
                                 </el-table-column>
                                 <el-table-column prop="applyAmt"  label="黑名单" align="center" min-width="160">
                                   <template    slot-scope="scope" align="center">
-                                    <el-button type="primary"   @click="viewBlackList()">查看黑名单</el-button>
+                                    <el-button :type="approveResult?'primary':'danger'" :disabled="!approveResult"   @click="viewBlackList()">查看黑名单</el-button>
                                   </template>
                                 </el-table-column>                                
                                 <el-table-column prop="applyAmt"  label="审核结果" align="center" min-width="160">
@@ -1628,10 +1628,10 @@
                       <th >
                         <template >
                                      <span :style="{color:temp.strategyDecision=='Reject'?'red':
-                            temp.strategyDecision=='Review'?'yellow':
+                            temp.strategyDecision=='Review'?'#FF6100':
                             temp.strategyDecision=='Accept'?'green':''}">决策分:{{temp.strategyScore}}</span> <br/>    
                                      <span :style="{color:temp.strategyDecision=='Reject'?'red':
-                            temp.strategyDecision=='Review'?'yellow':
+                            temp.strategyDecision=='Review'?'#FF6100':
                             temp.strategyDecision=='Accept'?'green':''}">决策结果
                           {{temp.strategyDecision=='Reject'?'拒绝，风险评估决策为高风险建议拒绝':
                             temp.strategyDecision=='Review'?'审核，风险评估决策为低风险建议人工审核':
