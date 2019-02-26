@@ -63,11 +63,12 @@
           </el-table-column> 
             <el-table-column prop="userId" fixed label="用户ID" align="center" width="70"  >
             </el-table-column>
+                        <el-table-column prop="userName" fixed label="用户姓名" align="center" min-width="70" >
+            </el-table-column>
             <el-table-column prop="phoneNumber" label="用户号码" align="center" min-width="100"  >
             </el-table-column>
 
-            <el-table-column prop="userName" label="用户姓名" align="center" min-width="70" >
-            </el-table-column>
+
             <el-table-column prop="idCard" label="身份证" align="center" min-width="150"  >
                                                        <template slot-scope="scope">
                     {{scope.row.idCard }}

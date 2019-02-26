@@ -6,9 +6,10 @@ var qs = require('qs');
 axios.defaults.timeout = 60000;
 // axios.defaults.withCredentials = true;
 //axios.defaults.baseURL = 'http://localhost:7994'; //本地服务器
-//axios.defaults.baseURL = 'http://47.88.171.117:8084';
+axios.defaults.baseURL = 'http://129.28.69.40:7994';
 //axios.defaults.baseURL = 'http://101.132.171.38:8084';
-axios.defaults.baseURL = 'http://101.132.171.38:7994',
+//axios.defaults.baseURL = 'http://101.132.171.38:7994',
+
   // axios.defaults.baseURL = '/api/';
   //axios.defaults.baseURL = 'http://192.168.2.110:7994';
   //axios.defaults.baseURL = 'http://192.168.25.138:8084';

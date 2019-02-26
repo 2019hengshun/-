@@ -176,7 +176,7 @@
             </el-form>
         </el-dialog> 
         <el-dialog
-          title="角色新增"
+          title="角色修改"
           :visible.sync="dialogVisible3"
           center
           width="30%"
@@ -197,7 +197,7 @@
             </el-form>
         </el-dialog>         
         <el-dialog
-          title="角色修改"
+          title="菜单修改"
           :visible.sync="dialogVisible2"
           center
           width="30%"
@@ -228,6 +228,7 @@ import {
   httpSaveRoleMenu,
   httpSaveMenu
 } from "../../../service/http";
+import { timeFormat } from "../../../config/time";
 export default {
   data() {
     return {
@@ -263,16 +264,29 @@ export default {
   methods: {
     getData() {
       let _this = this;
-      getRoleList()
-        .then(res => {
-          let data = res.data;
-          _this.tableData = data;
-          _this.loading = false;
-        })
-        .catch(err => {
-          _this.tableData = [];
-          _this.loading = false;
-        });
+      if (this.search.time && this.search.time.length) {
+        getRoleList(this.search.time[0], timeFormat(this.search.time[1], 1))
+          .then(res => {
+            let data = res.data;
+            _this.tableData = data;
+            _this.loading = false;
+          })
+          .catch(err => {
+            _this.tableData = [];
+            _this.loading = false;
+          });
+      } else {
+        getRoleList()
+          .then(res => {
+            let data = res.data;
+            _this.tableData = data;
+            _this.loading = false;
+          })
+          .catch(err => {
+            _this.tableData = [];
+            _this.loading = false;
+          });
+      }
     },
     handleSearch(type = true) {
       this.getData();

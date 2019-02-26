@@ -64,7 +64,7 @@
 
 <script>
 import { timeFormat } from "../../../config/time";
-import { httpRegistercount} from "@/service/http";
+import { httpRegistercount } from "@/service/http";
 export default {
   data() {
     return {
@@ -90,25 +90,76 @@ export default {
 
     //得到销售统计
     _httpGetsales(salesCountType, begainTimeString, endTimeString, type) {
-
       httpRegistercount(salesCountType, begainTimeString, endTimeString, type)
         .then(res => {
           let data = res.data;
-          if (data.code == 200) {
-            let xData = [];
-            let sData = {
-              size: [],
-   
-       
-            };
-            data.data.forEach(v => {
-              salesCountType == 1
-                ? xData.push(timeFormat(v.time))
-                : xData.push(v.timeString);
-              sData.size.push(v.size);
-
-            });
-            this.drawLine(xData, sData, type);
+          if (salesCountType == 2) {
+            if (data.code == 200) {
+              let xData = [];
+              let sData = {
+                size: []
+              };
+              data.data.forEach(v => {
+                salesCountType == 1
+                  ? xData.push(timeFormat(v.time))
+                  : xData.push(v.timeString);
+                sData.size.push(v.size);
+              });
+              this.drawLine(xData, sData, type);
+            }
+          } else {
+            var Adate = [];
+            if (this.search.time && this.search.time.length) {
+              var Stime =
+                new Date(this.search.time[1]).getTime() -
+                new Date(this.search.time[0]).getTime();
+              var Stimes = Stime / 86400000;
+              for (let i = 0; i <= Stimes; i++) {
+                Adate.push(timeFormat(new Date(this.search.time[0]), i));
+              }
+            } else {
+              var Stime =
+                new Date(timeFormat(new Date())).getTime() -
+                new Date(timeFormat(new Date(), -31)).getTime();
+              var Stimes = Stime / 86400000;
+              console.log(
+                timeFormat(new Date(), -31),
+                timeFormat(new Date()),
+                Stimes
+              );
+              for (let i = 0; i <= Stimes; i++) {
+                Adate.push(timeFormat(new Date(), i - 31));
+              }
+            }
+            if (data.code == 200) {
+              let xData = [];
+              let sData = {
+                size: []
+              };
+              let xDatas = [];
+              let sDatas = {
+                size: []
+              };
+              data.data.forEach(v => {
+                salesCountType == 1
+                  ? xData.push(timeFormat(v.time))
+                  : xData.push(v.timeString);
+                sData.size.push(v.size);
+              });
+              Adate.forEach((v, i) => {
+                var num = xData.findIndex(vv => {
+                  return vv == v;
+                });
+                if (num >= 0) {
+                  xDatas.push(xData[num]);
+                  sDatas.size.push(sData.size[num]);
+                } else {
+                  xDatas.push(v);
+                  sDatas.size.push(0);
+                }
+              });
+              this.drawLine(xDatas, sDatas, type);
+            }
           }
         })
         .catch(err => {
@@ -130,10 +181,9 @@ export default {
           if (data.code == 200) {
             let xData = [];
             let sData = {
-              size: data.data.length>0?data.data[0].size:'',
-
+              size: data.data.length > 0 ? data.data[0].size : ""
             };
-
+            console.log(sData);
             // data.data.forEach(v => {
             //   xData.push(timeFormat(v.time));
             //   sData.allMoney.push(v.allMoney);
@@ -172,9 +222,7 @@ export default {
         },
         //图例名
         legend: {
-          data: [
-            "个数",
-          ]
+          data: ["个数"]
         },
         grid: {
           left: "3%", //图表距边框的距离
@@ -262,19 +310,14 @@ export default {
               }
             },
             data: sData.exeamineSuccess
-          },
+          }
         ]
       });
     },
     //画当天的图
     drawDataLine(sData, type) {
-      var dataAxis = [
-        "个数",
-
-      ];
-      var data = [
-        sData.size,
-      ];
+      var dataAxis = ["个数"];
+      var data = [sData.size];
       var yMax = 10;
       var dataShadow = [];
 
@@ -432,21 +475,18 @@ export default {
         date;
 
       let date2 = timeFormat(new Date(date1), 1);
+
       if (this.month && this.month1) {
+        var dates = timeFormat(new Date(this.month1));
+        console.log(dates);
+        var year = dates.split("-")[0];
+        var month = dates.split("-")[1];
+        var day = this.getLastDay(year, month);
+        console.log();
         this._httpGetsales(
           2,
           timeFormat(this.month) + " 00:00:00",
-          timeFormat(
-            timeFormat(timeFormat(new Date(this.month1))).split("-")[0] +
-              "-" +
-              timeFormat(timeFormat(new Date(this.month1))).split("-")[1] +
-              "-" +
-              this.getLastDay(
-                timeFormat(timeFormat(new Date(this.month1))).split("-")[0],
-                timeFormat(timeFormat(new Date(this.month1))).split("-")[1]
-              ),
-            1
-          ) + " 00:00:00",
+          timeFormat(year + "-" + month + "-" + day, 1) + " 00:00:00",
           false
         );
       } else {

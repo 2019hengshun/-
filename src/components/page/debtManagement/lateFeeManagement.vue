@@ -163,7 +163,7 @@
           >
 
             <el-table-column prop="id" fixed label="ID号" align="center"   width="70"></el-table-column>
-            <el-table-column prop="userName" label="姓名" align="center"  min-width="70"></el-table-column>
+            <el-table-column prop="userName" fixed  label="姓名" align="center"  min-width="70"></el-table-column>
             <el-table-column prop="mobile" label="手机号" align="center" min-width="100"></el-table-column>
             <el-table-column prop="idNo" label="身份证号" align="center"  min-width="150">
                                                        <template slot-scope="scope">
@@ -187,15 +187,10 @@
             <el-table-column prop="realrepayMoney" label="实际还款金额" align="center" min-width="100"  ></el-table-column>
      
             <el-table-column prop="late_fee" label="滞纳金额" align="center" min-width="70"  ></el-table-column>  
-            <el-table-column prop="realrepayMoney" label="实际滞纳金额" min-width="100"    align="center">
-                <template slot-scope="scope">
-                  <template >
-                    {{scope.row.realrepayMoney-scope.row.raise_money>0?scope.row.realrepayMoney-scope.row.raise_money:0}}
-                  </template>
-                </template>              
+            <el-table-column prop="chbrealrepayMoney" label="实际滞纳金额" min-width="100"    align="center">
               </el-table-column>  
        <el-table-column prop="overdue_day" label="逾期天数" align="center" min-width="70"  ></el-table-column> 
-    <el-table-column prop="overdue_day" label="M值" align="center" min-width="80">
+    <el-table-column prop="overdue_days" label="M值" align="center" min-width="80">
                       <template slot-scope="scope">
                     {{scope.row.overdue_day==0?'':scope.row.overdue_day < 11?'M1':scope.row.overdue_day < 21?'M2':scope.row.overdue_day < 31?'M3':'M3+'}}
                 </template>
@@ -340,6 +335,16 @@ export default {
 
           let tableData = data.list;
           this.tableData = tableData;
+
+          this.tableData.forEach(v => {
+            // var num = (v.realrepayMoney - v.raise_money).toFixed(4).toFixed(2);
+            console.log(1);
+            v["chbrealrepayMoney"] =
+              v.realrepayMoney - v.raise_money > 0
+                ? (v.realrepayMoney - v.raise_money).toFixed(2)
+                : 0;
+          });
+          console.log(this.tableData);
           this.total = data.allsize;
           this.allLateMoney = data.countVo.allLateMoney;
           this.allCostMony = data.countVo.allCostMony;

@@ -6,50 +6,39 @@
               :closable="false"
               type="info">
             </el-alert>           
-        </el-row>        
-        <el-row class="m20 col-flex-end" >
-    
-             
+        </el-row>       
+        <el-row class="m20 col-flex-end">
               <div style="flex-grow:1" >
                 <el-button  icon="el-icon-plus" @click="export2Excel">导出excel</el-button>
-               
-
-              </div>
-               <el-button  type="primary" @click="cz">重置</el-button>
-                <div class="l20">
+              </div>          
+          <el-form :inline="true" :model="search" :rules="rules" ref="search"  class="demo-form-inline">
+             <el-form-item >
+                <el-button  type="primary" @click="cz">重置</el-button>
+              </el-form-item>            
+              <el-form-item >
                     <el-input
-                    style="padding:0px 10px 0px 0px"
                       placeholder="手机号"
-                   
                       v-model="search.phonenumber"
                       clearable>
                     </el-input> 
-                </div>
-                <div class="l20">
+              </el-form-item>
+              <el-form-item >
                   <el-input
-                    style="padding:0px 10px 0px 0px"
                       placeholder="姓名"
                       v-model="search.IdCard"
                       clearable>
                     </el-input> 
-                </div>
-                <div class="l20">
+              </el-form-item>
+              <el-form-item prop="userName">
                   <el-input
-                       style="padding:0px 10px 0px 0px"
+                  
                          placeholder="身份证"
                          v-model="search.userName"
                          clearable>
-                       </el-input>  
-                </div>
-                      <!-- <el-select class="l20" v-model="search.paymentStatus" placeholder="还款状态">
-                      <el-option
-                        v-for="item in paymentStatus"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value">
-                      </el-option> -->
-                              
-                                     <el-select class="l20" v-model="search.execeedtimeType" placeholder="M值">
+                       </el-input> 
+              </el-form-item>
+              <el-form-item >
+                    <el-select v-model="search.execeedtimeType" placeholder="M值">
                       <el-option
                         v-for="item in execeedtimeTypes"
                         :key="item.value"
@@ -57,21 +46,22 @@
                         :value="item.value">
                       </el-option>
                     </el-select>   
+              </el-form-item>
+              <el-form-item >
                     <el-date-picker
-                    class="l20"
-                    style="width:340px"
                       v-model="search.time"
                       type="daterange"
                       value-format="yyyy-MM-dd"
                       range-separator="至"
                       start-placeholder="开始日期"
                       end-placeholder="结束日期">
-                    </el-date-picker>  
-                                                                         
-                 
-
+                    </el-date-picker>
+              </el-form-item> 
+              <el-form-item >
                     <el-button @click="handleSearch" class="l20" style="margin-left:20px" icon="el-icon-search"  type="success" circle></el-button>                                                                  
-       
+              </el-form-item>                            
+
+          </el-form>
         </el-row> 
         <el-table
             :data="tableData"  
@@ -83,7 +73,7 @@
             v-loading="loading"
           >
             <el-table-column prop="id" fixed label="ID" align="center"   width="70"></el-table-column>
-            <el-table-column prop="userName" label="姓名" align="center"  min-width="70"></el-table-column>
+            <el-table-column prop="userName" fixed label="姓名" align="center"  min-width="70"></el-table-column>
             <el-table-column prop="mobile" label="手机号" align="center" min-width="100"></el-table-column>
             <el-table-column prop="idNo" label="身份证号" align="center"  min-width="150">
                 <template slot-scope="scope">
@@ -189,10 +179,7 @@
     ]">
                   <el-input v-model="editForm.charge_fee"   ></el-input>
                 </el-form-item> -->
-                <el-form-item label="减免金额 ："     :rules="[
-      { required: true, message: '减免金额不能为空'},
-      { type: 'number', message: '减免金额必须为数字值'}
-    ]">
+                <el-form-item label="减免金额 ："   prop="penalty_money"     >
                   <el-input v-model="editForm.penalty_money"    ></el-input>
                 </el-form-item>
                 <!-- <el-form-item label="本金逾期金额：" prop="return_money" >
@@ -235,6 +222,26 @@ export default {
         }
       }, 1000);
     };
+    var valinamePass = (rule, value, callback) => {
+      var reg = /^[0-9a-zA-Z]+$/;
+      if (!reg.test(value) || typeof value == "undefined") {
+        if (!!value) {
+          callback(new Error("你输入的身份证不正确"));
+        } else {
+          callback();
+        }
+      } else {
+        callback();
+      }
+    };
+    var checkMoney = (rule, value, callback) => {
+      var reg = /^[0-9]+$/;
+      if (!reg.test(value)) {
+        callback(new Error("请输入减免金额且为数字"));
+      } else {
+        callback();
+      }
+    };
     return {
       sub: true,
       editForm: {},
@@ -258,8 +265,13 @@ export default {
       total: 0,
       index: 0,
       rules: {
-        return_money: [{ validator: checkAge, trigger: "blur" }]
-      }
+        return_money: [{ validator: checkAge, trigger: "blur" }],
+        userName: [
+          { required: true, validator: valinamePass, trigger: "change" }
+        ],
+        penalty_money: [{ validator: checkMoney, trigger: "blur" }]
+      },
+      formInline: {}
     };
   },
   computed: {
@@ -357,35 +369,70 @@ export default {
         });
     },
     handleSearch(type = true) {
-      if (type) {
-        this.npage = 1;
-        this.pagesize = 10;
-      }
-      if (this.search.time && this.search.time.length) {
-        this.getData(
-          this.npage,
-          this.pagesize,
-          this.search.time[0] + " 00:00:00",
-          timeFormat(this.search.time[1], 1) + " 00:00:00",
-          this.search.phonenumber,
-          this.search.IdCard,
-          this.search.userName,
-          this.search.execeedtimeType
-          // this.search.order ? this.search.order : 0,
-        );
-      } else {
-        this.getData(
-          this.npage,
-          this.pagesize,
-          "",
-          "",
-          this.search.phonenumber,
-          this.search.IdCard,
-          this.search.userName,
-          this.search.execeedtimeType
-          // this.search.order ? this.search.order : 0,
-        );
-      }
+      this.$refs["search"].validate(valid => {
+        if (valid) {
+          if (type) {
+            this.npage = 1;
+            this.pagesize = 10;
+          }
+          if (this.search.time && this.search.time.length) {
+            this.getData(
+              this.npage,
+              this.pagesize,
+              this.search.time[0] + " 00:00:00",
+              timeFormat(this.search.time[1], 1) + " 00:00:00",
+              this.search.phonenumber,
+              this.search.IdCard,
+              this.search.userName,
+              this.search.execeedtimeType
+              // this.search.order ? this.search.order : 0,
+            );
+          } else {
+            this.getData(
+              this.npage,
+              this.pagesize,
+              "",
+              "",
+              this.search.phonenumber,
+              this.search.IdCard,
+              this.search.userName,
+              this.search.execeedtimeType
+              // this.search.order ? this.search.order : 0,
+            );
+          }
+        } else {
+          return false;
+        }
+      });
+      // if (type) {
+      //   this.npage = 1;
+      //   this.pagesize = 10;
+      // }
+      // if (this.search.time && this.search.time.length) {
+      //   this.getData(
+      //     this.npage,
+      //     this.pagesize,
+      //     this.search.time[0] + " 00:00:00",
+      //     timeFormat(this.search.time[1], 1) + " 00:00:00",
+      //     this.search.phonenumber,
+      //     this.search.IdCard,
+      //     this.search.userName,
+      //     this.search.execeedtimeType
+      //     // this.search.order ? this.search.order : 0,
+      //   );
+      // } else {
+      //   this.getData(
+      //     this.npage,
+      //     this.pagesize,
+      //     "",
+      //     "",
+      //     this.search.phonenumber,
+      //     this.search.IdCard,
+      //     this.search.userName,
+      //     this.search.execeedtimeType
+      //     // this.search.order ? this.search.order : 0,
+      //   );
+      // }
     },
     handleCurrentChange(val) {
       this.npage = val;

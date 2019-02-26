@@ -162,7 +162,7 @@
                         size="mini"
                         type="success"
                         @click="handleAllocation(scope.$index, scope.row)"
-                       >修改菜单</el-button>
+                       >角色修改</el-button>
                     </template> 
                 </el-table-column>            
         </el-table>     
@@ -187,7 +187,7 @@
           width="30%"
           >
 
-            <el-form :model="roleForm" status-icon  ref="roleForm" label-width="100px"  >
+            <el-form :model="roleForm" status-icon  ref="roleForm" label-width="100px" :rules="rules" >
               <el-form-item label="父组件菜单:" prop="parentId" >
                 <el-select  v-model="roleForm.parentId" placeholder="父组件菜单:">
                       <el-option
@@ -236,7 +236,26 @@ export default {
       multipleSelection: [], //全部选中嘛
       parentRole: [],
       dialogVisible1: false,
-      roleForm: {}
+      roleForm: {},
+      rules: {
+        parentId: [
+          { required: true, message: "请选择父组件", trigger: "change" }
+        ],
+        mname: [
+          {
+            required: true,
+            message: "请输入菜单名",
+            trigger: "change"
+          }
+        ],
+        sort: [
+          {
+            required: true,
+            message: "请输入权重",
+            trigger: "change"
+          }
+        ]
+      }
     };
   },
   methods: {
@@ -276,6 +295,7 @@ export default {
       );
     },
     handleAllocation(index, row) {
+      console.log(1);
       this.dialogVisible1 = true;
       this.roleForm = Object.assign({}, row);
     },
@@ -326,6 +346,10 @@ export default {
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
+    },
+    qx1(formName) {
+      this.resetForm(formName);
+      this.dialogVisible1 = false;
     }
   },
   mounted() {

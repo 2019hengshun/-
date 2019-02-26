@@ -1093,7 +1093,7 @@ export const powerRouter = [{
       path: '/paymentapplylist',
       component: resolve => require(['../components/page/afterLoan/paymentapplylist'], resolve),
       meta: {
-        title: '线下还款申请列表展示',
+        title: '总逾期客户管理',
         role: 'paymentapplylist'
       }
     },

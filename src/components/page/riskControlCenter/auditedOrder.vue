@@ -38,7 +38,7 @@
 				<!--@selection-change="chooseSelect"-->
 				<!--<el-table-column type="selection" width="55"></el-table-column>-->
 				<el-table-column prop="id" fixed label="ID" align="center" width="70"></el-table-column>
-				<el-table-column prop="userName" label="姓名" align="center" min-width="70"></el-table-column>
+				<el-table-column prop="userName" fixed label="姓名" align="center" min-width="70"></el-table-column>
 				<el-table-column label="审核人" align="center" min-width="80">
 					<template slot-scope="scope">
 						<div v-if="scope.row.operatorName === ''|| scope.row.operatorName === null">

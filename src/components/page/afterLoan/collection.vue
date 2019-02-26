@@ -235,7 +235,7 @@
             </el-table-column>        
        
             <el-table-column prop="id" fixed label="订单号" align="center" width="70"  ></el-table-column>
-            <el-table-column prop="userName" label="姓名" align="center" min-width="70" ></el-table-column>
+            <el-table-column prop="userName" fixed label="姓名" align="center" min-width="70" ></el-table-column>
             <el-table-column prop="updateTime" label="最后催收更新时间" align="center" min-width="140"  >
                 <template slot-scope="scope">
                   <template v-if="scope.row.updateTime">

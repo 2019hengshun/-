@@ -952,8 +952,8 @@
                                     :data="customerInformation"
                                     border
                                         highlight-current-row style="width: 100%;font-weight:bold">
-                                <el-table-column  fixed prop="applyAmt"  label="授信额度" align="center"  min-width="140"></el-table-column>
-                                <el-table-column prop="approveAmt"  label="申请金额" align="center" min-width="140" ></el-table-column>
+                               <el-table-column prop="approveAmt" fixed  label="授信额度" align="center"  min-width="140"></el-table-column>
+                                <el-table-column prop="applyAmt"  label="申请金额" align="center" min-width="140" ></el-table-column>
                                 <el-table-column prop="counts"  label="签到次数" align="center" min-width="140" ></el-table-column>                                
                                 <el-table-column prop="lastLoginTime"  label="上次登录时间" align="center" min-width="140">
                                   <template slot-scope="scope" align="center">

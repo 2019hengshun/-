@@ -133,7 +133,7 @@
            <el-form-item>  
                 <el-button type="primary" @click="onSubmit1">提交</el-button>
                  <!-- <el-button @click="addDomain">新增借款期限</el-button> -->
-                <el-button type="primary" style="margin-left:30px" @click="qx1('roleForm')">取消</el-button>
+                <el-button type="primary" style="margin-left:30px" @click="qx1('sysForm')">取消</el-button>
               </el-form-item>
             </el-form>
         </el-dialog>   
@@ -145,7 +145,7 @@
           width="30%"
           >
 
-            <el-form :model="newForm" status-icon  ref="newForm" label-width="50px"  >
+            <el-form :model="newForm" status-icon  ref="newForm" label-width="100px" :rules="rules" >
               <el-form-item label="标题:" prop="title" >
                 <el-input type="text"   v-model="newForm.title" ></el-input>
               </el-form-item>
@@ -153,9 +153,9 @@
                 <el-input type="textarea"  v-model="newForm.content" ></el-input>
               </el-form-item> 
            <el-form-item>  
-                <el-button type="primary" @click="onSubmit2">提交</el-button>
+                <el-button type="primary" @click="onSubmit2('newForm')">提交</el-button>
                  <!-- <el-button @click="addDomain">新增借款期限</el-button> -->
-                <el-button type="primary" style="margin-left:30px" @click="qx1('roleForm')">取消</el-button>
+                <el-button type="primary" style="margin-left:30px" @click="qx2('newForm')">取消</el-button>
               </el-form-item>
             </el-form>
         </el-dialog>                                           
@@ -193,6 +193,10 @@ export default {
       newForm: {
         title: "",
         content: ""
+      },
+      rules: {
+        title: [{ required: true, message: "请输入标题", trigger: "change" }],
+        content: [{ required: true, message: "请输入内容", trigger: "change" }]
       }
     };
   },
@@ -210,8 +214,8 @@ export default {
             this.getData(this.npage, this.pagesize);
           }
         })
-        .catch(err=>{
-          console.log(err)
+        .catch(err => {
+          console.log(err);
         });
     },
     _httpAnnounceadelate(id) {
@@ -224,7 +228,7 @@ export default {
           console.log(1);
           httpAnnounceadelate(id)
             .then(res => {
-              let data  = res.data;
+              let data = res.data;
               if (data.code == 200) {
                 this.$message({
                   type: "success",
@@ -302,8 +306,14 @@ export default {
         this.sysForm.content
       );
     },
-    onSubmit2() {
-      this._httpAnnounceadd(this.newForm.title, this.newForm.content);
+    onSubmit2(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          this._httpAnnounceadd(this.newForm.title, this.newForm.content);
+        } else {
+          return false;
+        }
+      });
     },
     handleDelete(index, row) {
       this._httpAnnounceadelate(row.id);
@@ -311,6 +321,17 @@ export default {
     handleAdd() {
       this.newForm = Object.assign({}, { title: "", content: "" });
       this.dialogVisible2 = true;
+    },
+    qx1(formName) {
+      this.dialogVisible1 = false;
+      this.resetForm(formName);
+    },
+    qx2(formName) {
+      this.dialogVisible2 = false;
+      this.resetForm(formName);
+    },
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
     }
   },
   mounted() {

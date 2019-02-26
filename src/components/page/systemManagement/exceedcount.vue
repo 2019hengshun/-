@@ -2,7 +2,7 @@
     <div class="container">
         <el-row>
             <el-alert
-              title="提现逾期统计"
+              title="日销售逾期统计"
               :closable="false"
               type="info">
             </el-alert>           
@@ -50,7 +50,7 @@
             </el-table-column>
             <el-table-column  prop="allSalesMoney" label="当日净利润" align="center" width="166">
                     <template slot-scope="scope">
-                        {{scope.row.allSalesMoney-scope.row.exceedMonry}}
+                        {{scope.row.allSalesMoney-scope.row.exceedMonry-scope.row.repayMoney>0?scope.row.allSalesMoney-scope.row.exceedMonry-scope.row.repayMoney:0}}
                     </template> 
             </el-table-column>            
             <el-table-column  prop="exceedMonry" label="逾期量" align="center"  width="166">
@@ -95,6 +95,7 @@
           :visible.sync="dialogVisible" 
           center
           width="60%"
+          id="sss"
           >
         <el-table
             :data="showData"  
@@ -367,6 +368,9 @@ export default {
   color: #fff;
 }
 #ss .el-table__body tr:hover > td {
+  color: #000;
+}
+#sss .el-table__body tr:hover > td {
   color: #000;
 }
 </style>

@@ -59,7 +59,7 @@
         <!--@selection-change="chooseSelect"-->
         <!--<el-table-column type="selection" width="55"></el-table-column>-->
         <el-table-column prop="id" fixed label="ID" align="center" width="70"></el-table-column>
-        <el-table-column prop="userName" label="姓名" align="center" min-width="70"></el-table-column>
+        <el-table-column prop="userName" fixed label="姓名" align="center" min-width="70"></el-table-column>
         <el-table-column label="审核人" align="center" min-width="70">
           <template slot-scope="scope">
             <div v-if="scope.row.operatorName === ''|| scope.row.operatorName === null">
@@ -236,8 +236,8 @@
                                     :data="customerInformation"
                                     border
                                         highlight-current-row style="width: 100%;font-weight:bold">
-                                <el-table-column prop="applyAmt" fixed  label="授信额度" align="center"  min-width="140"></el-table-column>
-                                <el-table-column prop="approveAmt"  label="申请金额" align="center" min-width="140" ></el-table-column>
+                               <el-table-column prop="approveAmt" fixed  label="授信额度" align="center"  min-width="140"></el-table-column>
+                                <el-table-column prop="applyAmt"  label="申请金额" align="center" min-width="140" ></el-table-column>
                                 <el-table-column prop="counts"  label="签到次数" align="center" min-width="140" ></el-table-column>                                
                                 <el-table-column prop="lastLoginTime"  label="上次登录时间" align="center" min-width="140">
                                   <template slot-scope="scope" align="center">
@@ -395,9 +395,9 @@
                                     <el-button :type="approveResult?'primary':'danger'" :disabled="!approveResult"   @click="viewBlackList()">查看黑名单</el-button>
                                   </template>
                                 </el-table-column>                                
-                                <el-table-column prop="applyAmt"  label="审核结果" align="center" min-width="160">
+                                <el-table-column prop="applyAmt"  label="审核结果" align="center" min-width="160" v-if="activename=='first'">
                                   <template    slot-scope="scope" align="center">
-                                   <el-button :type="activename=='three'?'danger':'primary'"  :disabled="activename=='three'"  @click="addResult">添加审核结果</el-button>
+                                   <el-button :type="activename=='second'?'danger':'primary'"  :disabled="activename=='second'"  @click="addResult">添加审核结果</el-button>
                                   </template>
                                 </el-table-column>                                
                             </el-table>
@@ -4175,8 +4175,8 @@ export default {
       chooseMoneyVo: {},
       reportList: {},
       whiteForm: {},
-      BreportList:false,
-            txReport: [],
+      BreportList: false,
+      txReport: [],
       brReport: [],
       mxReport: [],
       scReport: [],
@@ -4191,7 +4191,7 @@ export default {
       fljkReport: [],
       clReport: [],
       reportList: {},
-      blackListVisible:false,
+      blackListVisible: false
       //
     };
   },
@@ -5070,7 +5070,7 @@ export default {
       //   });
       // });
       // console.log(this.customerInformation);
-    },    
+    },
     //得到系统参数
     _httpParametershow() {
       httpParametershow()
@@ -5207,7 +5207,7 @@ export default {
     },
     // 查看风控报告
     viewRiskManagementreport() {
-      console.log(1)
+      console.log(1);
       this.yysShow = true;
       this.lxrShow = true;
       this.reportList = {};
@@ -5234,16 +5234,15 @@ export default {
           //   console.log(JSON.parse(data.data.xinyanReport.data));
           //   this.BreportList = true;
           // }
-           if (
-              JSON.parse(data.data.xinyanReport.data).data.desc !== "查询未命中"
-            ) {
-              this.BreportList = true;
+          if (
+            JSON.parse(data.data.xinyanReport.data).data.desc !== "查询未命中"
+          ) {
+            this.BreportList = true;
 
-              this.reportList = JSON.parse(
-                data.data.xinyanReport.data
-              ).data.result_detail;
-         
-            }          
+            this.reportList = JSON.parse(
+              data.data.xinyanReport.data
+            ).data.result_detail;
+          }
           if (data.data.mifengreport) {
             let date = data.data.mifengreport;
             this.userBasicInformation = date.mifengreportApplicationCheck;
@@ -5273,7 +5272,7 @@ export default {
           this.CreditReport = true;
         })
         .catch(err => {
-          console.log(err)
+          console.log(err);
           this.$message.error("网络错误请联系管理员");
         });
     },

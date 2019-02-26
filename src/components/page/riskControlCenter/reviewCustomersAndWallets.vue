@@ -67,7 +67,7 @@
                          highlight-current-row style="width: 100%;font-weight:bold"
                   >
                 <el-table-column prop="id" fixed label="ID" align="center" width="70"></el-table-column>
-                    <el-table-column prop="userName" label="姓名" align="center" min-width="70"></el-table-column>
+                    <el-table-column prop="userName" fixed label="姓名" align="center" min-width="70"></el-table-column>
                     <el-table-column label="审核人" align="center" min-width="70">
                       <template slot-scope="scope">
                         <div v-if="scope.row.operatorName === ''|| scope.row.operatorName === null">
@@ -250,8 +250,8 @@
                                     :data="customerInformation"
                                     border
                                         highlight-current-row style="width: 100%;font-weight:bold">
-                                <el-table-column prop="applyAmt" fixed  label="授信额度" align="center"  min-width="140"></el-table-column>
-                                <el-table-column prop="approveAmt"  label="申请金额" align="center" min-width="140" ></el-table-column>
+                                <el-table-column prop="approveAmt" fixed  label="授信额度" align="center"  min-width="140"></el-table-column>
+                                <el-table-column prop="applyAmt"  label="申请金额" align="center" min-width="140" ></el-table-column>
                                 <el-table-column prop="counts"  label="签到次数" align="center" min-width="140" ></el-table-column>                                
                                 <el-table-column prop="lastLoginTime"  label="上次登录时间" align="center" min-width="140">
                                   <template slot-scope="scope" align="center">
@@ -676,9 +676,11 @@
           width="70%"
           title="风控报告"
           :visible.sync="CreditReport"
+          :close-on-click-modal="false"
+          :close-on-press-escape="false"
           append-to-body
          >
-          <el-tabs v-model="activeName" @tab-click="handleClick">
+          <el-tabs v-model="activeName" @tab-click="handleClick1">
             <el-tab-pane label="芝麻信用报告" name="first" v-if="false">芝麻信用报告</el-tab-pane>
             <el-tab-pane label="新颜信用报告" name="second">
             <el-row class="xy_flex">
@@ -5443,6 +5445,7 @@ export default {
     handleClick() {
       this.reset();
     },
+    handleClick1(){},
     //重置
     reset() {
       this.search = {};
@@ -5593,7 +5596,7 @@ export default {
           }
 
           if (data.data.xinyanReport) {
-        
+            console.log(JSON.parse(data.data.xinyanReport.data));
             if (
               JSON.parse(data.data.xinyanReport.data).data.desc !== "查询未命中"
             ) {

@@ -46,7 +46,7 @@
                         <el-input
                         style="padding:0px 10px 0px 0px"
                           placeholder="请输入身份证 "
-                          v-model="search.idcard"
+                          v-model.trim="search.idcard"
                           clearable>
                         </el-input> 
                     </div>                                                                        
@@ -63,7 +63,7 @@
                       id="text"
               >
                 <el-table-column prop="id" fixed   align="center" label="ID"  width="60"  ></el-table-column>
-                <el-table-column prop="realName"  align="center" label="姓名"  width="70" ></el-table-column>
+                <el-table-column prop="realName"  fixed align="center" label="姓名"  width="70" ></el-table-column>
                 <el-table-column prop="source"  align="center" label="来源"  width="70"
                          :filters="[{ value: 1, text: '苹果' }, { value: 2, text: '安卓' }, { value: 3, text: '网页' }]"
                          :filter-method="filterSource"                   
@@ -445,7 +445,7 @@
                                 <el-table-column prop="borrowDay" align="center" label="借款期限" width="200"></el-table-column>
                                 <el-table-column prop="borrowTime" align="center" width="180" label="借款时间">
                                   <template slot-scope="scope">
-                                      {{scope.row.borrowTime|dateServer}}
+                                      {{scope.row.borrowDateTime|dateServer}}
                                   </template>                                    
                                 </el-table-column>  
                                 <el-table-column prop="returnTime" align="center" width="180" label="应还款日期">
@@ -872,9 +872,17 @@ export default {
           this.$message.error("请检查网络连接或联系管理员");
         });
     },
-    getData(npage, pagesize, source, realName, phoneNumber, idcard,channel) {
+    getData(npage, pagesize, source, realName, phoneNumber, idcard, channel) {
       this.loading = true;
-      getCustUserList(npage, pagesize, source, realName, phoneNumber, idcard,channel)
+      getCustUserList(
+        npage,
+        pagesize,
+        source,
+        realName,
+        phoneNumber,
+        idcard,
+        channel
+      )
         .then(res => {
           let data = res.data;
           this.tableData = data.rows;

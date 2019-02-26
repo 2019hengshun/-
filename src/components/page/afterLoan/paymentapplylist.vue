@@ -231,6 +231,21 @@ export default {
       }
       callback();
     };
+    var validateTimePass = (rule, value, callback) => {
+      if (value === "" || typeof value == "undefined") {
+        callback(new Error("请填写还款时间"));
+      } else if (
+        new Date(value).getTime() - new Date(timeFormat(this.Stime)).getTime() <
+        0
+      ) {
+        callback(new Error("还款时间必须大于提现时间"));
+      } else {
+        // if (this.ruleForm2.checkPass !== "") {
+        //   this.$refs.ruleForm2.validateField("checkPass");
+        // }
+        callback();
+      }
+    };
     return {
       trevewerlist: [],
       execeedtimeTypes: [
@@ -239,6 +254,7 @@ export default {
         { label: "M3", value: 3 },
         { label: "M3+", value: 4 }
       ],
+      Stime: "",
       search: {},
       npage: 1,
       pagesize: 10,
@@ -250,7 +266,10 @@ export default {
       types: [{ label: "线下", value: 1 }, { label: "线上", value: 2 }],
       rules: {
         remark: [{ required: true, message: "请填写备注", trigger: "blur" }],
-        time: [{ required: true, message: "请填写还款时间", trigger: "blur" }],
+        time: [
+          { required: true, validator: validateTimePass, trigger: "blur" }
+        ],
+        // time: [{ required: true, message: "请填写还款时间", trigger: "blur" }],
         title: [
           { required: true, message: "请选择电销人员", trigger: "change" }
         ],
@@ -473,14 +492,16 @@ export default {
 
       if (!isJPG) {
         this.$message.error("上传头像图片只能是 JPG 格式!");
+        return;
       }
       if (!isLt2M) {
-        this.$message.error("上传头像图片大小不能超过 2MB!");
+        this.$message.error("上传头像图片大小不能超过 4MB!");
+        return;
       }
       if (!file) {
         this.$message.error("请上传图片");
+        return;
       }
-
       this.dialogVisible1 = false;
       this.resetForm("editForm");
       axios
@@ -527,6 +548,8 @@ export default {
     handlePreview(file) {},
     handleChange(file, fileList) {},
     handlehk(index, row) {
+      console.log(row.createTime);
+      this.Stime = row.createTime;
       this.editForm.withdrawId = row.id;
       this.editForm.yMoney = row.late_fee
         ? Number(row.raise_money) + Number(row.late_fee)

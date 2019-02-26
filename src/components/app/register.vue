@@ -181,12 +181,12 @@ export default {
               navigator.userAgent.indexOf("Linux") > -1
             ) {
               //安卓手机
-              source = 1;
+              source = 2;
               // window.location.href = "mobile/index.html";
             } else if (navigator.userAgent.indexOf("iPhone") > -1) {
               //苹果手机
               // window.location.href = "mobile/index.html";
-              source = 2;
+              source = 1;
             } else if (navigator.userAgent.indexOf("Windows Phone") > -1) {
               //winphone手机
               source = 3;

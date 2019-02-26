@@ -88,7 +88,7 @@
           >
             <el-table-column prop="id" fixed label="ID" align="center" width="70"  >
             </el-table-column>  
-         <el-table-column prop="userName" label="姓名" align="center" min-width="70" >
+         <el-table-column prop="userName" fixed label="姓名" align="center" min-width="70" >
             </el-table-column> 
            <el-table-column prop="mobile" label="手机号" align="center" min-width="100" >
             </el-table-column>  
@@ -364,7 +364,7 @@
           >
             <el-table-column prop="id" fixed label="ID" align="center" width="70"  >
             </el-table-column>
-         <el-table-column prop="userName" label="姓名" align="center" min-width="70" >
+         <el-table-column prop="userName" fixed label="姓名" align="center" min-width="70" >
             </el-table-column> 
            <el-table-column prop="phoneNumber" label="手机号" align="center" min-width="100" >
             </el-table-column>   

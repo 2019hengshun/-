@@ -17,7 +17,7 @@
                  <el-input            
                  style="padding:0px 10px 0px 0px"
                       placeholder="请输入产品"
-                      v-model="search.phonenumber"
+                      v-model="search.productName"
                       clearable>
                      </el-input> 
                     </div> 
@@ -229,6 +229,7 @@ export default {
       });
     },
     handleSearch() {
+      console.log(this.search.productName)
       this.getData(this.search.productName);
     },
     handleEdit(index, row) {
