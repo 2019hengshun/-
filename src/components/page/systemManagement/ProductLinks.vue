@@ -118,8 +118,6 @@
                       list-type="picture"
                       :auto-upload="false" >
                       <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-                      <!-- <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button> -->
-                      <!-- <div slot="tip" class="el-upload__tip">（必须上传图片，且大小为4M以内），且不超过4M</div> -->
                     </el-upload>  
             </el-form-item> 
             <el-form-item label="排序权重" label-width="100px">
@@ -229,7 +227,7 @@ export default {
       });
     },
     handleSearch() {
-      console.log(this.search.productName)
+      console.log(this.search.productName);
       this.getData(this.search.productName);
     },
     handleEdit(index, row) {
@@ -281,7 +279,7 @@ export default {
         let data = res.data;
         if (data.code == 200) {
           this.dialogFormAddVisible = false;
-       this.getData();
+          this.getData();
         }
       });
     },
@@ -298,11 +296,26 @@ export default {
         let data = res.data;
         if (data.code == 200) {
           this.dialogFormEditVisible = false;
-         this.getData();
+          this.getData();
         }
       });
     },
     handleClick() {
+      // httpSaveProductLinks(
+      //   null,
+      //   null,
+      //   this.addForm.downloadUrl,
+      //   this.addForm.registeredUrl,
+      //   this.addForm.extendField,
+      //   this.addForm.productName,
+      //   this.addForm.sort
+      // ).then(res => {
+      //   let data = res.data;
+      //   if (data.code == 200) {
+      //     this.dialogFormAddVisible = false;
+      //  this.getData();
+      //   }
+      // });
       this.$refs.upload.submit();
     },
     handleAdd() {

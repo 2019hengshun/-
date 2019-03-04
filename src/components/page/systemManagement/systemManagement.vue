@@ -63,25 +63,26 @@
                       <el-card shadow="always">
                           <el-row>
                               <strong style="margin-left:30px">借款期限:</strong>
-                              <i style="color:red">{{list.borrowDay?list.borrowDay:''}}</i>
+                              <i style="color:red">{{list.borrowDay}}</i>
                           </el-row>
                           <el-row class="m20">
                                <strong style="margin-left:30px">借款千分利率:</strong>
-                               <i style="color:red">{{list.rateAll?list.rateAll:""}}</i>
+                               <i style="color:red">{{list.rateAll}}</i>
                           </el-row>
                           <el-row class="m20">
                                <strong style="margin-left:30px">逾期率:</strong>
-                               <i style="color:red">{{list.overdue_rate?list.overdue_rate:''}}</i>
+                               <i style="color:red">{{list.overdue_rate}}</i>
+                                <el-button @click="change(i)" style="float:right" type="primary" icon="el-icon-edit" circle></el-button>
                           </el-row>  
-                          <el-row class="m20">
+                          <!-- <el-row class="m20">
                                <strong style="margin-left:30px">逾期服务费利率:</strong>
-                               <i style="color:red">{{list.management_rate?list.management_rate:''}}</i>
+                               <i style="color:red">{{list.management_rate}}</i>
                           </el-row>  
                           <el-row class="m20">
                                <strong style="margin-left:30px">逾期利率:</strong>
-                               <i style="color:red">{{list.liquidated_rate?list.liquidated_rate:''}}</i>
-                                <el-button @click="change(i)" style="float:right" type="primary" icon="el-icon-edit" circle></el-button>
-                          </el-row>    
+                               <i style="color:red">{{list.liquidated_rate}}</i>
+                               
+                          </el-row>     -->
                       </el-card>
                  </el-col>                
             
@@ -120,7 +121,7 @@
                     >
                     <el-input v-model="sysForm.overdue_rate"></el-input>
                   </el-form-item>   
-                 <el-form-item
+                 <!-- <el-form-item
                       :label="'逾期服务费利率'"
             
                     >
@@ -131,7 +132,7 @@
             
                     >
                     <el-input v-model="sysForm.liquidated_rate"></el-input>
-                  </el-form-item>                                       
+                  </el-form-item>                                        -->
                                
 
        
@@ -341,6 +342,7 @@ export default {
     change(i) {
       this.dialogVisible1 = true;
       this.sysForm = JSON.parse(JSON.stringify(this.list));
+      console.log(this.sysForm);
     },
     add() {
       this.addForm = {};
@@ -360,18 +362,21 @@ export default {
     },
     onSubmit() {
       if (
-        this.sysForm.rateAll == null ||
-        this.sysForm.overdue_rate == null ||
-        this.sysForm.management_rate == null ||
-        this.sysForm.liquidated_rate == null ||
-        this.sysForm.rateAll == undefined ||
-        this.sysForm.overdue_rate == undefined ||
-        this.sysForm.management_rate == undefined ||
-        this.sysForm.liquidated_rate == undefined ||
-        this.sysForm.rateAll == "" ||
-        this.sysForm.overdue_rate == "" ||
-        this.sysForm.management_rate == "" ||
-        this.sysForm.liquidated_rate == ""
+        this.sysForm.rateAll === null ||
+        this.sysForm.overdue_rate === null
+        // this.sysForm.management_rate === null ||
+        // this.sysForm.liquidated_rate === null 
+        ||
+        this.sysForm.rateAll === undefined ||
+        this.sysForm.overdue_rate === undefined
+        
+        // this.sysForm.management_rate === undefined ||
+        // this.sysForm.liquidated_rate === undefined
+         ||
+        this.sysForm.rateAll === "" ||
+        this.sysForm.overdue_rate === "" 
+        // this.sysForm.management_rate === "" ||
+        // this.sysForm.liquidated_rate === ""
       ) {
         this.$message({
           message: "参数不能为空",

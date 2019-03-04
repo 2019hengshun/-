@@ -28,7 +28,7 @@
           center
           width="30%"
           >
-              <el-row>
+              <!-- <el-row>
                 <el-tag
                 class="l20 m20"
                   v-for="tag in dynamicTags"
@@ -36,7 +36,7 @@
                   type="danger">
                   {{tag.phoneNumber}}
                 </el-tag>
-              </el-row>          
+              </el-row>           -->
             <el-form class="m20" :model="smsForm" status-icon  ref="smsForm" label-width="100px" :rules="rules" >
               <el-form-item label="短信平台:" prop="platformName">
                  <el-select v-model="smsForm.platformName" placeholder="短信平台">
@@ -110,6 +110,7 @@ export default {
               type: "success"
             });
             this.dialogVisible = false;
+            this.smsForm = {};
             this._httpEleMsgPlatform();
           } else {
             this.$message.error(data.msg);
@@ -182,22 +183,6 @@ export default {
           }
         })
         .catch(err => {
-          let data = {
-            code: 200,
-            msg: "提交成功",
-            data: [
-              { id: 1, platformName: "华信" },
-              { id: 2, platformName: "创蓝" }
-            ]
-          };
-          if (data.code == 200) {
-            this.eleMsgPlatform = data.data;
-            this.eleMsgPlatform.forEach(element => {
-              element.platform = this._httpEleSignatures(element.id, element);
-            });
-          } else {
-            this.$message.error(data.msg);
-          }
           this.$message.error("请检查网络连接或联系管理员");
         });
     },

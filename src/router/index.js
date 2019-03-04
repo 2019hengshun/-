@@ -1239,10 +1239,18 @@ export const powerRouter = [{
     {
       path: '/ProductTotal',
       component: resolve => require(['../components/page/systemManagement/uv'], resolve),
-      // component: resolve => require(['../components/page/w/test'], resolve),
+      // component: resolve => require(['../components/page/systemManagement/operatingCondition'], resolve),
       meta: {
         title: 'UV统计',
         role: 'ProductTotal'
+      }
+    },
+    {
+      path: '/operatingCondition',
+      component: resolve => require(['../components/page/systemManagement/operatingCondition'], resolve),
+      meta: {
+        title: '经营状况统计',
+        role: 'operatingCondition'
       }
     },
     // {

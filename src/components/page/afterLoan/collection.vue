@@ -55,7 +55,7 @@
               align="center"
               width="55">
             </el-table-column>        
-            <el-table-column prop="id" label="订单号" align="center" width="70"   ></el-table-column>
+            <!-- <el-table-column prop="id" label="订单号" align="center" width="70"   ></el-table-column>
             <el-table-column prop="userName" label="姓名" align="center" min-width="70" ></el-table-column>
             <el-table-column prop="mobile" label="手机号" align="center" min-width="100"></el-table-column>
             <el-table-column prop="idNo" label="身份证号" align="center" min-width="150">
@@ -73,8 +73,27 @@
                 <template slot-scope="scope">
                     {{scope.row.collectorUserName?scope.row.collectorUserName:'暂无催收员'}}
                 </template>
+            </el-table-column>             -->
+            <el-table-column prop="id" fixed label="ID" align="center" width="70"   ></el-table-column>
+         <el-table-column prop="userName" fixed label="姓名" align="center" min-width="70"   ></el-table-column>
+            <el-table-column prop="mobile" label="手机号" align="center" min-width="100"   ></el-table-column>
+            <el-table-column prop="id_no" label="身份证号" align="center" min-width="150"   ></el-table-column> 
+            <el-table-column prop="raise_money" label="合同金额" align="center" min-width="70"   ></el-table-column>
+                       
+            <el-table-column prop="withdrawMoney" label="实际到款金额" align="center" min-width="95"   ></el-table-column>
+            <el-table-column prop="overdue_day" label="逾期天数" align="center" min-width="70"   ></el-table-column>
+            <el-table-column prop="late_fee" label="逾期费" align="center" min-width="60"   ></el-table-column>
+                       <el-table-column prop="returnTime" label="应还款时间" align="center" min-width="90"   >
+                <template slot-scope="scope">
+                    {{scope.row.returnTime|dateServer2}}
+                </template>                
+            </el-table-column>
+            <el-table-column prop="createTime" label="提现时间" align="center" min-width="140"   >
+                <template slot-scope="scope">
+                    {{scope.row.createTime|dateServer}}
+                </template>                
             </el-table-column>            
-            <el-table-column type="expand" label="更多详情" min-width="80" >
+            <!-- <el-table-column type="expand" label="更多详情" min-width="80" >
               <template slot-scope="props" >
                 <el-alert
                   title="提现情况"
@@ -150,7 +169,7 @@
                       </el-table-column>                      
                 </el-table>                
               </template>
-            </el-table-column> 
+            </el-table-column>  -->
                 <el-table-column prop="cz"  align="center" label="操作"  min-width="80"  >
                     <template slot-scope="scope">
                     <el-button
@@ -457,7 +476,9 @@ import {
   execeedtimeDistribute,
   getExeceedtimeapplyListbycollectorR,
   getExeceedtimeapplyListNo,
-  httpGxeceedtime_distributeafreshbatch
+  httpGxeceedtime_distributeafreshbatch,
+  httpOverdueneeddealList,
+  httpOverdueneeddeal
 } from "../../../service/http";
 import Timer from "../../../config/timer";
 import { timeFormat } from "../../../config/time";
@@ -523,9 +544,14 @@ export default {
     ) {
       this.loading = true;
       let _this = this;
+      // let u =
+      //   this.activeName == "first"
+      //     ? getExeceedtimeapplyListNo
+      //     : getExeceedtimeapplyList;
+      console.log(this.activeName);
       let u =
         this.activeName == "first"
-          ? getExeceedtimeapplyListNo
+          ? httpOverdueneeddealList
           : getExeceedtimeapplyList;
       u(
         loginId,
@@ -541,17 +567,20 @@ export default {
         .then(res => {
           let data = res.data;
           if (this.activeName == "first") {
-            let tableData = data.list;
-            for (let a = 0; a < data.list.length; a++) {
-              httpExeceedtimeapplydetail(data.list[a].id)
-                .then(re => {
-                  tableData[a].detail = re.data;
-                })
-                .catch();
-            }
-
+            let tableData = data.data.list;
+            // console.log(11);
+            // for (let a = 0; a < data.data.list.length; a++) {
+            //   httpExeceedtimeapplydetail(data.data.list[a].id)
+            //     .then(re => {
+            //       tableData[a].detail = re.data;
+            //     })
+            //     .catch(err => {
+            //       console.log(err);
+            //     });
+            // }
+            // console.log(JSON.stringify(tableData));
             _this.tableData = tableData;
-            _this.total = data.allsize;
+            _this.total = data.data.allpage;
             _this.loading = false;
           } else {
             if (data.code == 200) {
@@ -711,7 +740,8 @@ export default {
       let _this = this;
       if (this.trevewer) {
         if (this.distributionStatus == 1) {
-          execeedtimeDistribute(
+          // execeedtimeDistribute(
+          httpOverdueneeddeal(
             this.dynamicTags.length == 1
               ? this.dynamicTags[0] + ","
               : this.dynamicTags.join(","),
@@ -844,6 +874,7 @@ export default {
       this.distributionStatus
     );
     this.getrevewerlist();
+    // httpOverdueneeddealList(null, 1, 10, null, null, null, 1, null, null);
   }
 };
 </script>

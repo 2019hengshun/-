@@ -479,32 +479,45 @@ export default {
           "催收本金",
           "应催收违约金",
           "催回总金额",
-          "已收M1",
-          "已收M2",
-          "已收M3",
-          "已收M3+"
+          "总数量",
+          "M1",
+          "M2",
+          "M3",
+          "M3+",
+          "支付宝还款"
         ];
         const filterVal = [
           "i",
           "name",
-          "mallOverdueMoney",
+          "allOverdueMoney",
           "all_late_fee",
           "borrowDay",
+          "allCollectNumber",
           "collect_money_m1",
           "collect_money_m2",
           "collect_money_m3",
-          "collect_money_m4"
+          "collect_money_m4",
+          "zhifuBaoRepayNumber"
         ];
         let list = JSON.parse(JSON.stringify(this.tableData));
 
         for (var i = 0; i < list.length; i++) {
           list[i].i = i + 1;
-
           list[i].borrowDay =
             list[i].collect_money_m1 +
             list[i].collect_money_m2 +
             list[i].collect_money_m3 +
             list[i].collect_money_m4;
+          list[i].collect_money_m1 =
+            list[i].overdueMoney_m1_number + "个 " + list[i].collect_money_m1;
+          list[i].collect_money_m2 =
+            list[i].overdueMoney_m2_number + "个 " + list[i].collect_money_m2;
+          list[i].collect_money_m3 =
+            list[i].overdueMoney_m3_number + "个 " + list[i].collect_money_m3;
+          list[i].collect_money_m4 =
+            list[i].overdueMoney_m4_number + "个 " + list[i].collect_money_m4;
+          list[i].zhifuBaoRepayNumber =
+            list[i].zhifuBaoRepayNumber + "个 " + list[i].zhifuBaoRepayMoney;
         }
         const data = this.formatJson(filterVal, list);
         export_json_to_excel(tHeader, data, "催收记录统计");

@@ -1329,7 +1329,7 @@ export default {
       });
     },
     quxiao1() {
-      this.dialogVisible = false;
+      this.dialogVisible3 = false;
       this.resetForm("ruleForm1");
     },
     quxiao2() {

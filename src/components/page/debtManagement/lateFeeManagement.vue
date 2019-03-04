@@ -456,10 +456,13 @@ export default {
           "实际还款时间",
           "客户提现金额",
           "实际下款金额",
+          "实际还款金额",
           "滞纳金额",
+          "实际滞纳金额",
           "逾期天数",
           "M值",
           "应还款总额",
+          "优惠券面值",
           "当前状态",
           "催收员"
         ];
@@ -472,10 +475,13 @@ export default {
           "realRepaymentTime",
           "raise_money",
           "withdraw_money",
+          "realrepayMoney",
           "late_fee",
+          "chbrealrepayMoney",
           "overdue_day",
           "M",
           "return_money",
+          "coupon_value",
           "repay_status",
           "collectorName"
         ];
@@ -486,13 +492,20 @@ export default {
             list[i].repay_status === 0
               ? "未还"
               : list[i].repay_status === 1 ? "已还" : "";
+          // list[i].M =
+          //   list[i].M == 11
+          //     ? ""
+          //     : list[i].M < 11
+          //       ? "M1"
+          //       : list[i].M < 21 ? "M2" : list[i].M < 31 ? "M3" : "M3+";
           list[i].M =
-            list[i].M == 11
+            list[i].overdue_day == 0
               ? ""
-              : list[i].M < 11
+              : list[i].overdue_day < 11
                 ? "M1"
-                : list[i].M < 21 ? "M2" : list[i].M < 31 ? "M3" : "M3+";
-
+                : list[i].overdue_day < 21
+                  ? "M2"
+                  : list[i].overdue_day < 31 ? "M3" : "M3+";
           // list[i].cash_outType =
           // list[i].cash_outType===0?'无提现记录':list[i].cash_outType===1?'有余额':'无余额'
           list[i].realRepaymentTime = list[i].realRepaymentTime

@@ -6,40 +6,40 @@ var qs = require('qs');
 axios.defaults.timeout = 60000;
 // axios.defaults.withCredentials = true;
 //axios.defaults.baseURL = 'http://localhost:7994'; //本地服务器
-axios.defaults.baseURL = 'http://129.28.69.40:7994';
+//axios.defaults.baseURL = 'http://129.28.69.40:7994';
 //axios.defaults.baseURL = 'http://101.132.171.38:8084';
 //axios.defaults.baseURL = 'http://101.132.171.38:7994',
 
-  // axios.defaults.baseURL = '/api/';
-  //axios.defaults.baseURL = 'http://192.168.2.110:7994';
-  //axios.defaults.baseURL = 'http://192.168.25.138:8084';
-  //axios.defaults.baseURL = 'http://192.168.2.112:7994';
+// axios.defaults.baseURL = '/api/';
+//axios.defaults.baseURL = 'http://192.168.2.110:7994';
+//axios.defaults.baseURL = 'http://192.168.25.138:8084';
+axios.defaults.baseURL = 'http://192.168.2.112:7994';
 
 
 
 
-  //http request 拦截器
-  axios.interceptors.request.use(
-    config => {
-      console.log(store);
-      store
-        .dispatch("SETLogin")
-      // const token = ('session');
-      // config.data = JSON.stringify(config.data);
-      // config.headers = {
-      //     // 'Content-Type': 'application/x-www-form-urlencoded',
-      //     'Content-Type': 'application/json'
-      // };
-      // if (token) {
-      //     config.params = (token)
-      // };
+//http request 拦截器
+axios.interceptors.request.use(
+  config => {
+    console.log(store);
+    store
+      .dispatch("SETLogin")
+    // const token = ('session');
+    // config.data = JSON.stringify(config.data);
+    // config.headers = {
+    //     // 'Content-Type': 'application/x-www-form-urlencoded',
+    //     'Content-Type': 'application/json'
+    // };
+    // if (token) {
+    //     config.params = (token)
+    // };
 
-      return config;
-    },
-    err => {
-      return Promise.reject(err);
-    }
-  );
+    return config;
+  },
+  err => {
+    return Promise.reject(err);
+  }
+);
 // http response 拦截器
 /*axios.interceptors.response.use(
     response => {
@@ -2562,9 +2562,13 @@ export function httpGetcompanypayaccount(
   })
 }
 
-export function httpUpdatecompanypayaccount(id, alipayAccount, companyPhone, weixinNumber, weixinName, uploadFile) {
+export function httpUpdatecompanypayaccount(id, alipayAccount, companyPhone, weixinNumber, weixinName, uploadFile, zhimaQrcode) {
   let param = new FormData(); //创建form对象
-  param.append('uploadFile', uploadFile); //通过append向form对象添加数据
+  if (uploadFile) {
+    param.append('uploadFile', uploadFile); //通过append向form对象添  param.append('uploadFile', uploadFile); //通过append向form对象添加数据加数据
+  }
+
+  param.append('zhimaQrcode', zhimaQrcode); //通过append向form对象添加数据
   param.append('id', id); //通过append向form对象添加数据
   param.append('alipayAccount', alipayAccount); //通过append向form对象添加数据
   param.append('companyPhone', companyPhone); //通过append向form对象添加数据
@@ -2616,22 +2620,40 @@ export function httpselectProductLinks(productName) {
 }
 
 export function httpSaveProductLinks(id, imageUrl, downloadUrl, registeredUrl, extend_field, productName, sort) {
-  let param = new FormData(); //创建form对象
-  param.append('imageUrl', imageUrl); //通过append向form对象添加数据
-  param.append('id', id); //通过append向form对象添加数据
-  param.append('downloadUrl', downloadUrl); //通过append向form对象添加数据
-  param.append('registeredUrl', registeredUrl); //通过append向form对象添加数据
-  param.append('extend_field', extend_field); //通过append向form对象添加数据
-  param.append('productName', productName); //通过append向form对象添加数据
-  param.append('sort', sort); //通过append向form对象添加数据
-  return axios({
-    url: '/saveProductLinks',
-    method: 'post',
-    headers: {
-      "Content-Type": "multipart/form-data"
-    },
-    data: param
-  })
+
+  if (imageUrl) {
+    let param = new FormData(); //创建form对象
+    param.append('imageUrlFile', imageUrl); //通过append向form对象添加数据
+    param.append('id', id); //通过append向form对象添加数据
+    param.append('downloadUrl', downloadUrl); //通过append向form对象添加数据
+    param.append('registeredUrl', registeredUrl); //通过append向form对象添加数据
+    param.append('extend_field', extend_field); //通过append向form对象添加数据
+    param.append('productName', productName); //通过append向form对象添加数据
+    param.append('sort', sort); //通过append向form对象添加数据
+    return axios({
+      url: '/saveProductLinks',
+      method: 'post',
+      headers: {
+        "Content-Type": "multipart/form-data"
+      },
+      data: param
+    })
+  } else {
+    let data = {
+      id,
+      imageUrl,
+      downloadUrl,
+      registeredUrl,
+      extend_field,
+      productName,
+      sort
+    }
+    return axios({
+      url: '/saveProductLinks',
+      method: 'post',
+      data: qs.stringify(data)
+    })
+  }
 }
 
 
@@ -2705,6 +2727,74 @@ export function httpPublicDetails(produectId, pageSize, pageNum, type) {
   return axios({
     url: '/publicDetails',
     method: 'post',
+    data: qs.stringify(data)
+  })
+}
+
+//后台管理模块 /逾期列表展示 未分配
+export function httpOverdueneeddealList(loginId,
+  npage,
+  pagesize,
+  begainTimeString,
+  endTimeString,
+  phonenumber,
+  execeedtimeType,
+  distributionStatus,
+  collectorId) {
+  let data = {
+    loginId,
+    npage,
+    pagesize,
+    begainTimeString,
+    endTimeString,
+    phonenumber,
+    execeedtimeType,
+    distributionStatus,
+    collectorId
+  };
+  return axios({
+    url: '/sys/overdueneeddealList',
+    method: 'post',
+    // headers: {
+    //   'Content-type': 'application/json  '
+    // },
+    // data: JSON.stringify(data)
+    data: qs.stringify(data)
+  })
+}
+
+//后台管理模块 /逾期列表展示 未分配
+export function httpOverdueneeddeal(ids,
+  id) {
+  let data = {
+    ids,
+    id
+  };
+  return axios({
+    url: '/sys/overdueneeddeal',
+    method: 'post',
+    // headers: {
+    //   'Content-type': 'application/json  '
+    // },
+    // data: JSON.stringify(data)
+    data: qs.stringify(data)
+  })
+}
+
+//后台管理模块 /逾期列表展示 未分配
+export function httpOperatingCondition(StartDate,
+  EndDate) {
+  let data = {
+    StartDate,
+    EndDate
+  };
+  return axios({
+    url: '/stat/operatingCondition',
+    method: 'post',
+    // headers: {
+    //   'Content-type': 'application/json  '
+    // },
+    // data: JSON.stringify(data)
     data: qs.stringify(data)
   })
 }

@@ -232,12 +232,12 @@ export default {
       callback();
     };
     var validateTimePass = (rule, value, callback) => {
+      var num =
+        new Date(value).getTime() - new Date(timeFormat(this.Stime)).getTime();
+      console.log(num);
       if (value === "" || typeof value == "undefined") {
         callback(new Error("请填写还款时间"));
-      } else if (
-        new Date(value).getTime() - new Date(timeFormat(this.Stime)).getTime() <
-        0
-      ) {
+      } else if (num < 0) {
         callback(new Error("还款时间必须大于提现时间"));
       } else {
         // if (this.ruleForm2.checkPass !== "") {
@@ -550,6 +550,7 @@ export default {
     handlehk(index, row) {
       console.log(row.createTime);
       this.Stime = row.createTime;
+      this.editForm = {};
       this.editForm.withdrawId = row.id;
       this.editForm.yMoney = row.late_fee
         ? Number(row.raise_money) + Number(row.late_fee)

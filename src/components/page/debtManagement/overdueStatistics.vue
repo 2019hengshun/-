@@ -203,7 +203,6 @@ export default {
           export_json_to_excel
         } = require("../../../vendor/Export2Excel");
         const tHeader = [
-          "序号",
           "审核员",
           "订单总数",
           "总逾期本金",
@@ -222,23 +221,22 @@ export default {
           "m3+违约金"
         ];
         const filterVal = [
-          "id",
           "username",
           "applyNumber",
           "allOverdueMoney",
           "allLate_free",
+          "allOverdueMoney_m11",
           "allOverdueMoney_m1",
           "allLate_free_m1",
-          "m1",
+          "allOverdueMoney_m22",
           "allOverdueMoney_m2",
           "allLate_free_m2",
-          "m2",
+          "allOverdueMoney_m33",
           "allOverdueMoney_m3",
           "allLate_free_m3",
-          "m3",
+          "allOverdueMoney_m44",
           "allOverdueMoney_m4",
-          "allLate_free_m4",
-          "m4"
+          "allLate_free_m4"
         ];
         let list = JSON.parse(JSON.stringify(this.overdueTable));
 
@@ -251,6 +249,26 @@ export default {
           //   list[i].cash_outType === 0
           //     ? "无提现记录"
           //     : list[i].cash_outType === 1 ? "有余额" : "无余额";
+          list[i].allOverdueMoney_m11 =
+            (
+              (list[i].overdueApplyNumber_m1 / list[i].applyNumber).toFixed(4) *
+              100
+            ).toFixed(2) + "%";
+          list[i].allOverdueMoney_m22 =
+            (
+              (list[i].overdueApplyNumber_m2 / list[i].applyNumber).toFixed(4) *
+              100
+            ).toFixed(2) + "%";
+          list[i].allOverdueMoney_m33 =
+            (
+              (list[i].overdueApplyNumber_m3 / list[i].applyNumber).toFixed(4) *
+              100
+            ).toFixed(2) + "%";
+          list[i].allOverdueMoney_m44 =
+            (
+              (list[i].overdueApplyNumber_m4 / list[i].applyNumber).toFixed(4) *
+              100
+            ).toFixed(2) + "%";
           list[i].m1 = (
             list[i].overdueApplyNumber_m1 / list[i].applyNumber
           ).toFixed(2);
@@ -260,12 +278,12 @@ export default {
           list[i].m3 = (
             list[i].overdueApplyNumber_m3 / list[i].applyNumber
           ).toFixed(2);
-          list[i].m4 = (
-            list[i].overdueApplyNumber_m4 / list[i].applyNumber
-          ).toFixed(2);
+          // list[i].m4 = (
+          //   list[i].overdueApplyNumber_m4 / list[i].applyNumber
+          // ).toFixed(2);
         }
         const data = this.formatJson(filterVal, list);
-        export_json_to_excel(tHeader, data, "滞纳金管理");
+        export_json_to_excel(tHeader, data, "审核逾期统计");
       });
     },
     formatJson(filterVal, jsonData) {

@@ -1090,6 +1090,7 @@ export default {
           "实际到款金额",
           "实际还款金额",
           "滞纳金",
+          "优惠券",
           "商户订单号",
           "还款时间",
           "催收员",
@@ -1107,6 +1108,7 @@ export default {
           "withdrawMoney",
           "realMoney",
           "late_fee",
+          "coupon_value",
           "baofuapplyId",
           "createTime",
           "collectName",
@@ -1141,38 +1143,38 @@ export default {
           "姓名",
           "手机号",
           "身份证",
+          "合同金额",
           "实际到款金额",
           "需要还款金额",
           "滞纳金",
           "实际还款金额",
-          "合同金额",
-          "催收员姓名"
+          "实际还款日期",
+          "应还款日",
+          "描述",
+          "催收员"
         ];
         const filterVal = [
           "id",
           "userName",
-          "mobile",
+          "phoneNumber",
           "id_no",
+          "raise_money",
           "withdrawMoney",
           "ned_return_money",
           "late_fee",
           "returnMoney",
-          "raise_money",
+          "realRepmnentDate",
+          "returnTime",
+          "remarks",
           "collectName"
         ];
         let list = JSON.parse(JSON.stringify(this.tableData));
 
-        // for (var i = 0; i < list.length; i++) {
-        //   list[i].status =
-        //     list[i].status === 1
-        //       ? "成功"
-        //       : list[i].status === 2 ? "还款中" : "失败";
-        //   // list[i].result =
-        //   //   list[i].result === 1
-        //   //     ? "通过"
-        //   //     : list[i].result === 2 ? "人工" : "拒绝";
-        //   list[i].createTime = timeFormat(list[i].createTime);
-        // }
+        for (var i = 0; i < list.length; i++) {
+          list[i].realRepmnentDate = timeFormat(list[i].realRepmnentDate);
+          list[i].returnTime = timeFormat(list[i].returnTime);
+          list[i].ned_return_money = list[i].late_fee + list[i].raise_money;
+        }
         const data = this.formatJson(filterVal, list);
         export_json_to_excel(tHeader, data, "线下还款列表");
       });

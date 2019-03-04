@@ -112,7 +112,7 @@
                         >{{scope.row.standardApplyPassSum}}</el-button>  
                     </template> 
                   </el-table-column>                                             
-                <el-table-column prop="applyPassSum" align="center" label="机申通过数量" min-width="90" >
+                <el-table-column prop="applyPassSum" align="center" label="机审通过数量" min-width="90" >
                  <template slot-scope="scope">
                         <el-button
                         size="mini"

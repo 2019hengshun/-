@@ -55,13 +55,19 @@
             <el-form-item label="支付宝账号" label-width="100px">
               <el-input v-model="editForm.alipayAccount" autocomplete="off"></el-input>
             </el-form-item>
-            <el-form-item label="二维码" label-width="100px">
+            <el-form-item label="是否修改照片">
+              <el-switch
+                v-model="imgUrl"
+                active-text="是"
+                inactive-text="否">
+              </el-switch>              
+            </el-form-item>
+            <el-form-item label="二维码" label-width="100px" v-show="imgUrl">
                     <el-upload
                         action="123"
                       class="upload-demo"
                       ref="upload"
                       :limit="1"
-                   
                       :on-change="handleChange"
                         :on-preview="handlePreview"
                         :on-remove="handleRemove"
@@ -72,15 +78,16 @@
                       <!-- <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button> -->
                       <!-- <div slot="tip" class="el-upload__tip">（必须上传图片，且大小为4M以内），且不超过4M</div> -->
                     </el-upload>  
-            </el-form-item>                                                            
-
+            </el-form-item> 
+            <el-form-item label="" label-width="100px" v-show="imgUrl">
+              <span style="font-size:12px;color:red">*如果确定修改图片必须上传图片</span>
+            </el-form-item>
           </el-form>
           <div slot="footer" class="dialog-footer">
             <el-button @click="dialogFormEditVisible = false">取 消</el-button>
             <el-button type="primary" @click="handleClick">确 定</el-button>
           </div>
         </el-dialog> 
-
     </div>
 </template>
 
@@ -94,6 +101,7 @@ export default {
     return {
       tableData: {},
       show: false,
+      imgUrl: false,
       editForm: {},
       dialogFormEditVisible: false
     };
@@ -161,7 +169,25 @@ export default {
       });
     },
     handleClick() {
-      this.$refs.upload.submit();
+      if (this.imgUrl) {
+        this.$refs.upload.submit();
+      } else {
+        httpUpdatecompanypayaccount(
+          this.editForm.id,
+          this.editForm.alipayAccount,
+          this.editForm.companyPhone,
+          this.editForm.weixinNumber,
+          this.editForm.weixinName,
+          null,
+          this.editForm.zhimaQrcode
+        ).then(res => {
+          let data = res.data;
+          if (data.code == 200) {
+            this.dialogFormEditVisible = false;
+            this._inits();
+          }
+        });
+      }
     }
   },
   mounted() {

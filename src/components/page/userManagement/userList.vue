@@ -270,6 +270,9 @@ export default {
     ])
   },
   methods: {
+    qx1() {
+      this.dialogVisible1 = false;
+    },
     _httpGetRole() {
       httpGetRole()
         .then(res => {

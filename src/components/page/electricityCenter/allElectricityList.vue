@@ -1284,7 +1284,16 @@ export default {
         })
         .catch();
     },
-    getData(pageNumber, pageSize, startDate, endDate, PromotionCode,phone, name, typeStr) {
+    getData(
+      pageNumber,
+      pageSize,
+      startDate,
+      endDate,
+      PromotionCode,
+      phone,
+      name,
+      typeStr
+    ) {
       let _this = this;
       this.loading = true;
       findCustUserForSalesman(
@@ -1361,7 +1370,7 @@ export default {
           // "2018-08-02 00:00:00",
           "",
           "",
-              this.channelId,
+          this.channelId,
           this.phone,
           this.name,
           this.typeStr
@@ -1492,6 +1501,7 @@ export default {
       this.phone = "";
       this.name = "";
       this.typeStr = "";
+      this.channelId = null;
       this.time = [];
       this.getData(this.npage, this.pagesize);
     },
@@ -1609,7 +1619,7 @@ export default {
         const filterVal = ["phoneNumber"];
         let list = JSON.parse(JSON.stringify(this.tableData));
         const data = this.formatJson(filterVal, list);
-        export_json_to_excel(tHeader, data, "客户信息表");
+        export_json_to_excel(tHeader, data, "客户电销列表");
       });
     },
     formatJson(filterVal, jsonData) {
